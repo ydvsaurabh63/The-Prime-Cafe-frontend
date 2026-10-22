@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Tag, Plus, Edit2, Trash2, Calendar, Sparkles, Check, X, Percent, IndianRupee } from 'lucide-react';
+import React, { useEffect, useState, useRef } from 'react';
+import { Tag, Plus, Edit2, Trash2, Calendar, Sparkles, Check, X, Percent, IndianRupee, Upload, RefreshCw, Image as ImageIcon } from 'lucide-react';
 import api from '../../services/api';
 
 const AdminOffersTab = () => {
@@ -7,6 +7,8 @@ const AdminOffersTab = () => {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingOffer, setEditingOffer] = useState(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const fileInputRef = useRef(null);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -23,6 +25,33 @@ const AdminOffersTab = () => {
 
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+
+  const handleImageFileChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      setUploadingImage(true);
+      setError('');
+      const uploadData = new FormData();
+      uploadData.append('file', file);
+      uploadData.append('folder', 'aaj_kal_cafe/offers');
+
+      const res = await api.post('/upload', uploadData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+
+      if (res.data?.success && res.data.data?.url) {
+        setFormData((prev) => ({ ...prev, image: res.data.data.url }));
+      } else {
+        throw new Error(res.data?.message || 'Failed to upload offer banner');
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || err.message || 'Error uploading banner image');
+    } finally {
+      setUploadingImage(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
 
   const fetchOffers = async () => {
     try {
@@ -371,14 +400,58 @@ const AdminOffersTab = () => {
               </div>
 
               <div>
-                <label className="block font-bold text-[#4A2C18] mb-1">Banner Image URL</label>
+                <label className="block font-bold text-[#4A2C18] mb-1">Banner Image</label>
                 <input
-                  type="url"
-                  value={formData.image}
-                  onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                  placeholder="https://images.unsplash.com/..."
-                  className="w-full p-2.5 bg-[#FAF7F2] border border-[#E6DCD3] rounded-xl focus:outline-none focus:border-[#C85A32]"
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleImageFileChange}
+                  accept="image/*"
+                  className="hidden"
                 />
+                
+                {formData.image ? (
+                  <div className="relative mb-2 rounded-xl overflow-hidden border border-[#E6DCD3] h-28 bg-[#FAF7F2]">
+                    <img src={formData.image} alt="Offer Preview" className="w-full h-full object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => setFormData({ ...formData, image: '' })}
+                      className="absolute top-1.5 right-1.5 bg-black/60 text-white rounded-full p-1 hover:bg-black/80"
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
+                ) : null}
+
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={uploadingImage}
+                    className="flex-1 bg-[#FAF7F2] hover:bg-[#F5EFEB] border border-[#E6DCD3] text-[#4A2C18] font-bold py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 transition text-xs"
+                  >
+                    {uploadingImage ? (
+                      <>
+                        <RefreshCw size={14} className="animate-spin text-[#C85A32]" />
+                        <span>Uploading...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Upload size={14} className="text-[#C85A32]" />
+                        <span>Upload from Device</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                <div className="mt-2">
+                  <input
+                    type="url"
+                    value={formData.image}
+                    onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                    placeholder="or paste online image URL..."
+                    className="w-full p-2 bg-[#FAF7F2] border border-[#E6DCD3] rounded-xl text-xs focus:outline-none focus:border-[#C85A32]"
+                  />
+                </div>
               </div>
 
               <div className="flex gap-2 pt-3 border-t border-[#F5EFEB]">

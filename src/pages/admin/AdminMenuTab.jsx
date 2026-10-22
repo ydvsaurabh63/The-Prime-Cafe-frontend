@@ -141,10 +141,21 @@ const AdminMenuTab = () => {
     try {
       setUploadingImage(true);
       setError('');
-      const compressed = await compressImageFile(file);
-      setFormData((prev) => ({ ...prev, image: compressed }));
+      const uploadData = new FormData();
+      uploadData.append('file', file);
+      uploadData.append('folder', 'aaj_kal_cafe/menu');
+
+      const res = await api.post('/upload', uploadData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+
+      if (res.data?.success && res.data.data?.url) {
+        setFormData((prev) => ({ ...prev, image: res.data.data.url }));
+      } else {
+        throw new Error(res.data?.message || 'Failed to upload image');
+      }
     } catch (err) {
-      setError(err.message || 'Error processing image');
+      setError(err.response?.data?.message || err.message || 'Error uploading image');
     } finally {
       setUploadingImage(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
@@ -156,10 +167,21 @@ const AdminMenuTab = () => {
     if (!file) return;
     try {
       setCatUploading(true);
-      const compressed = await compressImageFile(file);
-      setNewCatImg(compressed);
+      const uploadData = new FormData();
+      uploadData.append('file', file);
+      uploadData.append('folder', 'aaj_kal_cafe/categories');
+
+      const res = await api.post('/upload', uploadData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+
+      if (res.data?.success && res.data.data?.url) {
+        setNewCatImg(res.data.data.url);
+      } else {
+        throw new Error(res.data?.message || 'Failed to upload category image');
+      }
     } catch (err) {
-      alert(err.message || 'Error processing image');
+      alert(err.response?.data?.message || err.message || 'Error uploading image');
     } finally {
       setCatUploading(false);
       if (catFileInputRef.current) catFileInputRef.current.value = '';

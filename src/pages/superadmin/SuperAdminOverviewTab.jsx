@@ -12,8 +12,6 @@ import {
   Sparkles,
   ExternalLink,
   RefreshCw,
-  Server,
-  Activity,
   Mail,
   Phone
 } from 'lucide-react';
@@ -25,19 +23,15 @@ const SuperAdminOverviewTab = () => {
   const [clients, setClients] = useState(getStoredClients());
   const [admins, setAdmins] = useState(getStoredAdmins());
   const [loading, setLoading] = useState(true);
-  const [apiLatency, setApiLatency] = useState(null);
 
   const loadData = async () => {
     setLoading(true);
-    const startTime = performance.now();
     try {
       const [overviewData, clientsData, adminsData] = await Promise.all([
         fetchSuperAdminOverview(),
         fetchClientsApi(),
         fetchAdminsApi()
       ]);
-      const latencyMs = Math.round(performance.now() - startTime);
-      setApiLatency(latencyMs);
 
       if (overviewData) setStats(overviewData);
       if (clientsData && Array.isArray(clientsData)) setClients(clientsData);
@@ -166,193 +160,120 @@ const SuperAdminOverviewTab = () => {
         </div>
       </div>
 
-      {/* Main Grid: Clients Table + Infrastructure & Health */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column (2 cols): Client Cafes Table */}
-        <div className="lg:col-span-2 bg-white border border-[#E6DCD3] rounded-2xl p-5 shadow-xs space-y-4">
-          <div className="flex items-center justify-between border-b border-[#E6DCD3] pb-3">
-            <div>
-              <h2 className="font-extrabold text-sm md:text-base text-[#2C1810]">
-                Client Cafes Overview & Performance
-              </h2>
-              <p className="text-xs text-[#7A685D]">
-                Showing registered client cafes, owner contacts, and live performance.
-              </p>
-            </div>
-            <button
-              onClick={() => navigate('/superadmin/clients')}
-              className="text-xs font-bold text-[#C85A32] hover:underline flex items-center gap-1 cursor-pointer"
-            >
-              <span>Manage All Clients</span>
-              <ArrowUpRight size={14} />
-            </button>
+      {/* Client Cafes Table (Full Width) */}
+      <div className="bg-white border border-[#E6DCD3] rounded-2xl p-5 shadow-xs space-y-4">
+        <div className="flex items-center justify-between border-b border-[#E6DCD3] pb-3">
+          <div>
+            <h2 className="font-extrabold text-sm md:text-base text-[#2C1810]">
+              Client Cafes Overview & Performance
+            </h2>
+            <p className="text-xs text-[#7A685D]">
+              Showing registered client cafes, owner contacts, and live performance.
+            </p>
           </div>
-
-          {/* Cafes Table */}
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead>
-                <tr className="bg-[#FAF7F2] border-b border-[#E6DCD3] text-[#7A685D] font-bold uppercase text-[10px] tracking-wider">
-                  <th className="py-3 px-4">Cafe Client</th>
-                  <th className="py-3 px-4">Owner & Contact</th>
-                  <th className="py-3 px-4">Assigned Admin</th>
-                  <th className="py-3 px-4 text-right">Total Sales</th>
-                  <th className="py-3 px-4 text-center">Status</th>
-                  <th className="py-3 px-4 text-right">Action</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[#F5EFEB]">
-                {clients.length === 0 ? (
-                  <tr>
-                    <td colSpan={6} className="py-8 text-center text-[#7A685D]">
-                      No client cafes found.
-                    </td>
-                  </tr>
-                ) : (
-                  clients.map((c) => (
-                    <tr key={c._id} className="hover:bg-[#FAF7F2] transition">
-                      {/* Cafe Client */}
-                      <td className="py-3 px-4 font-extrabold text-[#2C1810]">
-                        <div className="flex items-center gap-2.5">
-                          <div className="w-8 h-8 rounded-xl bg-[#4A2C18] text-white flex items-center justify-center font-black text-xs shadow-xs">
-                            {c.cafeName?.charAt(0) || 'C'}
-                          </div>
-                          <div>
-                            <div>{c.cafeName}</div>
-                            <div className="text-[10px] text-[#7A685D] font-normal">
-                              ID: {c._id?.slice(-6)}
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-
-                      {/* Owner & Contact */}
-                      <td className="py-3 px-4 space-y-0.5">
-                        <div className="font-bold text-[#2C1810]">{c.ownerName}</div>
-                        <div className="text-[11px] text-[#7A685D] flex items-center gap-1">
-                          <Mail size={11} className="text-[#C85A32]" />
-                          <span>{c.email}</span>
-                        </div>
-                        <div className="text-[11px] text-[#7A685D] flex items-center gap-1">
-                          <Phone size={11} />
-                          <span>{c.phone}</span>
-                        </div>
-                      </td>
-
-                      {/* Assigned Admin */}
-                      <td className="py-3 px-4">
-                        <span className="bg-[#F5EFEB] px-2.5 py-1 rounded-lg text-[11px] font-semibold text-[#4A2C18]">
-                          {c.assignedAdminName || 'Superadmin HQ'}
-                        </span>
-                      </td>
-
-                      {/* Total Sales */}
-                      <td className="py-3 px-4 text-right font-extrabold text-[#2C1810]">
-                        <div>₹{c.totalSales?.toLocaleString('en-IN') || '0'}</div>
-                        <div className="text-[10px] font-normal text-[#7A685D]">
-                          {c.totalOrders || 0} orders
-                        </div>
-                      </td>
-
-                      {/* Status */}
-                      <td className="py-3 px-4 text-center">
-                        <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
-                          c.status === 'Active'
-                            ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
-                            : 'bg-amber-100 text-amber-800 border border-amber-300'
-                        }`}>
-                          <CheckCircle2 size={11} />
-                          <span>{c.status || 'Active'}</span>
-                        </span>
-                      </td>
-
-                      {/* Action */}
-                      <td className="py-3 px-4 text-right">
-                        <button
-                          onClick={() => navigate('/client/orders')}
-                          className="inline-flex items-center gap-1 text-[11px] font-bold text-[#C85A32] bg-orange-50 hover:bg-orange-100 px-2.5 py-1.5 rounded-xl transition cursor-pointer"
-                          title="Open Cafe Client Dashboard"
-                        >
-                          <span>Open Panel</span>
-                          <ExternalLink size={12} />
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
+          <button
+            onClick={() => navigate('/superadmin/clients')}
+            className="text-xs font-bold text-[#C85A32] hover:underline flex items-center gap-1 cursor-pointer"
+          >
+            <span>Manage All Clients</span>
+            <ArrowUpRight size={14} />
+          </button>
         </div>
 
-        {/* Right Column (1 col): System Health & Quick Actions */}
-        <div className="space-y-5">
-          {/* Infrastructure & System Health */}
-          <div className="bg-white border border-[#E6DCD3] rounded-2xl p-5 shadow-xs space-y-3">
-            <div className="flex items-center gap-2 border-b border-[#E6DCD3] pb-2.5">
-              <Server size={18} className="text-[#4A2C18]" />
-              <h3 className="font-extrabold text-sm text-[#2C1810]">Infrastructure & Health</h3>
-            </div>
+        {/* Cafes Table */}
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs">
+            <thead>
+              <tr className="bg-[#FAF7F2] border-b border-[#E6DCD3] text-[#7A685D] font-bold uppercase text-[10px] tracking-wider">
+                <th className="py-3 px-4">Cafe Client</th>
+                <th className="py-3 px-4">Owner & Contact</th>
+                <th className="py-3 px-4">Assigned Admin</th>
+                <th className="py-3 px-4 text-right">Total Sales</th>
+                <th className="py-3 px-4 text-center">Status</th>
+                <th className="py-3 px-4 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[#F5EFEB]">
+              {clients.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="py-8 text-center text-[#7A685D]">
+                    No client cafes found.
+                  </td>
+                </tr>
+              ) : (
+                clients.map((c) => (
+                  <tr key={c._id} className="hover:bg-[#FAF7F2] transition">
+                    {/* Cafe Client */}
+                    <td className="py-3 px-4 font-extrabold text-[#2C1810]">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-8 h-8 rounded-xl bg-[#4A2C18] text-white flex items-center justify-center font-black text-xs shadow-xs">
+                          {c.cafeName?.charAt(0) || 'C'}
+                        </div>
+                        <div>
+                          <div>{c.cafeName}</div>
+                          <div className="text-[10px] text-[#7A685D] font-normal">
+                            ID: {c._id?.slice(-6)}
+                          </div>
+                        </div>
+                      </div>
+                    </td>
 
-            <div className="space-y-2 text-xs">
-              <div className="flex items-center justify-between py-1 border-b border-[#F5EFEB]">
-                <span className="text-[#7A685D]">API Status</span>
-                <span className="font-bold text-emerald-700 flex items-center gap-1">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                  Operational {apiLatency !== null ? `(${apiLatency}ms)` : ''}
-                </span>
-              </div>
-              <div className="flex items-center justify-between py-1 border-b border-[#F5EFEB]">
-                <span className="text-[#7A685D]">MongoDB Database</span>
-                <span className="font-bold text-emerald-700">Connected</span>
-              </div>
-              <div className="flex items-center justify-between py-1 border-b border-[#F5EFEB]">
-                <span className="text-[#7A685D]">Socket.IO Realtime</span>
-                <span className="font-bold text-emerald-700">Connected</span>
-              </div>
-              <div className="flex items-center justify-between py-1">
-                <span className="text-[#7A685D]">Uptime Metric</span>
-                <span className="font-bold text-[#2C1810]">100% Operational</span>
-              </div>
-            </div>
-          </div>
+                    {/* Owner & Contact */}
+                    <td className="py-3 px-4 space-y-0.5">
+                      <div className="font-bold text-[#2C1810]">{c.ownerName}</div>
+                      <div className="text-[11px] text-[#7A685D] flex items-center gap-1">
+                        <Mail size={11} className="text-[#C85A32]" />
+                        <span>{c.email}</span>
+                      </div>
+                      <div className="text-[11px] text-[#7A685D] flex items-center gap-1">
+                        <Phone size={11} />
+                        <span>{c.phone}</span>
+                      </div>
+                    </td>
 
-          {/* Quick Management Shortcuts */}
-          <div className="bg-gradient-to-br from-[#4A2C18] to-[#2C1810] text-white rounded-2xl p-5 shadow-xs space-y-3">
-            <h3 className="font-black text-sm flex items-center gap-1.5">
-              <Activity size={16} className="text-amber-400" />
-              <span>Superadmin Quick Actions</span>
-            </h3>
-            <p className="text-xs text-[#E6DCD3]">
-              Perform administrative actions across cafe operations.
-            </p>
+                    {/* Assigned Admin */}
+                    <td className="py-3 px-4">
+                      <span className="bg-[#F5EFEB] px-2.5 py-1 rounded-lg text-[11px] font-semibold text-[#4A2C18]">
+                        {c.assignedAdminName || 'Superadmin HQ'}
+                      </span>
+                    </td>
 
-            <div className="space-y-2 pt-1">
-              <button
-                onClick={() => navigate('/superadmin/clients')}
-                className="w-full text-left bg-white/10 hover:bg-white/20 px-3.5 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-between cursor-pointer"
-              >
-                <span>+ Onboard New Cafe Client</span>
-                <ArrowUpRight size={14} className="text-amber-300" />
-              </button>
+                    {/* Total Sales */}
+                    <td className="py-3 px-4 text-right font-extrabold text-[#2C1810]">
+                      <div>₹{c.totalSales?.toLocaleString('en-IN') || '0'}</div>
+                      <div className="text-[10px] font-normal text-[#7A685D]">
+                        {c.totalOrders || 0} orders
+                      </div>
+                    </td>
 
-              <button
-                onClick={() => navigate('/superadmin/admins')}
-                className="w-full text-left bg-white/10 hover:bg-white/20 px-3.5 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-between cursor-pointer"
-              >
-                <span>+ Manage Platform Admins</span>
-                <ArrowUpRight size={14} className="text-amber-300" />
-              </button>
+                    {/* Status */}
+                    <td className="py-3 px-4 text-center">
+                      <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                        c.status === 'Active'
+                          ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                          : 'bg-amber-100 text-amber-800 border border-amber-300'
+                      }`}>
+                        <CheckCircle2 size={11} />
+                        <span>{c.status || 'Active'}</span>
+                      </span>
+                    </td>
 
-              <button
-                onClick={() => navigate('/client/orders')}
-                className="w-full text-left bg-[#C85A32] hover:bg-[#B24E2A] text-white px-3.5 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-between shadow-xs cursor-pointer"
-              >
-                <span>☕ Switch to Client Dashboard</span>
-                <ExternalLink size={14} />
-              </button>
-            </div>
-          </div>
+                    {/* Action */}
+                    <td className="py-3 px-4 text-right">
+                      <button
+                        onClick={() => navigate('/client/orders')}
+                        className="inline-flex items-center gap-1 text-[11px] font-bold text-[#C85A32] bg-orange-50 hover:bg-orange-100 px-2.5 py-1.5 rounded-xl transition cursor-pointer"
+                        title="Open Cafe Client Dashboard"
+                      >
+                        <span>Open Panel</span>
+                        <ExternalLink size={12} />
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

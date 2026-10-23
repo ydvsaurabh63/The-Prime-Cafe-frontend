@@ -26,6 +26,8 @@ const INITIAL_CLIENTS = [
     status: 'Active',
     plan: 'Enterprise',
     tablesCount: 15,
+    password: 'Admin@123',
+    plainPassword: 'Admin@123',
     totalSales: 48620,
     totalOrders: 312,
     clientUrl: '/client/orders',

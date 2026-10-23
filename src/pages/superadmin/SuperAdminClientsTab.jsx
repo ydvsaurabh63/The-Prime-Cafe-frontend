@@ -121,9 +121,9 @@ const SuperAdminClientsTab = () => {
       plan: client.plan || 'Growth',
       tablesCount: client.tablesCount || 10,
       status: client.status || 'Active',
-      password: ''
+      password: client.password || client.plainPassword || 'Admin@123'
     });
-    setShowEditPassword(false);
+    setShowEditPassword(true);
     setIsEditModalOpen(true);
   };
 
@@ -694,21 +694,18 @@ const SuperAdminClientsTab = () => {
 
               {/* Update Password */}
               <div>
-                <div className="flex items-center justify-between mb-1">
-                  <label className="flex items-center gap-1.5 text-xs font-bold text-[#C85A32]">
-                    <KeyRound size={13} className="text-[#C85A32]" />
-                    <span>Password / Update Password</span>
-                  </label>
-                  <span className="text-[10px] text-[#7A685D] font-normal">(Leave blank to keep current)</span>
-                </div>
+                <label className="flex items-center gap-1.5 text-xs font-bold text-[#C85A32] mb-1">
+                  <KeyRound size={13} className="text-[#C85A32]" />
+                  <span>Update Password</span>
+                </label>
                 <div className="relative">
                   <input
                     type={showEditPassword ? 'text' : 'password'}
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    placeholder="Enter new password to update"
-                    autoComplete="new-password"
-                    className="w-full bg-[#FAF7F2] border border-[#E6DCD3] rounded-xl pl-3 pr-9 py-2 text-xs text-[#2C1810] focus:outline-none focus:border-[#C85A32]"
+                    placeholder="Enter password"
+                    autoComplete="off"
+                    className="w-full bg-[#FAF7F2] border border-[#E6DCD3] rounded-xl pl-3 pr-9 py-2 text-xs text-[#2C1810] font-mono focus:outline-none focus:border-[#C85A32]"
                   />
                   <button
                     type="button"

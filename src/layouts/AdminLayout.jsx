@@ -99,23 +99,26 @@ const AdminLayout = () => {
       <PortalSwitcher />
       <div className="flex-1 flex flex-col md:flex-row">
       {/* Sidebar for Desktop */}
-      <aside className="hidden md:flex flex-col w-64 bg-white border-r border-[#E6DCD3] p-5 justify-between">
-        <div className="space-y-6">
-          {/* Brand */}
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-[#4A2C18] text-white flex items-center justify-center shadow-xs">
-              <Coffee size={22} />
-            </div>
-            <div>
-              <h1 className="font-extrabold text-sm text-[#2C1810] tracking-tight">The Prime Cafe</h1>
-              <span className="text-[10px] font-semibold text-[#C85A32] bg-[#FAF7F2] px-2 py-0.5 rounded-full border border-[#E6DCD3]">
-                Management Panel
-              </span>
-            </div>
+      <aside className="hidden md:flex flex-col w-64 bg-white border-r border-[#E6DCD3] p-5 md:sticky md:top-0 md:self-start space-y-5">
+        {/* Brand */}
+        <div className="flex items-center gap-3 pb-2 border-b border-[#E6DCD3]/60">
+          <div className="w-10 h-10 rounded-2xl bg-[#4A2C18] text-white flex items-center justify-center shadow-xs shrink-0">
+            <Coffee size={22} />
           </div>
+          <div>
+            <h1 className="font-extrabold text-sm text-[#2C1810] tracking-tight">The Prime Cafe</h1>
+            <span className="text-[10px] font-semibold text-[#C85A32] bg-[#FAF7F2] px-2 py-0.5 rounded-full border border-[#E6DCD3]">
+              Management Panel
+            </span>
+          </div>
+        </div>
 
-          {/* 5 Navigation Tabs */}
-          <nav className="space-y-1.5">
+        {/* 5 Navigation Tabs Section */}
+        <div className="space-y-1.5">
+          <span className="text-[10px] uppercase font-bold text-[#7A685D] px-2 tracking-wider">
+            Navigation Tabs
+          </span>
+          <nav className="space-y-1 pt-1">
             {navTabs.map((item) => {
               const Icon = item.icon;
               return (
@@ -145,21 +148,21 @@ const AdminLayout = () => {
           </nav>
         </div>
 
-        {/* Footer info & Logout */}
+        {/* Account & Sign Out Section (Directly under tabs) */}
         <div className="pt-4 border-t border-[#E6DCD3] space-y-3">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-full bg-[#F5EFEB] border border-[#E6DCD3] font-bold text-xs flex items-center justify-center text-[#4A2C18]">
-              {user?.name?.charAt(0)}
+          <div className="flex items-center gap-2.5 px-1">
+            <div className="w-8 h-8 rounded-full bg-[#F5EFEB] border border-[#E6DCD3] font-bold text-xs flex items-center justify-center text-[#4A2C18] shrink-0">
+              {user?.name?.charAt(0) || 'C'}
             </div>
             <div className="overflow-hidden">
-              <p className="text-xs font-bold text-[#2C1810] truncate">{user?.name}</p>
-              <p className="text-[10px] text-[#7A685D] truncate">{user?.email}</p>
+              <p className="text-xs font-bold text-[#2C1810] truncate">{user?.name || 'Cafe Admin'}</p>
+              <p className="text-[10px] text-[#7A685D] truncate">{user?.email || 'admin@theprimecafe.com'}</p>
             </div>
           </div>
 
           <button
             onClick={handleLogout}
-            className="w-full text-xs font-bold text-rose-700 bg-rose-50 hover:bg-rose-100 py-2 rounded-xl transition flex items-center justify-center gap-1.5"
+            className="w-full text-xs font-bold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 py-2.5 rounded-xl transition flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
           >
             <LogOut size={14} /> Sign Out
           </button>
@@ -174,9 +177,9 @@ const AdminLayout = () => {
         </div>
         <button
           onClick={handleLogout}
-          className="text-xs text-rose-600 font-semibold p-1"
+          className="text-[11px] font-bold text-rose-700 bg-rose-50 border border-rose-200 px-2.5 py-1 rounded-lg flex items-center gap-1"
         >
-          Logout
+          <LogOut size={12} /> Sign Out
         </button>
       </header>
 

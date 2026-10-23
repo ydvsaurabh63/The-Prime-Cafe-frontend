@@ -44,75 +44,73 @@ const AdminPortalLayout = () => {
 
       <div className="flex-1 flex flex-col md:flex-row">
         {/* Desktop Sidebar */}
-        <aside className="hidden md:flex flex-col w-64 bg-white border-r border-[#E6DCD3] p-5 justify-between">
-          <div className="space-y-6">
-            {/* Admin Brand */}
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-[#4A2C18] text-white flex items-center justify-center shadow-xs">
-                <UserCheck size={22} className="text-amber-300" />
-              </div>
-              <div>
-                <h1 className="font-extrabold text-sm text-[#2C1810] tracking-tight">Aaj Kal Cafe</h1>
-                <span className="text-[10px] font-extrabold text-[#C85A32] bg-[#FAF7F2] px-2 py-0.5 rounded-full border border-[#E6DCD3] flex items-center gap-1 w-max mt-0.5">
-                  <Sparkles size={10} /> Admin Portal
-                </span>
-              </div>
+        <aside className="hidden md:flex flex-col w-64 bg-white border-r border-[#E6DCD3] p-5 md:sticky md:top-0 md:self-start space-y-5">
+          {/* Admin Brand */}
+          <div className="flex items-center gap-3 pb-2 border-b border-[#E6DCD3]/60">
+            <div className="w-10 h-10 rounded-2xl bg-[#4A2C18] text-white flex items-center justify-center shadow-xs shrink-0">
+              <UserCheck size={22} className="text-amber-300" />
             </div>
-
-            {/* Exactly 2 Navigation Tabs */}
-            <div className="space-y-1">
-              <span className="text-[10px] uppercase font-bold text-[#7A685D] px-3 tracking-wider">
-                Admin Panel Tabs
+            <div>
+              <h1 className="font-extrabold text-sm text-[#2C1810] tracking-tight">Aaj Kal Cafe</h1>
+              <span className="text-[10px] font-extrabold text-[#C85A32] bg-[#FAF7F2] px-2 py-0.5 rounded-full border border-[#E6DCD3] flex items-center gap-1 w-max mt-0.5">
+                <Sparkles size={10} /> Admin Portal
               </span>
-              <nav className="space-y-1.5 pt-1">
-                {navTabs.map((item) => {
-                  const Icon = item.icon;
-                  return (
-                    <NavLink
-                      key={item.label}
-                      to={item.path}
-                      className={({ isActive }) =>
-                        `flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition ${
-                          isActive
-                            ? 'bg-[#4A2C18] text-white shadow-xs'
-                            : 'text-[#7A685D] hover:bg-[#F5EFEB] hover:text-[#2C1810]'
-                        }`
-                      }
-                    >
-                      <Icon size={18} />
-                      <span>{item.label}</span>
-                    </NavLink>
-                  );
-                })}
-              </nav>
             </div>
           </div>
 
-          {/* Footer info & Actions */}
+          {/* Exactly 2 Navigation Tabs Section */}
+          <div className="space-y-1.5">
+            <span className="text-[10px] uppercase font-bold text-[#7A685D] px-2 tracking-wider">
+              Navigation Tabs
+            </span>
+            <nav className="space-y-1 pt-1">
+              {navTabs.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <NavLink
+                    key={item.label}
+                    to={item.path}
+                    className={({ isActive }) =>
+                      `flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition ${
+                        isActive
+                          ? 'bg-[#4A2C18] text-white shadow-xs'
+                          : 'text-[#7A685D] hover:bg-[#F5EFEB] hover:text-[#2C1810]'
+                      }`
+                    }
+                  >
+                    <Icon size={18} />
+                    <span>{item.label}</span>
+                  </NavLink>
+                );
+              })}
+            </nav>
+          </div>
+
+          {/* Account & Sign Out Section (Directly under tabs) */}
           <div className="pt-4 border-t border-[#E6DCD3] space-y-3">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-full bg-[#F5EFEB] border border-[#E6DCD3] font-bold text-xs flex items-center justify-center text-[#4A2C18]">
+            <div className="flex items-center gap-2.5 px-1">
+              <div className="w-8 h-8 rounded-full bg-[#F5EFEB] border border-[#E6DCD3] font-bold text-xs flex items-center justify-center text-[#4A2C18] shrink-0">
                 AD
               </div>
               <div className="overflow-hidden">
                 <p className="text-xs font-bold text-[#2C1810] truncate">Amit Sharma</p>
-                <p className="text-[10px] text-[#7A685D] truncate">Delhi NCR Region</p>
+                <p className="text-[10px] text-[#7A685D] truncate">{user?.email || 'amit.sharma@aajkalcafe.com'}</p>
               </div>
             </div>
 
             <button
-              onClick={() => navigate('/client/orders')}
-              className="w-full text-xs font-bold text-[#4A2C18] bg-[#FAF7F2] hover:bg-[#F5EFEB] border border-[#E6DCD3] py-2 rounded-xl transition flex items-center justify-center gap-1.5"
+              onClick={handleLogout}
+              className="w-full text-xs font-bold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 py-2.5 rounded-xl transition flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
             >
-              <Coffee size={14} className="text-[#C85A32]" />
-              <span>Open Client Dashboard</span>
+              <LogOut size={14} /> Sign Out
             </button>
 
             <button
-              onClick={handleLogout}
-              className="w-full text-xs font-bold text-rose-700 bg-rose-50 hover:bg-rose-100 py-2 rounded-xl transition flex items-center justify-center gap-1.5"
+              onClick={() => navigate('/client/orders')}
+              className="w-full text-xs font-bold text-[#4A2C18] bg-[#FAF7F2] hover:bg-[#F5EFEB] border border-[#E6DCD3] py-2 rounded-xl transition flex items-center justify-center gap-1.5 cursor-pointer"
             >
-              <LogOut size={14} /> Sign Out
+              <Coffee size={14} className="text-[#C85A32]" />
+              <span>Open Client Dashboard</span>
             </button>
           </div>
         </aside>
@@ -123,12 +121,20 @@ const AdminPortalLayout = () => {
             <UserCheck size={20} className="text-[#4A2C18]" />
             <h2 className="font-extrabold text-sm text-[#2C1810]">Admin Portal</h2>
           </div>
-          <button
-            onClick={() => navigate('/client/orders')}
-            className="text-[11px] font-bold text-[#C85A32] bg-orange-50 px-2 py-1 rounded-lg"
-          >
-            Client Panel
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => navigate('/client/orders')}
+              className="text-[11px] font-bold text-[#C85A32] bg-orange-50 px-2 py-1 rounded-lg"
+            >
+              Client Panel
+            </button>
+            <button
+              onClick={handleLogout}
+              className="text-[11px] font-bold text-rose-700 bg-rose-50 border border-rose-200 px-2.5 py-1 rounded-lg flex items-center gap-1"
+            >
+              <LogOut size={12} /> Sign Out
+            </button>
+          </div>
         </header>
 
         {/* Main Content Area */}

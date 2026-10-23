@@ -166,9 +166,8 @@ const SuperAdminClientsTab = () => {
       c.phone?.includes(searchTerm);
 
     const matchesStatus = statusFilter === 'All' || c.status === statusFilter;
-    const matchesPlan = planFilter === 'All' || c.plan === planFilter;
 
-    return matchesSearch && matchesStatus && matchesPlan;
+    return matchesSearch && matchesStatus;
   });
 
   return (
@@ -234,28 +233,10 @@ const SuperAdminClientsTab = () => {
         </div>
 
         <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
-          {/* Plan Filter */}
-          <div className="flex items-center gap-1.5">
-            <span className="text-xs text-[#7A685D] font-medium">Plan:</span>
-            {['All', 'Enterprise', 'Growth', 'Starter'].map((pl) => (
-              <button
-                key={pl}
-                onClick={() => setPlanFilter(pl)}
-                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition ${
-                  planFilter === pl
-                    ? 'bg-[#4A2C18] text-white shadow-xs'
-                    : 'bg-[#FAF7F2] text-[#7A685D] hover:bg-[#F5EFEB]'
-                }`}
-              >
-                {pl}
-              </button>
-            ))}
-          </div>
-
           {/* Status Filter */}
-          <div className="flex items-center gap-1.5 ml-0 sm:ml-2">
+          <div className="flex items-center gap-1.5">
             <span className="text-xs text-[#7A685D] font-medium">Status:</span>
-            {['All', 'Active', 'Pending', 'Suspended'].map((st) => (
+            {['All', 'Active', 'Pending'].map((st) => (
               <button
                 key={st}
                 onClick={() => setStatusFilter(st)}
@@ -282,7 +263,6 @@ const SuperAdminClientsTab = () => {
                 <th className="py-3 px-4">Owner & Contact</th>
                 <th className="py-3 px-4">Location</th>
                 <th className="py-3 px-4">Assigned Admin</th>
-                <th className="py-3 px-4">Plan & Tables</th>
                 <th className="py-3 px-4 text-right">Total Sales</th>
                 <th className="py-3 px-4 text-center">Status</th>
                 <th className="py-3 px-4 text-right">Actions</th>
@@ -291,7 +271,7 @@ const SuperAdminClientsTab = () => {
             <tbody className="divide-y divide-[#F5EFEB]">
               {filteredClients.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="py-8 text-center text-[#7A685D]">
+                  <td colSpan={7} className="py-8 text-center text-[#7A685D]">
                     No client cafes found matching your filter criteria.
                   </td>
                 </tr>
@@ -346,22 +326,6 @@ const SuperAdminClientsTab = () => {
                       </span>
                     </td>
 
-                    {/* Plan */}
-                    <td className="py-3 px-4 space-y-1">
-                      <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
-                        client.plan === 'Enterprise'
-                          ? 'bg-purple-100 text-purple-800'
-                          : client.plan === 'Growth'
-                          ? 'bg-blue-100 text-blue-800'
-                          : 'bg-stone-100 text-stone-800'
-                      }`}>
-                        {client.plan}
-                      </span>
-                      <div className="text-[10px] text-[#7A685D]">
-                        {client.tablesCount || 8} Active Tables
-                      </div>
-                    </td>
-
                     {/* Sales */}
                     <td className="py-3 px-4 text-right font-extrabold text-[#2C1810]">
                       <div>₹{client.totalSales?.toLocaleString('en-IN') || '0'}</div>
@@ -377,15 +341,11 @@ const SuperAdminClientsTab = () => {
                         className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold transition cursor-pointer ${
                           client.status === 'Active'
                             ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200 border border-emerald-300'
-                            : client.status === 'Pending'
-                            ? 'bg-amber-100 text-amber-800 hover:bg-amber-200 border border-amber-300'
-                            : 'bg-rose-100 text-rose-800 hover:bg-rose-200 border border-rose-300'
+                            : 'bg-amber-100 text-amber-800 hover:bg-amber-200 border border-amber-300'
                         }`}
                         title="Click to toggle status"
                       >
-                        {client.status === 'Active' && <CheckCircle2 size={11} />}
-                        {client.status === 'Pending' && <Clock size={11} />}
-                        {client.status === 'Suspended' && <XCircle size={11} />}
+                        {client.status === 'Active' ? <CheckCircle2 size={11} /> : <Clock size={11} />}
                         <span>{client.status}</span>
                       </button>
                     </td>
@@ -700,7 +660,6 @@ const SuperAdminClientsTab = () => {
                   >
                     <option value="Active">Active</option>
                     <option value="Pending">Pending</option>
-                    <option value="Suspended">Suspended</option>
                   </select>
                 </div>
               </div>

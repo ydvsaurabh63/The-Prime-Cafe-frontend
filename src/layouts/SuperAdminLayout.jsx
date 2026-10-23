@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -10,9 +10,21 @@ import {
   Sparkles
 } from 'lucide-react';
 import PortalSwitcher from '../components/PortalSwitcher';
+import { useAuth } from '../context/AuthContext';
 
 const SuperAdminLayout = () => {
   const navigate = useNavigate();
+  const { user, loading, logout } = useAuth();
+
+  useEffect(() => {
+    if (!loading) {
+      const userEmail = (user?.email || '').toLowerCase();
+      const isSuper = user?.role === 'superadmin' || userEmail === 'superadmin@aajkalcafe.com';
+      if (!user || !isSuper) {
+        navigate('/superadmin/login', { replace: true });
+      }
+    }
+  }, [user, loading, navigate]);
 
   // Exactly 3 Tabs as requested by user
   const navTabs = [
@@ -21,8 +33,9 @@ const SuperAdminLayout = () => {
     { label: 'Manage Client', path: '/superadmin/clients', icon: Store }
   ];
 
-  const handleLogout = () => {
-    navigate('/admin/login');
+  const handleLogout = async () => {
+    await logout();
+    navigate('/superadmin/login');
   };
 
   return (

@@ -17,10 +17,9 @@ import api from '../services/api';
 import PortalSwitcher from '../components/PortalSwitcher';
 
 const AdminLayout = () => {
-  const { user, isAdmin, login, logout, loading } = useAuth();
+  const { user, isAdmin, logout, loading } = useAuth();
   const navigate = useNavigate();
   const [unreadCount, setUnreadCount] = useState(0);
-  const [authenticating, setAuthenticating] = useState(false);
 
   // Fetch unread notifications count
   const fetchUnread = async () => {
@@ -35,29 +34,21 @@ const AdminLayout = () => {
   };
 
   useEffect(() => {
-    const handleAuth = async () => {
-      if (!loading && (!user || !isAdmin)) {
-        try {
-          setAuthenticating(true);
-          const res = await login('admin@theprimecafe.com', 'Admin@123');
-          if (!res?.success) {
-            navigate('/admin/login');
-          }
-        } catch (e) {
-          navigate('/admin/login');
-        } finally {
-          setAuthenticating(false);
+    if (!loading) {
+      if (!user) {
+        navigate('/client/login', { replace: true });
+      } else {
+        const userEmail = (user.email || '').toLowerCase();
+        const isClient = userEmail.includes('theprimecafe') || user.role === 'client' || user.role === 'superadmin';
+        if (!isClient) {
+          navigate('/client/login', { replace: true });
         }
       }
-    };
-
-    if (!loading && (!user || !isAdmin)) {
-      handleAuth();
     }
-  }, [user, isAdmin, loading]);
+  }, [user, loading, navigate]);
 
   useEffect(() => {
-    if (isAdmin) {
+    if (isAdmin || user?.role === 'superadmin') {
       fetchUnread();
       const socket = getSocket();
       socket.emit('join_admin');
@@ -75,7 +66,7 @@ const AdminLayout = () => {
         socket.off('new_order');
       };
     }
-  }, [isAdmin]);
+  }, [isAdmin, user]);
 
   const location = useLocation();
   const isClientRoute = location.pathname.startsWith('/client');
@@ -91,10 +82,10 @@ const AdminLayout = () => {
 
   const handleLogout = async () => {
     await logout();
-    navigate('/admin/login');
+    navigate('/client/login');
   };
 
-  if (loading || authenticating) {
+  if (loading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-[#FAF7F2] space-y-3">
         <div className="w-8 h-8 border-3 border-[#4A2C18] border-t-transparent rounded-full animate-spin"></div>

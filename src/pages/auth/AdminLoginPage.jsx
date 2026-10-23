@@ -1,51 +1,116 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Coffee, Lock, Mail, ShieldAlert } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Coffee, Lock, Mail, ShieldAlert, ShieldCheck, UserCheck } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
-const AdminLoginPage = () => {
+const AdminLoginPage = ({ portal: propPortal }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const { login } = useAuth();
+  const { login, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Detect portal from prop or current pathname
+  let portal = propPortal;
+  if (!portal) {
+    if (location.pathname.startsWith('/superadmin')) {
+      portal = 'superadmin';
+    } else if (location.pathname.startsWith('/client')) {
+      portal = 'client';
+    } else {
+      portal = 'admin';
+    }
+  }
 
   // Clear any delayed browser password manager autofill
-  React.useEffect(() => {
+  useEffect(() => {
     setEmail('');
     setPassword('');
+    setError('');
     const t = setTimeout(() => {
       setEmail('');
       setPassword('');
     }, 150);
     return () => clearTimeout(t);
-  }, []);
+  }, [portal]);
+
+  const portalConfig = {
+    superadmin: {
+      title: 'Aaj Kal Food Superadmin',
+      subtitle: 'Superadmin Portal Login',
+      Icon: ShieldCheck,
+      iconBg: 'bg-[#2C1810] text-amber-300',
+      btnText: 'Sign In as Superadmin',
+      target: '/superadmin/overview',
+      roleLabel: 'Superadmin'
+    },
+    admin: {
+      title: 'Aaj Kal Food Admin',
+      subtitle: 'Regional Admin Portal Login',
+      Icon: UserCheck,
+      iconBg: 'bg-[#4A2C18] text-emerald-300',
+      btnText: 'Sign In as Admin',
+      target: '/admin/overview',
+      roleLabel: 'Admin'
+    },
+    client: {
+      title: 'The Prime Cafe',
+      subtitle: 'Client Cafe Portal Login',
+      Icon: Coffee,
+      iconBg: 'bg-[#2C1810] text-orange-300',
+      btnText: 'Sign In as Client',
+      target: '/client/orders',
+      roleLabel: 'Client'
+    }
+  };
+
+  const current = portalConfig[portal] || portalConfig.admin;
+  const PortalIcon = current.Icon;
 
   const handleAdminLogin = async (e) => {
     e.preventDefault();
     try {
       setLoading(true);
       setError('');
-      const res = await login(email, password);
-      if (res.success) {
-        if (res.user.role !== 'admin' && res.user.role !== 'superadmin') {
-          setError('Access denied. This account does not possess staff or admin privileges.');
-          return;
-        }
 
-        // Smart routing based on role and account
-        if (res.user.role === 'superadmin') {
-          navigate('/superadmin/overview');
-        } else if (res.user.email?.toLowerCase().includes('amit.sharma')) {
-          navigate('/admin/overview');
-        } else {
-          navigate('/client/orders');
+      const res = await login(email, password, portal);
+      if (res?.success) {
+        const loggedUser = res.user;
+        const userEmail = (loggedUser?.email || '').toLowerCase();
+        const userRole = loggedUser?.role;
+
+        const isSuperAdmin = userRole === 'superadmin' || userEmail === 'superadmin@aajkalcafe.com';
+        const isClient = userRole === 'client' || userEmail.includes('theprimecafe') || userEmail === 'admin@theprimecafe.com';
+        const isAdmin = userEmail.includes('amit.sharma') || (userRole === 'admin' && !isSuperAdmin && !isClient);
+
+        if (portal === 'superadmin') {
+          if (!isSuperAdmin) {
+            await logout();
+            setError('Access denied! Only Superadmin can log in here.');
+            return;
+          }
+          navigate('/superadmin/overview', { replace: true });
+        } else if (portal === 'admin') {
+          if (!isAdmin) {
+            await logout();
+            setError('Access denied! Only Admin can log in here.');
+            return;
+          }
+          navigate('/admin/overview', { replace: true });
+        } else if (portal === 'client') {
+          if (!isClient) {
+            await logout();
+            setError('Access denied! Only Client can log in here.');
+            return;
+          }
+          navigate('/client/orders', { replace: true });
         }
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Invalid admin credentials');
+      setError(err.response?.data?.message || 'Invalid email or password for this portal');
     } finally {
       setLoading(false);
     }
@@ -55,16 +120,16 @@ const AdminLoginPage = () => {
     <div className="min-h-screen bg-[#FAF7F2] flex items-center justify-center p-4">
       <div className="max-w-md w-full bg-white rounded-3xl border border-[#E6DCD3] p-6 shadow-sm space-y-5">
         <div className="text-center space-y-1.5">
-          <div className="w-14 h-14 rounded-2xl bg-[#2C1810] text-[#FAF7F2] flex items-center justify-center mx-auto shadow-md">
-            <Coffee size={28} />
+          <div className={`w-14 h-14 rounded-2xl ${current.iconBg} flex items-center justify-center mx-auto shadow-md`}>
+            <PortalIcon size={28} />
           </div>
-          <h2 className="text-xl font-extrabold text-[#2C1810]">Aaj Kal Food Management</h2>
-          <p className="text-xs text-[#7A685D]">Superadmin, Regional Admin & Client Cafe Access</p>
+          <h2 className="text-xl font-extrabold text-[#2C1810]">{current.title}</h2>
+          <p className="text-xs text-[#7A685D]">{current.subtitle}</p>
         </div>
 
         {error && (
           <div className="p-3 bg-red-50 text-red-700 text-xs rounded-xl border border-red-200 flex items-center gap-2">
-            <ShieldAlert size={16} />
+            <ShieldAlert size={16} className="shrink-0" />
             <span>{error}</span>
           </div>
         )}
@@ -116,7 +181,7 @@ const AdminLoginPage = () => {
               disabled={loading}
               className="w-full bg-[#4A2C18] hover:bg-[#2C1810] text-white font-bold py-3 rounded-xl transition shadow-xs text-xs cursor-pointer"
             >
-              {loading ? 'Authenticating...' : 'Sign In to Portal'}
+              {loading ? 'Authenticating...' : current.btnText}
             </button>
           </div>
         </form>

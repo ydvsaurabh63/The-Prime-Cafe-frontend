@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -9,9 +9,22 @@ import {
   Sparkles
 } from 'lucide-react';
 import PortalSwitcher from '../components/PortalSwitcher';
+import { useAuth } from '../context/AuthContext';
 
 const AdminPortalLayout = () => {
   const navigate = useNavigate();
+  const { user, loading, logout } = useAuth();
+
+  useEffect(() => {
+    if (!loading) {
+      const userEmail = (user?.email || '').toLowerCase();
+      const isSuper = user?.role === 'superadmin' || userEmail === 'superadmin@aajkalcafe.com';
+      const isAdmin = userEmail.includes('amit.sharma') || (user?.role === 'admin' && !userEmail.includes('theprimecafe'));
+      if (!user || (!isAdmin && !isSuper)) {
+        navigate('/admin/login', { replace: true });
+      }
+    }
+  }, [user, loading, navigate]);
 
   // Exactly 2 Tabs as requested by user: 1st overview, 2nd manage client
   const navTabs = [
@@ -19,7 +32,8 @@ const AdminPortalLayout = () => {
     { label: 'Manage Client', path: '/admin/clients', icon: Store }
   ];
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await logout();
     navigate('/admin/login');
   };
 

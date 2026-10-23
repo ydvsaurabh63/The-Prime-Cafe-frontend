@@ -31,9 +31,10 @@ export const AuthProvider = ({ children }) => {
     checkLoggedIn();
   }, []);
 
-  // Standard Login (Customer or Admin)
-  const login = async (email, password) => {
-    const res = await api.post('/auth/login', { email, password });
+  // Standard Login (Customer, Superadmin, Admin or Client)
+  const login = async (email, password, portal) => {
+    const payload = portal ? { email, password, portal } : { email, password };
+    const res = await api.post('/auth/login', payload);
     if (res.data.success) {
       localStorage.setItem('akc_token', res.data.token);
       setUser(res.data.user);

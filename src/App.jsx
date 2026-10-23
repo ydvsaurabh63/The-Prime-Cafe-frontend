@@ -72,7 +72,9 @@ function App() {
 
             {/* Authentication Routes */}
             <Route path="/login" element={<CustomerLoginPage />} />
-            <Route path="/admin/login" element={<AdminLoginPage />} />
+            <Route path="/superadmin/login" element={<AdminLoginPage portal="superadmin" />} />
+            <Route path="/admin/login" element={<AdminLoginPage portal="admin" />} />
+            <Route path="/client/login" element={<AdminLoginPage portal="client" />} />
 
             {/* 1st: Superadmin Dashboard (3 Tabs: overview, manage admin, manage client) */}
             <Route path="/superadmin" element={<SuperAdminLayout />}>

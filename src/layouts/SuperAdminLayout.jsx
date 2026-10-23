@@ -6,7 +6,6 @@ import {
   Store,
   ShieldCheck,
   LogOut,
-  Coffee,
   Sparkles
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
@@ -85,31 +84,13 @@ const SuperAdminLayout = () => {
             </div>
           </div>
 
-          {/* Account & Sign Out Section (Pinned to bottom of sidebar) */}
-          <div className="pt-4 border-t border-[#E6DCD3] space-y-3 mt-auto">
-            <div className="flex items-center gap-2.5 px-1">
-              <div className="w-8 h-8 rounded-full bg-amber-100 border border-amber-300 font-black text-xs flex items-center justify-center text-amber-900 shrink-0">
-                SA
-              </div>
-              <div className="overflow-hidden">
-                <p className="text-xs font-extrabold text-[#2C1810] truncate">Super Admin Master</p>
-                <p className="text-[10px] text-[#7A685D] truncate">{user?.email || 'superadmin@aajkalcafe.com'}</p>
-              </div>
-            </div>
-
+          {/* Sign Out Section (Pinned to bottom of sidebar) */}
+          <div className="pt-4 border-t border-[#E6DCD3] mt-auto">
             <button
               onClick={handleLogout}
               className="w-full text-xs font-bold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 py-2.5 rounded-xl transition flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
             >
               <LogOut size={14} /> Sign Out
-            </button>
-
-            <button
-              onClick={() => navigate('/client/orders')}
-              className="w-full text-xs font-bold text-[#4A2C18] bg-[#FAF7F2] hover:bg-[#F5EFEB] border border-[#E6DCD3] py-2 rounded-xl transition flex items-center justify-center gap-1.5 cursor-pointer"
-            >
-              <Coffee size={14} className="text-[#C85A32]" />
-              <span>Open Client Dashboard</span>
             </button>
           </div>
         </aside>
@@ -121,12 +102,6 @@ const SuperAdminLayout = () => {
             <span className="font-black text-sm text-[#2C1810]">Superadmin HQ</span>
           </div>
           <div className="flex items-center gap-2">
-            <button
-              onClick={() => navigate('/client/orders')}
-              className="text-[11px] font-bold text-[#C85A32] bg-orange-50 px-2 py-1 rounded-lg"
-            >
-              Client Panel
-            </button>
             <button
               onClick={handleLogout}
               className="text-[11px] font-bold text-rose-700 bg-rose-50 border border-rose-200 px-2.5 py-1 rounded-lg flex items-center gap-1"

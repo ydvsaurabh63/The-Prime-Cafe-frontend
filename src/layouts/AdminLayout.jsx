@@ -148,18 +148,8 @@ const AdminLayout = () => {
           </div>
         </div>
 
-        {/* Account & Sign Out Section (Pinned to bottom of sidebar) */}
-        <div className="pt-4 border-t border-[#E6DCD3] space-y-3 mt-auto">
-          <div className="flex items-center gap-2.5 px-1">
-            <div className="w-8 h-8 rounded-full bg-[#F5EFEB] border border-[#E6DCD3] font-bold text-xs flex items-center justify-center text-[#4A2C18] shrink-0">
-              {user?.name?.charAt(0) || 'C'}
-            </div>
-            <div className="overflow-hidden">
-              <p className="text-xs font-bold text-[#2C1810] truncate">{user?.name || 'Cafe Admin'}</p>
-              <p className="text-[10px] text-[#7A685D] truncate">{user?.email || 'admin@theprimecafe.com'}</p>
-            </div>
-          </div>
-
+        {/* Sign Out Section (Pinned to bottom of sidebar) */}
+        <div className="pt-4 border-t border-[#E6DCD3] mt-auto">
           <button
             onClick={handleLogout}
             className="w-full text-xs font-bold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 py-2.5 rounded-xl transition flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"

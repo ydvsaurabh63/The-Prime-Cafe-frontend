@@ -16,6 +16,9 @@ import {
   ShieldAlert,
   Eye,
   EyeOff,
+  Copy,
+  Check,
+  KeyRound,
   X
 } from 'lucide-react';
 import {
@@ -39,14 +42,18 @@ const SuperAdminAdminsTab = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [currentAdmin, setCurrentAdmin] = useState(null);
-  const [showEditPassword, setShowEditPassword] = useState(false);
+
+  // Password visibility & copy states for table
+  const [visiblePasswords, setVisiblePasswords] = useState({});
+  const [copiedId, setCopiedId] = useState(null);
 
   // Form State
   const [formData, setFormData] = useState({
     name: '',
+    organization: '',
     email: '',
     phone: '',
-    region: 'Delhi NCR',
+    region: 'Delhi NCR & North Zone',
     password: '',
     status: 'Active'
   });
@@ -69,13 +76,28 @@ const SuperAdminAdminsTab = () => {
     loadAdmins();
   }, []);
 
+  const togglePasswordVisibility = (id) => {
+    setVisiblePasswords((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const handleCopyPassword = (pwd, id) => {
+    navigator.clipboard.writeText(pwd || 'Admin@123');
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 2000);
+  };
+
+  const handleDirectLogin = (admin) => {
+    navigate('/admin/overview');
+  };
+
   const handleOpenAddModal = () => {
     setFormData({
       name: '',
+      organization: '',
       email: '',
       phone: '',
-      region: 'Delhi NCR',
-      password: '',
+      region: 'Delhi NCR & North Zone',
+      password: 'Admin@123',
       status: 'Active'
     });
     setIsAddModalOpen(true);
@@ -85,13 +107,13 @@ const SuperAdminAdminsTab = () => {
     setCurrentAdmin(admin);
     setFormData({
       name: admin.name || '',
+      organization: admin.organization || `${admin.name || 'Admin'} Cafe Operations`,
       email: admin.email || '',
       phone: admin.phone || '',
-      region: admin.region || 'Delhi NCR',
-      password: '',
+      region: admin.region || 'Delhi NCR & North Zone',
+      password: admin.password || 'Admin@123',
       status: admin.status || 'Active'
     });
-    setShowEditPassword(false);
     setIsEditModalOpen(true);
   };
 
@@ -218,12 +240,12 @@ const SuperAdminAdminsTab = () => {
           <table className="w-full text-left text-xs">
             <thead>
               <tr className="bg-[#FAF7F2] border-b border-[#E6DCD3] text-[#7A685D] font-bold uppercase text-[10px] tracking-wider">
-                <th className="py-3 px-4">Admin Name</th>
-                <th className="py-3 px-4">Contact Info</th>
-                <th className="py-3 px-4">Assigned Territory</th>
-                <th className="py-3 px-4 text-center">Managed Cafes</th>
-                <th className="py-3 px-4 text-center">Status</th>
-                <th className="py-3 px-4 text-right">Actions</th>
+                <th className="py-3.5 px-4">ADMIN NAME & IDENTITY</th>
+                <th className="py-3.5 px-4">OFFICIAL CONTACT</th>
+                <th className="py-3.5 px-4">TERRITORY / AREA</th>
+                <th className="py-3.5 px-4">PASSWORD</th>
+                <th className="py-3.5 px-4 text-center">LOGIN</th>
+                <th className="py-3.5 px-4 text-right">ACTIONS</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#F5EFEB]">
@@ -234,83 +256,114 @@ const SuperAdminAdminsTab = () => {
                   </td>
                 </tr>
               ) : (
-                filteredAdmins.map((adm) => (
-                  <tr key={adm._id} className="hover:bg-[#FAF7F2] transition">
-                    <td className="py-3 px-4">
+                filteredAdmins.map((adm, index) => (
+                  <tr key={adm._id || index} className="hover:bg-[#FAF7F2]/60 transition">
+                    {/* 1. ADMIN NAME & IDENTITY */}
+                    <td className="py-3.5 px-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-[#4A2C18] text-white flex items-center justify-center font-black text-xs">
+                        <div className="w-9 h-9 rounded-xl bg-[#2C1810] text-[#E6DCD3] flex items-center justify-center font-black text-sm shrink-0 shadow-xs">
                           {adm.name?.charAt(0) || 'A'}
                         </div>
-                        <div>
-                          <div className="font-extrabold text-[#2C1810]">{adm.name}</div>
-                          <div className="text-[10px] text-[#7A685D]">
-                            Joined {new Date(adm.createdAt).toLocaleDateString()}
+                        <div className="min-w-0">
+                          <div className="font-extrabold text-[#2C1810] text-xs leading-tight">
+                            {adm.name}
+                          </div>
+                          <div className="flex items-center gap-1.5 text-[11px] text-[#7A685D] mt-0.5">
+                            <span className="truncate max-w-[150px] sm:max-w-[200px]">
+                              {adm.organization || `${adm.name} Operations`}
+                            </span>
+                            <span>•</span>
+                            <span className="text-[#C85A32] font-mono font-bold text-[10px] bg-[#FAF7F2] px-1.5 py-0.2 rounded border border-[#E6DCD3]">
+                              {adm.customId || `ADM-${101 + index}`}
+                            </span>
                           </div>
                         </div>
                       </div>
                     </td>
 
-                    <td className="py-3 px-4 space-y-0.5">
-                      <div className="flex items-center gap-1.5 text-[#2C1810]">
-                        <Mail size={12} className="text-[#C85A32]" />
-                        <span>{adm.email}</span>
-                      </div>
-                      <div className="flex items-center gap-1.5 text-[#7A685D]">
-                        <Phone size={12} />
-                        <span>{adm.phone}</span>
-                      </div>
-                    </td>
-
-                    <td className="py-3 px-4">
-                      <div className="inline-flex items-center gap-1 bg-[#F5EFEB] text-[#4A2C18] px-2.5 py-1 rounded-lg font-bold text-[11px]">
-                        <MapPin size={12} className="text-[#C85A32]" />
-                        <span>{adm.region}</span>
+                    {/* 2. OFFICIAL CONTACT */}
+                    <td className="py-3.5 px-4">
+                      <div className="space-y-1 text-xs">
+                        <div className="flex items-center gap-1.5 text-[#2C1810] font-medium">
+                          <Mail size={12} className="text-[#7A685D] shrink-0" />
+                          <span className="truncate">{adm.email}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 text-[#7A685D]">
+                          <Phone size={12} className="shrink-0" />
+                          <span>{adm.phone}</span>
+                        </div>
                       </div>
                     </td>
 
-                    <td className="py-3 px-4 text-center">
-                      <span className="font-bold text-[#2C1810] bg-stone-100 px-2 py-0.5 rounded-full text-[11px]">
-                        {adm.managedClientsCount || 0} Cafes
-                      </span>
+                    {/* 3. TERRITORY / AREA */}
+                    <td className="py-3.5 px-4">
+                      <div className="inline-flex items-center gap-1.5 bg-[#FAF7F2] border border-[#E6DCD3] text-[#2C1810] px-3 py-1.5 rounded-xl text-xs font-semibold">
+                        <MapPin size={12} className="text-[#C85A32] shrink-0" />
+                        <span>{adm.region || 'Delhi NCR & North Zone'}</span>
+                      </div>
                     </td>
 
-                    <td className="py-3 px-4 text-center">
+                    {/* 4. PASSWORD */}
+                    <td className="py-3.5 px-4">
+                      <div className="inline-flex items-center gap-2 bg-[#FAF7F2] border border-[#E6DCD3] px-3 py-1.5 rounded-xl text-xs text-[#2C1810]">
+                        <span className="font-mono tracking-wider font-bold">
+                          {visiblePasswords[adm._id]
+                            ? (adm.password || 'Admin@123')
+                            : '••••••••'}
+                        </span>
+                        <div className="flex items-center gap-1 text-[#7A685D] pl-1 border-l border-[#E6DCD3]">
+                          <button
+                            type="button"
+                            onClick={() => togglePasswordVisibility(adm._id)}
+                            className="hover:text-[#2C1810] p-1 transition cursor-pointer"
+                            title={visiblePasswords[adm._id] ? 'Hide password' : 'Show password'}
+                          >
+                            {visiblePasswords[adm._id] ? <EyeOff size={13} /> : <Eye size={13} />}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleCopyPassword(adm.password || 'Admin@123', adm._id)}
+                            className="hover:text-[#C85A32] p-1 transition cursor-pointer"
+                            title="Copy password"
+                          >
+                            {copiedId === adm._id ? (
+                              <Check size={13} className="text-emerald-600" />
+                            ) : (
+                              <Copy size={13} />
+                            )}
+                          </button>
+                        </div>
+                      </div>
+                    </td>
+
+                    {/* 5. LOGIN */}
+                    <td className="py-3.5 px-4 text-center">
                       <button
-                        onClick={() => handleToggleStatus(adm._id)}
-                        className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold transition cursor-pointer ${
-                          adm.status === 'Active'
-                            ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200 border border-emerald-300'
-                            : 'bg-rose-100 text-rose-800 hover:bg-rose-200 border border-rose-300'
-                        }`}
-                        title="Click to toggle status"
+                        onClick={() => handleDirectLogin(adm)}
+                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[#C85A32] hover:bg-[#B24E2A] text-white rounded-xl font-bold text-xs transition shadow-xs cursor-pointer"
+                        title={`Login as ${adm.name}`}
                       >
-                        {adm.status === 'Active' ? <CheckCircle2 size={11} /> : <XCircle size={11} />}
-                        <span>{adm.status}</span>
+                        <ExternalLink size={13} />
+                        <span>Login</span>
                       </button>
                     </td>
 
-                    <td className="py-3 px-4 text-right">
+                    {/* 6. ACTIONS */}
+                    <td className="py-3.5 px-4 text-right">
                       <div className="flex items-center justify-end gap-1.5">
                         <button
-                          onClick={() => navigate('/admin/overview')}
-                          className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition"
-                          title="View Admin Portal"
-                        >
-                          <ExternalLink size={14} />
-                        </button>
-                        <button
                           onClick={() => handleOpenEditModal(adm)}
-                          className="p-1.5 text-[#4A2C18] hover:bg-[#F5EFEB] rounded-lg transition"
+                          className="p-2 bg-[#FAF7F2] border border-[#E6DCD3] hover:border-[#C85A32] text-[#4A2C18] hover:text-[#C85A32] rounded-xl transition cursor-pointer"
                           title="Edit Admin"
                         >
-                          <Edit2 size={14} />
+                          <Edit2 size={13} />
                         </button>
                         <button
                           onClick={() => handleOpenDeleteModal(adm)}
-                          className="p-1.5 text-rose-600 hover:bg-rose-50 rounded-lg transition"
+                          className="p-2 bg-[#FAF7F2] border border-[#E6DCD3] hover:border-rose-400 text-[#7A685D] hover:text-rose-600 rounded-xl transition cursor-pointer"
                           title="Delete Admin"
                         >
-                          <Trash2 size={14} />
+                          <Trash2 size={13} />
                         </button>
                       </div>
                     </td>
@@ -332,7 +385,7 @@ const SuperAdminAdminsTab = () => {
               </h3>
               <button
                 onClick={() => setIsAddModalOpen(false)}
-                className="text-[#7A685D] hover:text-[#2C1810]"
+                className="text-[#7A685D] hover:text-[#2C1810] cursor-pointer"
               >
                 <X size={18} />
               </button>
@@ -352,53 +405,61 @@ const SuperAdminAdminsTab = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-[#2C1810] mb-1">Email Address *</label>
-                <input
-                  type="email"
-                  required
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  placeholder="amit@aajkalcafe.com"
-                  className="w-full bg-[#FAF7F2] border border-[#E6DCD3] rounded-xl px-3 py-2 text-xs text-[#2C1810] focus:outline-none focus:border-[#C85A32]"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-[#2C1810] mb-1">Mobile Phone *</label>
+                <label className="block text-xs font-bold text-[#2C1810] mb-1">Company / Organization</label>
                 <input
                   type="text"
-                  required
-                  value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  placeholder="+91 98112 34567"
+                  value={formData.organization}
+                  onChange={(e) => setFormData({ ...formData, organization: e.target.value })}
+                  placeholder="e.g. Amit Sharma Cafe Operations"
                   className="w-full bg-[#FAF7F2] border border-[#E6DCD3] rounded-xl px-3 py-2 text-xs text-[#2C1810] focus:outline-none focus:border-[#C85A32]"
                 />
               </div>
 
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-bold text-[#2C1810] mb-1">Email Address *</label>
+                  <input
+                    type="email"
+                    required
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    placeholder="amit@aajkalcafe.com"
+                    className="w-full bg-[#FAF7F2] border border-[#E6DCD3] rounded-xl px-3 py-2 text-xs text-[#2C1810] focus:outline-none focus:border-[#C85A32]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-[#2C1810] mb-1">Mobile Phone *</label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    placeholder="+91 98112 34567"
+                    className="w-full bg-[#FAF7F2] border border-[#E6DCD3] rounded-xl px-3 py-2 text-xs text-[#2C1810] focus:outline-none focus:border-[#C85A32]"
+                  />
+                </div>
+              </div>
+
               <div>
-                <label className="block text-xs font-bold text-[#2C1810] mb-1">Assigned Territory *</label>
-                <select
+                <label className="block text-xs font-bold text-[#2C1810] mb-1">Territory / Location *</label>
+                <input
+                  type="text"
                   value={formData.region}
                   onChange={(e) => setFormData({ ...formData, region: e.target.value })}
+                  placeholder="Delhi NCR & North Zone"
                   className="w-full bg-[#FAF7F2] border border-[#E6DCD3] rounded-xl px-3 py-2 text-xs text-[#2C1810] focus:outline-none focus:border-[#C85A32]"
-                >
-                  <option value="Delhi NCR">Delhi NCR</option>
-                  <option value="Mumbai West">Mumbai West</option>
-                  <option value="Bangalore Tech Zone">Bangalore Tech Zone</option>
-                  <option value="Pune Central">Pune Central</option>
-                  <option value="Hyderabad Cyberabad">Hyderabad Cyberabad</option>
-                  <option value="Kolkata Heritage">Kolkata Heritage</option>
-                </select>
+                />
               </div>
 
               <div>
                 <label className="block text-xs font-bold text-[#2C1810] mb-1">Initial Password</label>
                 <input
-                  type="password"
+                  type="text"
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  placeholder="Leave empty for auto-generated"
-                  className="w-full bg-[#FAF7F2] border border-[#E6DCD3] rounded-xl px-3 py-2 text-xs text-[#2C1810] focus:outline-none focus:border-[#C85A32]"
+                  placeholder="Admin@123"
+                  className="w-full bg-[#FAF7F2] border border-[#E6DCD3] rounded-xl px-3 py-2 text-xs text-[#2C1810] font-mono focus:outline-none focus:border-[#C85A32]"
                 />
               </div>
 
@@ -406,13 +467,13 @@ const SuperAdminAdminsTab = () => {
                 <button
                   type="button"
                   onClick={() => setIsAddModalOpen(false)}
-                  className="px-4 py-2 text-xs font-bold text-[#7A685D] hover:bg-[#F5EFEB] rounded-xl transition"
+                  className="px-4 py-2 text-xs font-bold text-[#7A685D] hover:bg-[#F5EFEB] rounded-xl transition cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 text-xs font-bold text-white bg-[#C85A32] hover:bg-[#B24E2A] rounded-xl transition shadow-xs"
+                  className="px-4 py-2 text-xs font-bold text-white bg-[#C85A32] hover:bg-[#B24E2A] rounded-xl transition shadow-xs cursor-pointer"
                 >
                   Save Admin
                 </button>
@@ -425,20 +486,21 @@ const SuperAdminAdminsTab = () => {
       {/* Edit Admin Modal */}
       {isEditModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl space-y-4 border border-[#E6DCD3]">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl space-y-4 border border-[#E6DCD3]">
             <div className="flex items-center justify-between border-b border-[#E6DCD3] pb-3">
               <h3 className="font-extrabold text-base text-[#2C1810] flex items-center gap-2">
-                <Edit2 size={18} className="text-[#C85A32]" /> Edit Territory Admin
+                Edit: {currentAdmin?.name} (ADMIN)
               </h3>
               <button
                 onClick={() => setIsEditModalOpen(false)}
-                className="text-[#7A685D] hover:text-[#2C1810]"
+                className="text-[#7A685D] hover:text-[#2C1810] cursor-pointer"
               >
                 <X size={18} />
               </button>
             </div>
 
-            <form onSubmit={handleUpdateAdmin} className="space-y-3">
+            <form onSubmit={handleUpdateAdmin} className="space-y-3.5">
+              {/* Full Name */}
               <div>
                 <label className="block text-xs font-bold text-[#2C1810] mb-1">Full Name</label>
                 <input
@@ -446,98 +508,91 @@ const SuperAdminAdminsTab = () => {
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  placeholder="e.g. Vijay Kumar Singh"
                   className="w-full bg-[#FAF7F2] border border-[#E6DCD3] rounded-xl px-3 py-2 text-xs text-[#2C1810] focus:outline-none focus:border-[#C85A32]"
                 />
               </div>
 
+              {/* Company / Organization */}
               <div>
-                <label className="block text-xs font-bold text-[#2C1810] mb-1">Email</label>
-                <input
-                  type="email"
-                  required
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full bg-[#FAF7F2] border border-[#E6DCD3] rounded-xl px-3 py-2 text-xs text-[#2C1810] focus:outline-none focus:border-[#C85A32]"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-[#2C1810] mb-1">Mobile Phone</label>
+                <label className="block text-xs font-bold text-[#2C1810] mb-1">Company / Organization</label>
                 <input
                   type="text"
-                  required
-                  value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  value={formData.organization}
+                  onChange={(e) => setFormData({ ...formData, organization: e.target.value })}
+                  placeholder="e.g. Vijay Kumar Singh Operations"
                   className="w-full bg-[#FAF7F2] border border-[#E6DCD3] rounded-xl px-3 py-2 text-xs text-[#2C1810] focus:outline-none focus:border-[#C85A32]"
                 />
               </div>
 
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <label className="block text-xs font-bold text-[#2C1810]">Password / Update Password</label>
-                  <span className="text-[10px] text-[#7A685D] font-normal">(Leave blank to keep current)</span>
-                </div>
-                <div className="relative">
+              {/* Email & Mobile */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-bold text-[#2C1810] mb-1">Email</label>
                   <input
-                    type={showEditPassword ? 'text' : 'password'}
-                    value={formData.password}
-                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    placeholder="Enter new password to update"
-                    autoComplete="new-password"
-                    className="w-full bg-[#FAF7F2] border border-[#E6DCD3] rounded-xl pl-3 pr-9 py-2 text-xs text-[#2C1810] focus:outline-none focus:border-[#C85A32]"
+                    type="email"
+                    required
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    placeholder="admin@aajkalcafe.com"
+                    className="w-full bg-[#FAF7F2] border border-[#E6DCD3] rounded-xl px-3 py-2 text-xs text-[#2C1810] focus:outline-none focus:border-[#C85A32]"
                   />
-                  <button
-                    type="button"
-                    onClick={() => setShowEditPassword(!showEditPassword)}
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#7A685D] hover:text-[#2C1810] p-1 cursor-pointer"
-                    title={showEditPassword ? 'Hide password' : 'Show password'}
-                  >
-                    {showEditPassword ? <EyeOff size={14} /> : <Eye size={14} />}
-                  </button>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-[#2C1810] mb-1">Mobile</label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    placeholder="9876500002"
+                    className="w-full bg-[#FAF7F2] border border-[#E6DCD3] rounded-xl px-3 py-2 text-xs text-[#2C1810] focus:outline-none focus:border-[#C85A32]"
+                  />
                 </div>
               </div>
 
+              {/* Territory / Location */}
               <div>
-                <label className="block text-xs font-bold text-[#2C1810] mb-1">Territory</label>
-                <select
+                <label className="block text-xs font-bold text-[#2C1810] mb-1">Territory / Location</label>
+                <input
+                  type="text"
                   value={formData.region}
                   onChange={(e) => setFormData({ ...formData, region: e.target.value })}
+                  placeholder="Delhi NCR & North Zone"
                   className="w-full bg-[#FAF7F2] border border-[#E6DCD3] rounded-xl px-3 py-2 text-xs text-[#2C1810] focus:outline-none focus:border-[#C85A32]"
-                >
-                  <option value="Delhi NCR">Delhi NCR</option>
-                  <option value="Mumbai West">Mumbai West</option>
-                  <option value="Bangalore Tech Zone">Bangalore Tech Zone</option>
-                  <option value="Pune Central">Pune Central</option>
-                  <option value="Hyderabad Cyberabad">Hyderabad Cyberabad</option>
-                  <option value="Kolkata Heritage">Kolkata Heritage</option>
-                </select>
+                />
               </div>
 
+              {/* Update Password */}
               <div>
-                <label className="block text-xs font-bold text-[#2C1810] mb-1">Status</label>
-                <select
-                  value={formData.status}
-                  onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                  className="w-full bg-[#FAF7F2] border border-[#E6DCD3] rounded-xl px-3 py-2 text-xs text-[#2C1810] focus:outline-none focus:border-[#C85A32]"
-                >
-                  <option value="Active">Active</option>
-                  <option value="Inactive">Inactive</option>
-                </select>
+                <label className="flex items-center gap-1.5 text-xs font-bold text-[#C85A32] mb-1">
+                  <KeyRound size={13} className="text-[#C85A32]" />
+                  <span>Update Password</span>
+                </label>
+                <input
+                  type="text"
+                  value={formData.password}
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  placeholder="admin123"
+                  autoComplete="off"
+                  className="w-full bg-[#FAF7F2] border border-[#E6DCD3] rounded-xl px-3 py-2 text-xs text-[#2C1810] font-mono focus:outline-none focus:border-[#C85A32]"
+                />
               </div>
 
+              {/* Footer */}
               <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#E6DCD3]">
                 <button
                   type="button"
                   onClick={() => setIsEditModalOpen(false)}
-                  className="px-4 py-2 text-xs font-bold text-[#7A685D] hover:bg-[#F5EFEB] rounded-xl transition"
+                  className="px-4 py-2 text-xs font-bold text-[#7A685D] hover:bg-[#F5EFEB] rounded-xl transition cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 text-xs font-bold text-white bg-[#C85A32] hover:bg-[#B24E2A] rounded-xl transition shadow-xs"
+                  className="px-5 py-2 text-xs font-bold text-white bg-[#C85A32] hover:bg-[#B24E2A] rounded-xl transition shadow-xs cursor-pointer"
                 >
-                  Update Admin
+                  Save Changes
                 </button>
               </div>
             </form>

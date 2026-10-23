@@ -268,14 +268,8 @@ const SuperAdminAdminsTab = () => {
                           <div className="font-extrabold text-[#2C1810] text-xs leading-tight">
                             {adm.name}
                           </div>
-                          <div className="flex items-center gap-1.5 text-[11px] text-[#7A685D] mt-0.5">
-                            <span className="truncate max-w-[150px] sm:max-w-[200px]">
-                              {adm.organization || `${adm.name} Operations`}
-                            </span>
-                            <span>•</span>
-                            <span className="text-[#C85A32] font-mono font-bold text-[10px] bg-[#FAF7F2] px-1.5 py-0.2 rounded border border-[#E6DCD3]">
-                              {adm.customId || `ADM-${101 + index}`}
-                            </span>
+                          <div className="text-[11px] text-[#7A685D] mt-0.5 truncate">
+                            {adm.organization || `${adm.name} Operations`}
                           </div>
                         </div>
                       </div>

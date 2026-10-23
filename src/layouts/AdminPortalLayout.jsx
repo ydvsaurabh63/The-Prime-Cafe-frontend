@@ -44,50 +44,52 @@ const AdminPortalLayout = () => {
 
       <div className="flex-1 flex flex-col md:flex-row">
         {/* Desktop Sidebar */}
-        <aside className="hidden md:flex flex-col w-64 bg-white border-r border-[#E6DCD3] p-5 md:sticky md:top-0 md:self-start space-y-5">
-          {/* Admin Brand */}
-          <div className="flex items-center gap-3 pb-2 border-b border-[#E6DCD3]/60">
-            <div className="w-10 h-10 rounded-2xl bg-[#4A2C18] text-white flex items-center justify-center shadow-xs shrink-0">
-              <UserCheck size={22} className="text-amber-300" />
+        <aside className="hidden md:flex flex-col w-64 bg-white border-r border-[#E6DCD3] p-5 md:sticky md:top-0 md:h-[calc(100vh-41px)] justify-between overflow-y-auto shrink-0">
+          <div className="space-y-6">
+            {/* Admin Brand */}
+            <div className="flex items-center gap-3 pb-2 border-b border-[#E6DCD3]/60">
+              <div className="w-10 h-10 rounded-2xl bg-[#4A2C18] text-white flex items-center justify-center shadow-xs shrink-0">
+                <UserCheck size={22} className="text-amber-300" />
+              </div>
+              <div>
+                <h1 className="font-extrabold text-sm text-[#2C1810] tracking-tight">Aaj Kal Cafe</h1>
+                <span className="text-[10px] font-extrabold text-[#C85A32] bg-[#FAF7F2] px-2 py-0.5 rounded-full border border-[#E6DCD3] flex items-center gap-1 w-max mt-0.5">
+                  <Sparkles size={10} /> Admin Portal
+                </span>
+              </div>
             </div>
-            <div>
-              <h1 className="font-extrabold text-sm text-[#2C1810] tracking-tight">Aaj Kal Cafe</h1>
-              <span className="text-[10px] font-extrabold text-[#C85A32] bg-[#FAF7F2] px-2 py-0.5 rounded-full border border-[#E6DCD3] flex items-center gap-1 w-max mt-0.5">
-                <Sparkles size={10} /> Admin Portal
+
+            {/* Exactly 2 Navigation Tabs Section */}
+            <div className="space-y-1.5">
+              <span className="text-[10px] uppercase font-bold text-[#7A685D] px-2 tracking-wider">
+                Navigation Tabs
               </span>
+              <nav className="space-y-1 pt-1">
+                {navTabs.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <NavLink
+                      key={item.label}
+                      to={item.path}
+                      className={({ isActive }) =>
+                        `flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition ${
+                          isActive
+                            ? 'bg-[#4A2C18] text-white shadow-xs'
+                            : 'text-[#7A685D] hover:bg-[#F5EFEB] hover:text-[#2C1810]'
+                        }`
+                      }
+                    >
+                      <Icon size={18} />
+                      <span>{item.label}</span>
+                    </NavLink>
+                  );
+                })}
+              </nav>
             </div>
           </div>
 
-          {/* Exactly 2 Navigation Tabs Section */}
-          <div className="space-y-1.5">
-            <span className="text-[10px] uppercase font-bold text-[#7A685D] px-2 tracking-wider">
-              Navigation Tabs
-            </span>
-            <nav className="space-y-1 pt-1">
-              {navTabs.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <NavLink
-                    key={item.label}
-                    to={item.path}
-                    className={({ isActive }) =>
-                      `flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition ${
-                        isActive
-                          ? 'bg-[#4A2C18] text-white shadow-xs'
-                          : 'text-[#7A685D] hover:bg-[#F5EFEB] hover:text-[#2C1810]'
-                      }`
-                    }
-                  >
-                    <Icon size={18} />
-                    <span>{item.label}</span>
-                  </NavLink>
-                );
-              })}
-            </nav>
-          </div>
-
-          {/* Account & Sign Out Section (Directly under tabs) */}
-          <div className="pt-4 border-t border-[#E6DCD3] space-y-3">
+          {/* Account & Sign Out Section (Pinned to bottom of sidebar) */}
+          <div className="pt-4 border-t border-[#E6DCD3] space-y-3 mt-auto">
             <div className="flex items-center gap-2.5 px-1">
               <div className="w-8 h-8 rounded-full bg-[#F5EFEB] border border-[#E6DCD3] font-bold text-xs flex items-center justify-center text-[#4A2C18] shrink-0">
                 AD

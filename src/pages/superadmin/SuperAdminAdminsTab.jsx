@@ -242,7 +242,6 @@ const SuperAdminAdminsTab = () => {
               <tr className="bg-[#FAF7F2] border-b border-[#E6DCD3] text-[#7A685D] font-bold uppercase text-[10px] tracking-wider">
                 <th className="py-3.5 px-4">ADMIN NAME & IDENTITY</th>
                 <th className="py-3.5 px-4">OFFICIAL CONTACT</th>
-                <th className="py-3.5 px-4">TERRITORY / AREA</th>
                 <th className="py-3.5 px-4">PASSWORD</th>
                 <th className="py-3.5 px-4 text-center">LOGIN</th>
                 <th className="py-3.5 px-4 text-right">ACTIONS</th>
@@ -251,7 +250,7 @@ const SuperAdminAdminsTab = () => {
             <tbody className="divide-y divide-[#F5EFEB]">
               {filteredAdmins.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="py-8 text-center text-[#7A685D]">
+                  <td colSpan={5} className="py-8 text-center text-[#7A685D]">
                     No admins found matching your criteria.
                   </td>
                 </tr>
@@ -289,15 +288,7 @@ const SuperAdminAdminsTab = () => {
                       </div>
                     </td>
 
-                    {/* 3. TERRITORY / AREA */}
-                    <td className="py-3.5 px-4">
-                      <div className="inline-flex items-center gap-1.5 bg-[#FAF7F2] border border-[#E6DCD3] text-[#2C1810] px-3 py-1.5 rounded-xl text-xs font-semibold">
-                        <MapPin size={12} className="text-[#C85A32] shrink-0" />
-                        <span>{adm.region || 'Delhi NCR & North Zone'}</span>
-                      </div>
-                    </td>
-
-                    {/* 4. PASSWORD */}
+                    {/* 3. PASSWORD */}
                     <td className="py-3.5 px-4">
                       <div className="inline-flex items-center gap-2 bg-[#FAF7F2] border border-[#E6DCD3] px-3 py-1.5 rounded-xl text-xs text-[#2C1810]">
                         <span className="font-mono tracking-wider font-bold">

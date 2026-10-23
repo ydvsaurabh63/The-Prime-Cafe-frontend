@@ -278,7 +278,6 @@ const SuperAdminClientsTab = () => {
               <tr className="bg-[#FAF7F2] border-b border-[#E6DCD3] text-[#7A685D] font-bold uppercase text-[10px] tracking-wider">
                 <th className="py-3 px-4">Cafe Client</th>
                 <th className="py-3 px-4">Owner & Contact</th>
-                <th className="py-3 px-4">Location</th>
                 <th className="py-3 px-4">Assigned Admin</th>
                 <th className="py-3 px-4 text-right">Total Sales</th>
                 <th className="py-3 px-4 text-center">Status</th>
@@ -288,7 +287,7 @@ const SuperAdminClientsTab = () => {
             <tbody className="divide-y divide-[#F5EFEB]">
               {filteredClients.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="py-8 text-center text-[#7A685D]">
+                  <td colSpan={6} className="py-8 text-center text-[#7A685D]">
                     No client cafes found matching your filter criteria.
                   </td>
                 </tr>
@@ -321,19 +320,6 @@ const SuperAdminClientsTab = () => {
                         <Phone size={11} />
                         <span>{client.phone}</span>
                       </div>
-                    </td>
-
-                    {/* Location */}
-                    <td className="py-3 px-4">
-                      <div className="text-[#2C1810] font-medium flex items-center gap-1">
-                        <MapPin size={12} className="text-[#C85A32]" />
-                        <span>{client.city}</span>
-                      </div>
-                      {client.address && (
-                        <div className="text-[10px] text-[#7A685D] truncate max-w-[140px]">
-                          {client.address}
-                        </div>
-                      )}
                     </td>
 
                     {/* Admin */}

@@ -33,7 +33,6 @@ const CustomerLoginPage = () => {
   // Real Customer Details Form Fields
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
-  const [email, setEmail] = useState('');
   const [area, setArea] = useState('');
   const [city, setCity] = useState('');
   const [pincode, setPincode] = useState('');
@@ -65,7 +64,6 @@ const CustomerLoginPage = () => {
       const payload = {
         name: name.trim(),
         phone: phone.trim(),
-        email: email.trim(),
         area: area.trim(),
         city: city.trim(),
         pincode: pincode.trim(),
@@ -159,20 +157,6 @@ const CustomerLoginPage = () => {
                 className="w-full p-3 bg-[#FAF7F2] border border-[#E6DCD3] rounded-2xl focus:outline-none focus:border-[#C85A32]"
               />
             </div>
-          </div>
-
-          {/* Optional Email */}
-          <div>
-            <label className="block font-bold text-[#4A2C18] mb-1">
-              Email Address (Optional)
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="e.g. rohan@gmail.com"
-              className="w-full p-3 bg-[#FAF7F2] border border-[#E6DCD3] rounded-2xl focus:outline-none focus:border-[#C85A32]"
-            />
           </div>
 
           {/* 3. Area, 4. City, 5. Pincode */}

@@ -166,7 +166,11 @@ export const updateAdminApi = async (id, adminData) => {
       return { success: true, data: res.data.data };
     }
   } catch (err) {
-    console.warn('Backend updateAdmin failed, updating locally:', err.message);
+    console.warn('Backend updateAdmin error:', err.message);
+    const errorMsg = err.response?.data?.message;
+    if (errorMsg) {
+      return { success: false, message: errorMsg };
+    }
   }
   const current = getStoredAdmins();
   const updated = current.map((adm) => (adm._id === id ? { ...adm, ...adminData } : adm));

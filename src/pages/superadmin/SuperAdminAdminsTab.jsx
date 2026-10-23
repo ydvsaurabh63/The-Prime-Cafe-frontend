@@ -14,6 +14,8 @@ import {
   MapPin,
   ExternalLink,
   ShieldAlert,
+  Eye,
+  EyeOff,
   X
 } from 'lucide-react';
 import {
@@ -37,6 +39,7 @@ const SuperAdminAdminsTab = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [currentAdmin, setCurrentAdmin] = useState(null);
+  const [showEditPassword, setShowEditPassword] = useState(false);
 
   // Form State
   const [formData, setFormData] = useState({
@@ -88,6 +91,7 @@ const SuperAdminAdminsTab = () => {
       password: '',
       status: admin.status || 'Active'
     });
+    setShowEditPassword(false);
     setIsEditModalOpen(true);
   };
 
@@ -112,9 +116,18 @@ const SuperAdminAdminsTab = () => {
     e.preventDefault();
     if (!currentAdmin) return;
 
-    await updateAdminApi(currentAdmin._id, formData);
-    await loadAdmins();
-    setIsEditModalOpen(false);
+    try {
+      const res = await updateAdminApi(currentAdmin._id, formData);
+      if (res && res.success === false) {
+        alert(res.message || 'Failed to update admin');
+        return;
+      }
+      await loadAdmins();
+      setIsEditModalOpen(false);
+      alert('Admin details updated successfully!');
+    } catch (err) {
+      alert(err.response?.data?.message || 'Error updating admin');
+    }
   };
 
   const handleDeleteAdmin = async () => {
@@ -457,6 +470,31 @@ const SuperAdminAdminsTab = () => {
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                   className="w-full bg-[#FAF7F2] border border-[#E6DCD3] rounded-xl px-3 py-2 text-xs text-[#2C1810] focus:outline-none focus:border-[#C85A32]"
                 />
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-xs font-bold text-[#2C1810]">Password / Update Password</label>
+                  <span className="text-[10px] text-[#7A685D] font-normal">(Leave blank to keep current)</span>
+                </div>
+                <div className="relative">
+                  <input
+                    type={showEditPassword ? 'text' : 'password'}
+                    value={formData.password}
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    placeholder="Enter new password to update"
+                    autoComplete="new-password"
+                    className="w-full bg-[#FAF7F2] border border-[#E6DCD3] rounded-xl pl-3 pr-9 py-2 text-xs text-[#2C1810] focus:outline-none focus:border-[#C85A32]"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowEditPassword(!showEditPassword)}
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#7A685D] hover:text-[#2C1810] p-1 cursor-pointer"
+                    title={showEditPassword ? 'Hide password' : 'Show password'}
+                  >
+                    {showEditPassword ? <EyeOff size={14} /> : <Eye size={14} />}
+                  </button>
+                </div>
               </div>
 
               <div>

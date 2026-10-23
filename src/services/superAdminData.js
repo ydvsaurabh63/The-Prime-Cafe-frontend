@@ -249,7 +249,11 @@ export const updateClientApi = async (id, clientData) => {
       return { success: true, data: res.data.data };
     }
   } catch (err) {
-    console.warn('Backend updateClient failed, updating locally:', err.message);
+    console.warn('Backend updateClient failed:', err.message);
+    const errorMsg = err.response?.data?.message;
+    if (errorMsg) {
+      return { success: false, message: errorMsg };
+    }
   }
   const current = getStoredClients();
   const updated = current.map((c) => (c._id === id ? { ...c, ...clientData } : c));

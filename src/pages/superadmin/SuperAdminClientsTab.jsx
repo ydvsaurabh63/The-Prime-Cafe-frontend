@@ -17,7 +17,10 @@ import {
   ShieldAlert,
   X,
   CreditCard,
-  Layers
+  Layers,
+  KeyRound,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 import {
   fetchClientsApi,
@@ -44,6 +47,7 @@ const SuperAdminClientsTab = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [currentClient, setCurrentClient] = useState(null);
+  const [showEditPassword, setShowEditPassword] = useState(false);
 
   // Form State
   const [formData, setFormData] = useState({
@@ -56,7 +60,8 @@ const SuperAdminClientsTab = () => {
     assignedAdminName: 'Amit Sharma (Delhi NCR)',
     plan: 'Growth',
     tablesCount: 10,
-    status: 'Active'
+    status: 'Active',
+    password: ''
   });
 
   const loadData = async () => {
@@ -97,7 +102,8 @@ const SuperAdminClientsTab = () => {
       assignedAdminName: admins[0]?.name ? `${admins[0].name} (${admins[0].region})` : 'Superadmin HQ',
       plan: 'Growth',
       tablesCount: 10,
-      status: 'Active'
+      status: 'Active',
+      password: 'Admin@123'
     });
     setIsAddModalOpen(true);
   };
@@ -114,8 +120,10 @@ const SuperAdminClientsTab = () => {
       assignedAdminName: client.assignedAdminName || 'Superadmin HQ',
       plan: client.plan || 'Growth',
       tablesCount: client.tablesCount || 10,
-      status: client.status || 'Active'
+      status: client.status || 'Active',
+      password: ''
     });
+    setShowEditPassword(false);
     setIsEditModalOpen(true);
   };
 
@@ -140,9 +148,18 @@ const SuperAdminClientsTab = () => {
     e.preventDefault();
     if (!currentClient) return;
 
-    await updateClientApi(currentClient._id, formData);
-    await loadData();
-    setIsEditModalOpen(false);
+    try {
+      const res = await updateClientApi(currentClient._id, formData);
+      if (res && res.success === false) {
+        alert(res.message || 'Failed to update client');
+        return;
+      }
+      await loadData();
+      setIsEditModalOpen(false);
+      alert('Client cafe details updated successfully!');
+    } catch (err) {
+      alert(err.response?.data?.message || 'Error updating client cafe');
+    }
   };
 
   const handleDeleteClient = async () => {
@@ -523,6 +540,17 @@ const SuperAdminClientsTab = () => {
                 />
               </div>
 
+              <div>
+                <label className="block text-xs font-bold text-[#2C1810] mb-1">Initial Password</label>
+                <input
+                  type="text"
+                  value={formData.password}
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  placeholder="Admin@123"
+                  className="w-full bg-[#FAF7F2] border border-[#E6DCD3] rounded-xl px-3 py-2 text-xs text-[#2C1810] font-mono focus:outline-none focus:border-[#C85A32]"
+                />
+              </div>
+
               <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#E6DCD3]">
                 <button
                   type="button"
@@ -661,6 +689,35 @@ const SuperAdminClientsTab = () => {
                     <option value="Active">Active</option>
                     <option value="Pending">Pending</option>
                   </select>
+                </div>
+              </div>
+
+              {/* Update Password */}
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="flex items-center gap-1.5 text-xs font-bold text-[#C85A32]">
+                    <KeyRound size={13} className="text-[#C85A32]" />
+                    <span>Password / Update Password</span>
+                  </label>
+                  <span className="text-[10px] text-[#7A685D] font-normal">(Leave blank to keep current)</span>
+                </div>
+                <div className="relative">
+                  <input
+                    type={showEditPassword ? 'text' : 'password'}
+                    value={formData.password}
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    placeholder="Enter new password to update"
+                    autoComplete="new-password"
+                    className="w-full bg-[#FAF7F2] border border-[#E6DCD3] rounded-xl pl-3 pr-9 py-2 text-xs text-[#2C1810] focus:outline-none focus:border-[#C85A32]"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowEditPassword(!showEditPassword)}
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#7A685D] hover:text-[#2C1810] p-1 cursor-pointer"
+                    title={showEditPassword ? 'Hide password' : 'Show password'}
+                  >
+                    {showEditPassword ? <EyeOff size={14} /> : <Eye size={14} />}
+                  </button>
                 </div>
               </div>
 

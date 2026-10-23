@@ -14,7 +14,6 @@ import {
 import { useAuth } from '../context/AuthContext';
 import { getSocket } from '../services/socket';
 import api from '../services/api';
-import PortalSwitcher from '../components/PortalSwitcher';
 
 const AdminLayout = () => {
   const { user, isAdmin, logout, loading } = useAuth();
@@ -96,10 +95,9 @@ const AdminLayout = () => {
 
   return (
     <div className="min-h-screen bg-[#FAF7F2] text-[#2C1810] flex flex-col antialiased">
-      <PortalSwitcher />
       <div className="flex-1 flex flex-col md:flex-row">
       {/* Sidebar for Desktop */}
-      <aside className="hidden md:flex flex-col w-64 bg-white border-r border-[#E6DCD3] p-5 md:sticky md:top-0 md:h-[calc(100vh-41px)] justify-between overflow-y-auto shrink-0">
+      <aside className="hidden md:flex flex-col w-64 bg-white border-r border-[#E6DCD3] p-5 md:sticky md:top-0 md:h-screen justify-between overflow-y-auto shrink-0">
         <div className="space-y-6">
           {/* Brand */}
           <div className="flex items-center gap-3 pb-2 border-b border-[#E6DCD3]/60">

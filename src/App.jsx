@@ -8,7 +8,9 @@ import { useAuth } from './context/AuthContext';
 
 // Layouts
 import CustomerLayout from './layouts/CustomerLayout';
-import AdminLayout from './layouts/AdminLayout';
+import AdminLayout from './layouts/AdminLayout'; // Client Dashboard (Screenshot Panel)
+import SuperAdminLayout from './layouts/SuperAdminLayout'; // 1st: Superadmin Dashboard
+import AdminPortalLayout from './layouts/AdminPortalLayout'; // 2nd: Admin Dashboard
 
 // Customer Pages (5 Tabs)
 import HomePage from './pages/customer/HomePage';
@@ -21,12 +23,21 @@ import ProfilePage from './pages/customer/ProfilePage';
 import CustomerLoginPage from './pages/auth/CustomerLoginPage';
 import AdminLoginPage from './pages/auth/AdminLoginPage';
 
-// Admin Pages (5 Tabs)
+// Client Dashboard Pages (5 Tabs from Screenshot - preserved untouched)
 import AdminOrdersTab from './pages/admin/AdminOrdersTab';
 import AdminMenuTab from './pages/admin/AdminMenuTab';
 import AdminOffersTab from './pages/admin/AdminOffersTab';
 import AdminNotificationsTab from './pages/admin/AdminNotificationsTab';
 import AdminProfileTab from './pages/admin/AdminProfileTab';
+
+// Superadmin Dashboard Pages (3 Tabs: overview, manage admin, manage client)
+import SuperAdminOverviewTab from './pages/superadmin/SuperAdminOverviewTab';
+import SuperAdminAdminsTab from './pages/superadmin/SuperAdminAdminsTab';
+import SuperAdminClientsTab from './pages/superadmin/SuperAdminClientsTab';
+
+// Admin Dashboard Pages (2 Tabs: overview, manage client)
+import AdminPortalOverviewTab from './pages/admin-portal/AdminPortalOverviewTab';
+import AdminPortalClientsTab from './pages/admin-portal/AdminPortalClientsTab';
 
 // Handles QR scans from tables: directs customer to form login first with table parameter
 const CafeQREntry = () => {
@@ -63,15 +74,40 @@ function App() {
             <Route path="/login" element={<CustomerLoginPage />} />
             <Route path="/admin/login" element={<AdminLoginPage />} />
 
-            {/* Admin Facing 5 Tabs Layout */}
-            <Route path="/admin" element={<AdminLayout />}>
-              <Route index element={<Navigate to="/admin/orders" replace />} />
+            {/* 1st: Superadmin Dashboard (3 Tabs: overview, manage admin, manage client) */}
+            <Route path="/superadmin" element={<SuperAdminLayout />}>
+              <Route index element={<Navigate to="/superadmin/overview" replace />} />
+              <Route path="overview" element={<SuperAdminOverviewTab />} />
+              <Route path="admins" element={<SuperAdminAdminsTab />} />
+              <Route path="manage-admin" element={<Navigate to="/superadmin/admins" replace />} />
+              <Route path="clients" element={<SuperAdminClientsTab />} />
+              <Route path="manage-client" element={<Navigate to="/superadmin/clients" replace />} />
+            </Route>
+
+            {/* 2nd: Admin Dashboard (2 Tabs: 1st overview, 2nd manage client) */}
+            <Route path="/admin" element={<AdminPortalLayout />}>
+              <Route index element={<Navigate to="/admin/overview" replace />} />
+              <Route path="overview" element={<AdminPortalOverviewTab />} />
+              <Route path="clients" element={<AdminPortalClientsTab />} />
+              <Route path="manage-client" element={<Navigate to="/admin/clients" replace />} />
+            </Route>
+
+            {/* Client Dashboard (The Screenshot Dashboard - 5 Tabs: orders, menu, offers, notifications, profile) */}
+            <Route path="/client" element={<AdminLayout />}>
+              <Route index element={<Navigate to="/client/orders" replace />} />
               <Route path="orders" element={<AdminOrdersTab />} />
               <Route path="menu" element={<AdminMenuTab />} />
               <Route path="offers" element={<AdminOffersTab />} />
               <Route path="notifications" element={<AdminNotificationsTab />} />
               <Route path="profile" element={<AdminProfileTab />} />
             </Route>
+
+            {/* Backward-compatibility for legacy /admin/* direct links */}
+            <Route path="/admin/orders" element={<Navigate to="/client/orders" replace />} />
+            <Route path="/admin/menu" element={<Navigate to="/client/menu" replace />} />
+            <Route path="/admin/offers" element={<Navigate to="/client/offers" replace />} />
+            <Route path="/admin/notifications" element={<Navigate to="/client/notifications" replace />} />
+            <Route path="/admin/profile" element={<Navigate to="/client/profile" replace />} />
 
             {/* Fallback */}
             <Route path="*" element={<Navigate to="/menu" replace />} />

@@ -15,7 +15,7 @@ const BottomNav = () => {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-[#FAF7F2]/95 backdrop-blur-md border-t border-[#E6DCD3] shadow-[0_-4px_20px_rgba(44,24,16,0.06)] pb-[env(safe-area-inset-bottom)]">
+    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-[#FAF7F2]/95 backdrop-blur-md border-t border-[#E6DCD3] shadow-[0_-4px_20px_rgba(44,24,16,0.06)] pb-[env(safe-area-inset-bottom)]">
       <div className="max-w-md mx-auto grid grid-cols-5 h-16">
         {navItems.map((item) => {
           const Icon = item.icon;

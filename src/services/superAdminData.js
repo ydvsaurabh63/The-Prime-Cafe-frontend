@@ -28,8 +28,8 @@ const INITIAL_CLIENTS = [
     tablesCount: 15,
     password: 'Admin@123',
     plainPassword: 'Admin@123',
-    totalSales: 48620,
-    totalOrders: 312,
+    totalSales: 1386,
+    totalOrders: 3,
     clientUrl: '/client/orders',
     createdAt: '2026-08-10T10:00:00.000Z'
   }
@@ -100,17 +100,17 @@ export const fetchSuperAdminOverview = async () => {
   const totalOrders = clients.reduce((acc, c) => acc + (c.totalOrders || 0), 0);
 
   return {
-    totalRevenue: totalSales || 48620,
-    totalOrders: totalOrders || 312,
+    totalRevenue: totalSales || 0,
+    totalOrders: totalOrders || 0,
     totalClients: clients.length,
     activeClients: clients.filter((c) => c.status === 'Active').length,
     pendingClients: clients.filter((c) => c.status === 'Pending').length,
     totalAdmins: admins.length,
-    topClients: clients.slice(0, 5),
+    topClients: clients.slice(0, 10),
     systemHealth: {
       database: 'Connected',
-      apiLatency: '38ms',
-      uptime: '99.98%',
+      apiLatency: 'Operational',
+      uptime: '100%',
       status: 'Operational'
     }
   };

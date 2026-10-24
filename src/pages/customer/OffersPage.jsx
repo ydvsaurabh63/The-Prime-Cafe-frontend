@@ -21,48 +21,51 @@ import { useAuth } from '../../context/AuthContext';
 import { Link } from 'react-router-dom';
 import confetti from 'canvas-confetti';
 
-const MILESTONES = [
+const DEFAULT_FALLBACK_MILESTONES = [
   {
-    visit: 1,
+    visitNumber: 1,
     title: 'Welcome Treat',
-    tag: '1st Check-In',
-    discount: '10% OFF',
-    code: 'PRIME10',
-    icon: Gift
+    discountType: 'percentage',
+    discountValue: 10,
+    couponCode: 'PRIME10'
   },
   {
-    visit: 3,
+    visitNumber: 3,
     title: 'Coffee Perk',
-    tag: '3rd Check-In',
-    discount: '15% OFF',
-    code: 'VISIT3COFFEE',
-    icon: Coffee
+    discountType: 'percentage',
+    discountValue: 15,
+    couponCode: 'VISIT3COFFEE'
   },
   {
-    visit: 5,
+    visitNumber: 5,
     title: 'Foodie Treat',
-    tag: '5th Check-In',
-    discount: '25% OFF',
-    code: 'MEGA5BURGER',
-    icon: Utensils
+    discountType: 'percentage',
+    discountValue: 25,
+    couponCode: 'MEGA5BURGER'
   },
   {
-    visit: 7,
+    visitNumber: 7,
     title: 'Pizza Feast',
-    tag: '7th Check-In',
-    discount: '₹200 OFF',
-    code: 'GOLD7PIZZA',
-    icon: Pizza
+    discountType: 'fixed',
+    discountValue: 200,
+    couponCode: 'GOLD7PIZZA'
   },
   {
-    visit: 10,
+    visitNumber: 10,
     title: 'VIP Royalty',
-    tag: '10th Check-In',
-    discount: '30% VIP',
-    code: 'VIP10FEAST',
-    icon: Crown
+    discountType: 'percentage',
+    discountValue: 30,
+    couponCode: 'VIP10FEAST'
   }
 ];
+
+const getMilestoneIcon = (visitNum) => {
+  if (visitNum <= 1) return Gift;
+  if (visitNum <= 3) return Coffee;
+  if (visitNum <= 5) return Utensils;
+  if (visitNum <= 7) return Pizza;
+  return Crown;
+};
 
 const OffersPage = () => {
   const [offers, setOffers] = useState([]);
@@ -72,6 +75,9 @@ const OffersPage = () => {
   const { applyCouponCode } = useCart();
   const { isAuthenticated } = useAuth();
   const [applyMessage, setApplyMessage] = useState({ text: '', isError: false });
+
+  // Dynamic check-in milestones from backend API
+  const [dynamicMilestones, setDynamicMilestones] = useState(DEFAULT_FALLBACK_MILESTONES);
 
   // Check-in tracking state
   const [orders, setOrders] = useState([]);
@@ -96,6 +102,22 @@ const OffersPage = () => {
     fetchOffers();
   }, []);
 
+  // Fetch dynamic check-in milestones from backend API
+  const fetchCheckInMilestones = useCallback(async () => {
+    try {
+      const res = await api.get('/offers/checkin-milestones');
+      if (res.data?.success && res.data.data?.length > 0) {
+        setDynamicMilestones(res.data.data);
+      }
+    } catch (err) {
+      console.error('Failed to fetch dynamic check-in milestones:', err);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchCheckInMilestones();
+  }, [fetchCheckInMilestones]);
+
   // Fetch customer orders for check-in calculation
   const fetchMyOrders = useCallback(async (isManualRefresh = false) => {
     if (!isAuthenticated) return;
@@ -103,9 +125,13 @@ const OffersPage = () => {
       if (isManualRefresh) setRefreshing(true);
       else setLoadingOrders(true);
 
-      const res = await api.get('/orders/my');
-      if (res.data?.success) {
-        setOrders(res.data.data || []);
+      const [ordersRes] = await Promise.all([
+        api.get('/orders/my'),
+        fetchCheckInMilestones()
+      ]);
+
+      if (ordersRes.data?.success) {
+        setOrders(ordersRes.data.data || []);
       }
     } catch (err) {
       console.error('Failed to fetch check-in visit history:', err);
@@ -113,7 +139,7 @@ const OffersPage = () => {
       setLoadingOrders(false);
       setRefreshing(false);
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, fetchCheckInMilestones]);
 
   useEffect(() => {
     fetchMyOrders();
@@ -188,7 +214,7 @@ const OffersPage = () => {
       )}
 
       {/* ========================================================= */}
-      {/* CUSTOMER VISIT CHECK-IN STAMPS ONLY */}
+      {/* CUSTOMER VISIT CHECK-IN STAMPS (DYNAMICALLY CONNECTED) */}
       {/* ========================================================= */}
       <section className="bg-white rounded-3xl border border-[#E6DCD3] p-5 sm:p-7 shadow-xs space-y-5">
         {/* Card Header */}
@@ -244,7 +270,19 @@ const OffersPage = () => {
               const visitNum = i + 1;
               const isDone = checkInCount >= visitNum;
               const isCurrentNext = checkInCount + 1 === visitNum;
-              const milestone = MILESTONES.find((m) => m.visit === visitNum);
+
+              // Match dynamic milestone from DB/API
+              const milestone = dynamicMilestones.find(
+                (m) => Number(m.visitNumber) === visitNum && m.isActive !== false
+              );
+
+              const discountBadge = milestone
+                ? milestone.discountType === 'percentage'
+                  ? `${milestone.discountValue}% OFF`
+                  : `₹${milestone.discountValue} OFF`
+                : null;
+
+              const IconComponent = milestone ? getMilestoneIcon(visitNum) : null;
 
               return (
                 <div
@@ -258,7 +296,7 @@ const OffersPage = () => {
                   }`}
                 >
                   {/* Milestone Badge Pill */}
-                  {milestone && (
+                  {discountBadge && (
                     <span
                       className={`absolute -top-2 px-1.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-tight shadow-xs ${
                         isDone
@@ -268,7 +306,7 @@ const OffersPage = () => {
                           : 'bg-[#7A685D] text-white'
                       }`}
                     >
-                      {milestone.discount}
+                      {discountBadge}
                     </span>
                   )}
 
@@ -286,8 +324,8 @@ const OffersPage = () => {
                       <CheckCircle2 size={22} className="stroke-[2.5]" />
                     ) : isCurrentNext ? (
                       <Sparkles size={18} />
-                    ) : milestone ? (
-                      <milestone.icon size={16} className="text-[#7A685D]" />
+                    ) : IconComponent ? (
+                      <IconComponent size={16} className="text-[#7A685D]" />
                     ) : (
                       <span>{visitNum}</span>
                     )}
@@ -307,18 +345,24 @@ const OffersPage = () => {
                           : 'text-[#8C7A6B]'
                       }`}
                     >
-                      {isDone ? 'Checked In ✓' : isCurrentNext ? 'Next Goal' : milestone ? milestone.tag : 'Stamp'}
+                      {isDone
+                        ? 'Checked In ✓'
+                        : isCurrentNext
+                        ? 'Next Goal'
+                        : milestone
+                        ? milestone.title
+                        : 'Stamp'}
                     </span>
                   </div>
 
                   {/* Unlocked Milestone Direct Action */}
                   {milestone && isDone && (
                     <button
-                      onClick={() => handleApplyOffer(milestone.code)}
+                      onClick={() => handleApplyOffer(milestone.couponCode)}
                       className="mt-1.5 text-[9px] bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold px-1.5 py-0.5 rounded-md transition shadow-2xs"
-                      title={`Apply ${milestone.code}`}
+                      title={`Apply ${milestone.couponCode}`}
                     >
-                      {milestone.code}
+                      {milestone.couponCode}
                     </button>
                   )}
                 </div>

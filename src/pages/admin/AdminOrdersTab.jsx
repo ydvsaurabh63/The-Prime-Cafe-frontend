@@ -253,8 +253,17 @@ const AdminOrdersTab = () => {
                       {order.tableNumber}
                     </span>
                   </div>
-                  <p className="text-xs text-[#7A685D] mt-1">
+                  <p className="text-xs text-[#7A685D] mt-1 flex items-center flex-wrap gap-1.5">
                     Guest: <strong className="text-[#2C1810]">{order.customerName}</strong> ({order.customerPhone})
+                    {order.customerVisits > 0 ? (
+                      <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        🎖️ Visit #{order.customerVisits}
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 border border-amber-200">
+                        ✨ 1st Visit
+                      </span>
+                    )}
                   </p>
                 </div>
 

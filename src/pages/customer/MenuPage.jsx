@@ -1,15 +1,26 @@
 import React, { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Search, Plus, Minus, Check, Clock, Sparkles } from 'lucide-react';
 import api from '../../services/api';
 import { useCart } from '../../context/CartContext';
 
 const MenuPage = () => {
+  const [searchParams] = useSearchParams();
+  const urlSearch = searchParams.get('search') || '';
   const [categories, setCategories] = useState([]);
   const [menuItems, setMenuItems] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState(urlSearch);
   const [vegOnly, setVegOnly] = useState(false);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const q = searchParams.get('search');
+    if (q !== null) {
+      setSearchQuery(q);
+    }
+  }, [searchParams]);
+
 
   const { cartItems, addToCart, updateQuantity } = useCart();
 

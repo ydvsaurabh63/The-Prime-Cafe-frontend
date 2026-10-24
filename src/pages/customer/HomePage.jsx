@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   Coffee,
   Sparkles,
@@ -25,7 +25,9 @@ import {
   Plus,
   Minus,
   Check,
-  Copy
+  Copy,
+  Search,
+  X
 } from 'lucide-react';
 import api from '../../services/api';
 import { useCart } from '../../context/CartContext';
@@ -49,11 +51,15 @@ const InstagramIcon = ({ size = 18, className = "" }) => (
 );
 
 const HomePage = () => {
+  const navigate = useNavigate();
   const [featuredItems, setFeaturedItems] = useState([]);
+  const [allItems, setAllItems] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const [activeOffers, setActiveOffers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [copiedCode, setCopiedCode] = useState(false);
   const videoRef = useRef(null);
+
 
   const { cartItems, addToCart, updateQuantity } = useCart();
   const [openFaqIndex, setOpenFaqIndex] = useState(-1);
@@ -187,6 +193,7 @@ const HomePage = () => {
 
         if (menuRes.status === 'fulfilled' && menuRes.value.data.success) {
           const items = menuRes.value.data.data;
+          setAllItems(items);
           setFeaturedItems(items.slice(0, 4));
         }
 
@@ -215,8 +222,27 @@ const HomePage = () => {
     return item ? item.quantity : 0;
   };
 
+  const searchResults = searchQuery.trim()
+    ? allItems.filter((item) => {
+        const q = searchQuery.toLowerCase().trim();
+        return (
+          item.name?.toLowerCase().includes(q) ||
+          item.description?.toLowerCase().includes(q) ||
+          item.category?.name?.toLowerCase().includes(q) ||
+          (item.tags && item.tags.some((t) => t.toLowerCase().includes(q)))
+        );
+      })
+    : [];
+
+  const handleSearchSubmit = (e) => {
+    e?.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/menu?search=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
+
   return (
-    <div className="space-y-10 pb-8">
+    <div className="space-y-8 sm:space-y-10 pb-8">
       {/* 1. HERO SECTION: Full-Bleed 3D Video Background */}
       <section className="relative overflow-hidden rounded-3xl bg-[#0F0805] text-[#FAF7F2] p-6 sm:p-10 shadow-2xl border border-[#3D2314] min-h-[420px] sm:min-h-[480px] flex flex-col justify-between">
         {/* Full-Bleed 3D Video Layer */}
@@ -292,7 +318,169 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* 2. SOCIAL PROOF & LIVE REPUTATION (Directly under Hero) */}
+      {/* 2. INSTANT SEARCH BAR FOR CUSTOMERS */}
+      <section className="relative z-20 -mt-4 sm:-mt-6">
+        <div className="bg-white rounded-3xl p-4 sm:p-5 border border-[#E6DCD3] shadow-lg space-y-3.5 hover:border-[#C85A32]/40 transition">
+          <form onSubmit={handleSearchSubmit} className="relative flex items-center">
+            <Search size={19} className="absolute left-3.5 sm:left-4 text-[#C85A32] shrink-0" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search coffee, burgers, pizza, pasta, shakes, desserts..."
+              className="w-full pl-11 sm:pl-12 pr-24 py-3 sm:py-3.5 bg-[#FAF7F2] border border-[#E6DCD3] focus:border-[#C85A32] rounded-2xl text-xs sm:text-sm text-[#2C1810] placeholder-[#7A685D] focus:outline-none transition shadow-2xs"
+            />
+            <div className="absolute right-2 flex items-center gap-1.5">
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  className="p-1.5 text-[#7A685D] hover:text-[#2C1810] rounded-full hover:bg-[#E6DCD3]/50 transition"
+                  title="Clear search"
+                >
+                  <X size={15} />
+                </button>
+              )}
+              <button
+                type="submit"
+                className="bg-[#C85A32] hover:bg-[#B24E2A] active:scale-95 text-white font-bold text-xs px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl transition shadow-xs flex items-center gap-1"
+              >
+                <span>Search</span>
+              </button>
+            </div>
+          </form>
+
+          {/* Quick Popular Search Tags */}
+          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-0.5 text-[11px] sm:text-xs">
+            <span className="font-bold text-[#7A685D] shrink-0 flex items-center gap-1 mr-1">
+              <Sparkles size={12} className="text-[#C85A32]" /> Popular:
+            </span>
+            {['Cold Brew', 'Artisan Burger', 'Pizza', 'Cappuccino', 'Fries', 'Cheesecake'].map((term) => (
+              <button
+                key={term}
+                type="button"
+                onClick={() => setSearchQuery(term)}
+                className={`px-3 py-1 rounded-full border transition shrink-0 font-medium ${
+                  searchQuery.toLowerCase() === term.toLowerCase()
+                    ? 'bg-[#4A2C18] text-white border-[#4A2C18]'
+                    : 'bg-[#FAF7F2] text-[#4A2C18] border-[#E6DCD3] hover:border-[#C85A32]'
+                }`}
+              >
+                {term}
+              </button>
+            ))}
+          </div>
+
+          {/* Real-Time Live Search Results Preview */}
+          {searchQuery.trim() && (
+            <div className="pt-3 border-t border-[#F5EFEB] space-y-3 animate-in fade-in duration-200">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-[#4A2C18]">
+                  {searchResults.length > 0
+                    ? `Found ${searchResults.length} dish${searchResults.length > 1 ? 'es' : ''} for "${searchQuery}"`
+                    : `No items matching "${searchQuery}"`}
+                </span>
+                {searchResults.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={handleSearchSubmit}
+                    className="text-[11px] font-bold text-[#C85A32] hover:underline flex items-center gap-1"
+                  >
+                    View in Full Menu <ArrowRight size={12} />
+                  </button>
+                )}
+              </div>
+
+              {searchResults.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[380px] overflow-y-auto pr-1">
+                  {searchResults.slice(0, 6).map((item) => {
+                    const qty = getItemQuantityInCart(item._id);
+                    return (
+                      <div
+                        key={item._id}
+                        className="p-2.5 bg-[#FAF7F2] border border-[#E6DCD3] rounded-2xl flex items-center justify-between gap-3 hover:border-[#C85A32] transition"
+                      >
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          {item.image ? (
+                            <img
+                              src={item.image}
+                              alt={item.name}
+                              className="w-13 h-13 sm:w-14 sm:h-14 rounded-xl object-cover shrink-0 border border-[#E6DCD3]"
+                            />
+                          ) : (
+                            <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-xl bg-[#E6DCD3] flex items-center justify-center shrink-0 text-[#7A685D]">
+                              <Coffee size={18} />
+                            </div>
+                          )}
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-1.5">
+                              <span
+                                className={`w-2 h-2 rounded-full shrink-0 ${
+                                  item.isVeg ? 'bg-emerald-600' : 'bg-rose-600'
+                                }`}
+                                title={item.isVeg ? 'Vegetarian' : 'Non-Vegetarian'}
+                              />
+                              <h5 className="font-extrabold text-xs text-[#2C1810] truncate">
+                                {item.name}
+                              </h5>
+                            </div>
+                            <p className="text-[10px] sm:text-[11px] text-[#7A685D] truncate mt-0.5 max-w-[140px] sm:max-w-[180px]">
+                              {item.description || item.category?.name || 'Freshly handcrafted'}
+                            </p>
+                            <span className="font-extrabold text-xs text-[#4A2C18] block mt-0.5">
+                              ₹{item.price}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Add to Cart button */}
+                        <div className="shrink-0">
+                          {qty > 0 ? (
+                            <div className="flex items-center gap-1 bg-[#4A2C18] text-white rounded-xl p-1">
+                              <button
+                                type="button"
+                                onClick={() => updateQuantity(item._id, qty - 1)}
+                                className="w-6 h-6 flex items-center justify-center hover:bg-black/20 rounded-lg"
+                              >
+                                <Minus size={12} />
+                              </button>
+                              <span className="text-xs font-bold px-1.5">{qty}</span>
+                              <button
+                                type="button"
+                                onClick={() => updateQuantity(item._id, qty + 1)}
+                                className="w-6 h-6 flex items-center justify-center hover:bg-black/20 rounded-lg"
+                              >
+                                <Plus size={12} />
+                              </button>
+                            </div>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => addToCart(item, 1)}
+                              className="bg-[#C85A32] hover:bg-[#B24E2A] text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow-xs transition active:scale-95 flex items-center gap-1"
+                            >
+                              <Plus size={13} />
+                              <span>Add</span>
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="text-center py-4 bg-[#FAF7F2] rounded-2xl">
+                  <p className="text-xs text-[#7A685D]">
+                    No dishes found matching <strong>"{searchQuery}"</strong>. Try popular terms like <strong>Burger</strong>, <strong>Cold Brew</strong>, or <strong>Pizza</strong>.
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* 3. SOCIAL PROOF & LIVE REPUTATION (Directly under Hero & Search) */}
       <section className="space-y-4">
         {/* Rating Score & Instagram Follow Banner */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">

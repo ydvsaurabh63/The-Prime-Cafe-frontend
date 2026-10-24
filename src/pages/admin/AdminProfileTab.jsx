@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { User, Lock, QrCode, Shield, Check, AlertCircle, Plus, Trash2, Printer, Download } from 'lucide-react';
+import { User, Lock, QrCode, Shield, Check, AlertCircle, Printer, Download, Copy, ExternalLink, Sparkles } from 'lucide-react';
+import QRCode from 'qrcode';
 import api from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 
@@ -28,31 +29,198 @@ const AdminProfileTab = () => {
   const [passwordError, setPasswordError] = useState('');
   const [passwordLoading, setPasswordLoading] = useState(false);
 
-  // Table & QR Management state
-  const [tables, setTables] = useState([]);
-  const [tablesLoading, setTablesLoading] = useState(false);
-  const [showAddTable, setShowAddTable] = useState(false);
-  const [newTableNum, setNewTableNum] = useState('');
-  const [newTableId, setNewTableId] = useState('');
-  const [newCapacity, setNewCapacity] = useState('4');
+  // Official Cafe Universal QR Code State
+  const [universalQrUrl, setUniversalQrUrl] = useState('');
+  const [copied, setCopied] = useState(false);
+  const [printCopies, setPrintCopies] = useState(5);
 
-  const fetchTables = async () => {
-    try {
-      setTablesLoading(true);
-      const res = await api.get('/admin/tables');
-      if (res.data.success) {
-        setTables(res.data.data);
-      }
-    } catch (e) {
-      console.error('Failed to fetch tables:', e);
-    } finally {
-      setTablesLoading(false);
-    }
-  };
+  const menuUrl = typeof window !== 'undefined'
+    ? `${window.location.origin}/menu`
+    : 'https://the-prime-cafe-frontend.vercel.app/menu';
 
   useEffect(() => {
-    fetchTables();
-  }, []);
+    QRCode.toDataURL(menuUrl, {
+      width: 512,
+      margin: 2,
+      color: {
+        dark: '#4A2C18',
+        light: '#FFFFFF'
+      }
+    })
+      .then((url) => setUniversalQrUrl(url))
+      .catch((err) => console.error('Failed to generate universal QR:', err));
+  }, [menuUrl]);
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(menuUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2500);
+  };
+
+  const handleDownloadQR = () => {
+    if (!universalQrUrl) return;
+    const a = document.createElement('a');
+    a.href = universalQrUrl;
+    a.download = 'The-Prime-Cafe-Official-QR.png';
+    a.click();
+  };
+
+  const handlePrintSingleStandee = () => {
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>The Prime Cafe - Official Menu QR</title>
+          <style>
+            @page { size: auto; margin: 15mm; }
+            body {
+              font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              min-height: 80vh;
+              text-align: center;
+              margin: 0;
+              background: #FAF7F2;
+              color: #2C1810;
+            }
+            .card {
+              background: #FFFFFF;
+              border: 3px solid #C85A32;
+              border-radius: 28px;
+              padding: 40px 30px;
+              box-shadow: 0 10px 30px rgba(74,44,24,0.08);
+              max-width: 360px;
+              width: 100%;
+            }
+            .logo-badge {
+              display: inline-block;
+              background: #4A2C18;
+              color: #FAF7F2;
+              padding: 8px 18px;
+              border-radius: 50px;
+              font-size: 13px;
+              font-weight: 700;
+              letter-spacing: 1px;
+              text-transform: uppercase;
+              margin-bottom: 12px;
+            }
+            h1 { color: #2C1810; margin: 0 0 6px 0; font-size: 28px; font-weight: 800; }
+            h2 { color: #C85A32; margin: 0 0 16px 0; font-size: 15px; font-weight: 600; }
+            .qr-wrapper {
+              background: #FAF7F2;
+              border: 2px dashed #E6DCD3;
+              border-radius: 20px;
+              padding: 16px;
+              display: inline-block;
+              margin: 10px 0 18px 0;
+            }
+            img { width: 230px; height: 230px; display: block; border-radius: 12px; }
+            .instruction {
+              font-size: 14px;
+              font-weight: 700;
+              color: #4A2C18;
+              margin: 0 0 4px 0;
+            }
+            .subtext { font-size: 12px; color: #7A685D; margin: 0; }
+          </style>
+        </head>
+        <body>
+          <div class="card">
+            <div class="logo-badge">Official Cafe QR</div>
+            <h1>The Prime Cafe</h1>
+            <h2>Artisanal Brews & Comfort Eats</h2>
+            <div class="qr-wrapper">
+              <img src="${universalQrUrl}" alt="The Prime Cafe QR Code" />
+            </div>
+            <p class="instruction">📷 Scan with phone camera to order</p>
+            <p class="subtext">Browse full digital menu & place orders instantly</p>
+          </div>
+          <script>window.onload = function() { window.print(); }</script>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+  };
+
+  const handlePrintMultipleCards = (count) => {
+    const printWindow = window.open('', '_blank');
+    const cardsHtml = Array.from({ length: count })
+      .map(
+        () => `
+        <div class="card">
+          <div class="logo-badge">The Prime Cafe</div>
+          <h3>Scan to View Menu & Order</h3>
+          <div class="qr-box">
+            <img src="${universalQrUrl}" alt="Cafe QR Code" />
+          </div>
+          <p class="tagline">Artisanal Brews & Fresh Eats</p>
+        </div>
+      `
+      )
+      .join('');
+
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>The Prime Cafe - ${count} Universal QR Cards</title>
+          <style>
+            @page { size: A4; margin: 10mm; }
+            body {
+              font-family: 'Segoe UI', Roboto, sans-serif;
+              margin: 0;
+              padding: 10px;
+              color: #2C1810;
+              background: #fff;
+            }
+            .grid {
+              display: grid;
+              grid-template-columns: repeat(2, 1fr);
+              gap: 15px;
+            }
+            .card {
+              border: 2px dashed #C85A32;
+              border-radius: 18px;
+              padding: 20px;
+              text-align: center;
+              background: #FAF7F2;
+              page-break-inside: avoid;
+            }
+            .logo-badge {
+              display: inline-block;
+              background: #4A2C18;
+              color: #FAF7F2;
+              padding: 4px 14px;
+              border-radius: 20px;
+              font-size: 11px;
+              font-weight: 800;
+              margin-bottom: 8px;
+            }
+            h3 { margin: 0 0 10px 0; font-size: 16px; color: #2C1810; font-weight: 800; }
+            .qr-box {
+              background: #fff;
+              display: inline-block;
+              padding: 10px;
+              border-radius: 14px;
+              border: 1px solid #E6DCD3;
+            }
+            img { width: 140px; height: 140px; display: block; }
+            .tagline { margin: 8px 0 0 0; font-size: 11px; color: #7A685D; font-weight: 600; }
+          </style>
+        </head>
+        <body>
+          <div class="grid">
+            ${cardsHtml}
+          </div>
+          <script>window.onload = function() { window.print(); }</script>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+  };
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
@@ -99,85 +267,13 @@ const AdminProfileTab = () => {
     }
   };
 
-  const handleCreateTable = async (e) => {
-    e.preventDefault();
-    if (!newTableNum || !newTableId) return;
-    try {
-      const res = await api.post('/admin/tables', {
-        tableNumber: newTableNum,
-        identifier: newTableId,
-        seatingCapacity: newCapacity
-      });
-      if (res.data.success) {
-        setShowAddTable(false);
-        setNewTableNum('');
-        setNewTableId('');
-        fetchTables();
-      }
-    } catch (err) {
-      alert(err.response?.data?.message || 'Failed to create table');
-    }
-  };
-
-  const handleToggleTable = async (table) => {
-    try {
-      const res = await api.patch(`/admin/tables/${table._id}/toggle`);
-      if (res.data.success) {
-        setTables((prev) =>
-          prev.map((t) => (t._id === table._id ? { ...t, isActive: !table.isActive } : t))
-        );
-      }
-    } catch (e) {
-      alert('Could not toggle table status');
-    }
-  };
-
-  const handleDeleteTable = async (table) => {
-    if (!window.confirm(`Delete ${table.tableNumber}? Active orders will lose this table reference.`)) return;
-    try {
-      const res = await api.delete(`/admin/tables/${table._id}`);
-      if (res.data.success) {
-        setTables((prev) => prev.filter((t) => t._id !== table._id));
-      }
-    } catch (e) {
-      alert('Could not delete table');
-    }
-  };
-
-  const handlePrintQR = (table) => {
-    const printWindow = window.open('', '_blank');
-    printWindow.document.write(`
-      <html>
-        <head>
-          <title>${table.tableNumber} QR Code - The Prime Cafe</title>
-          <style>
-            body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 90vh; text-align: center; }
-            h1 { color: #2C1810; margin-bottom: 5px; font-size: 26px; }
-            h2 { color: #C85A32; margin-top: 0; font-size: 20px; }
-            p { color: #7A685D; font-size: 14px; max-width: 300px; }
-            img { width: 280px; height: 280px; border: 4px solid #FAF7F2; border-radius: 16px; margin: 15px 0; }
-          </style>
-        </head>
-        <body>
-          <h1>The Prime Cafe</h1>
-          <h2>${table.tableNumber}</h2>
-          <p>Scan with your phone camera to fill the entry form & order directly from this table!</p>
-          <img src="${table.qrCodeDataUrl}" alt="${table.tableNumber} QR" />
-          <p>Table ID: ${table.identifier} • Seating: ${table.seatingCapacity} Guests</p>
-          <script>window.onload = function() { window.print(); }</script>
-        </body>
-      </html>
-    `);
-    printWindow.document.close();
-  };
-
   return (
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h2 className="text-xl font-extrabold text-[#2C1810]">Admin Account & Cafe Tables</h2>
+        <h2 className="text-xl font-extrabold text-[#2C1810]">Admin Account & Cafe QR Code</h2>
         <p className="text-xs text-[#7A685D] mt-0.5">
-          Manage staff security, password, and generate table QR codes for dine-in guests.
+          Manage staff security, password, and official QR code for cafe guests.
         </p>
       </div>
 
@@ -302,146 +398,178 @@ const AdminProfileTab = () => {
           </form>
         </div>
       </div>
-
-      {/* TABLE & QR CODES MANAGEMENT SECTION */}
-      <div className="bg-white rounded-3xl border border-[#E6DCD3] p-5 space-y-5 shadow-2xs">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#F5EFEB] pb-4">
-          <div>
-            <div className="flex items-center gap-2">
-              <QrCode size={20} className="text-[#C85A32]" />
-              <h3 className="font-extrabold text-base text-[#2C1810]">
-                Table QR Codes & Dine-In Management
-              </h3>
-            </div>
-            <p className="text-xs text-[#7A685D] mt-0.5">
-              Every table generates a scannable QR code directing customers directly to their table cart.
-            </p>
+      {/* OFFICIAL CAFE UNIFIED QR CODE SECTION */}
+      <div className="bg-white rounded-3xl border border-[#E6DCD3] p-5 sm:p-6 space-y-6 shadow-2xs">
+        <div className="border-b border-[#F5EFEB] pb-4">
+          <div className="flex items-center gap-2">
+            <QrCode size={22} className="text-[#C85A32]" />
+            <h3 className="font-extrabold text-base sm:text-lg text-[#2C1810]">
+              Official Cafe QR Code & Digital Menu
+            </h3>
           </div>
-
-          <button
-            onClick={() => setShowAddTable(!showAddTable)}
-            className="text-xs font-bold bg-[#FAF7F2] border border-[#E6DCD3] hover:bg-[#F5EFEB] text-[#4A2C18] px-3.5 py-2 rounded-xl transition shadow-2xs flex items-center gap-1 self-start sm:self-auto"
-          >
-            <Plus size={15} /> Add Table
-          </button>
+          <p className="text-xs text-[#7A685D] mt-1">
+            A single, unified QR code for your entire cafe. Place copies of this same QR code on your tables, counter, or stands so guests can scan and order directly.
+          </p>
         </div>
 
-        {/* Add Table Form */}
-        {showAddTable && (
-          <form
-            onSubmit={handleCreateTable}
-            className="p-4 bg-[#FAF7F2] rounded-2xl border border-[#E6DCD3] space-y-3 text-xs"
-          >
-            <h4 className="font-bold text-[#4A2C18]">Create New Table</h4>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div>
-                <label className="block font-semibold mb-1">Table Display Name</label>
+        {/* Main QR Showcase Card */}
+        <div className="bg-[#FAF7F2] border border-[#E6DCD3] rounded-3xl p-5 sm:p-6 flex flex-col md:flex-row items-center gap-6">
+          {/* QR Code Preview */}
+          <div className="bg-white p-3 rounded-2xl border border-[#E6DCD3] shadow-md shrink-0 flex flex-col items-center">
+            {universalQrUrl ? (
+              <img
+                src={universalQrUrl}
+                alt="Official Cafe QR Code"
+                className="w-44 h-44 sm:w-48 sm:h-48 object-contain rounded-xl"
+              />
+            ) : (
+              <div className="w-44 h-44 flex items-center justify-center text-xs text-[#7A685D]">
+                Generating QR...
+              </div>
+            )}
+            <span className="text-[11px] font-bold text-[#4A2C18] mt-2 flex items-center gap-1">
+              <Sparkles size={12} className="text-[#C85A32]" /> Scan to View Menu & Order
+            </span>
+          </div>
+
+          {/* Details & Actions */}
+          <div className="flex-1 space-y-4 text-center md:text-left min-w-0">
+            <div>
+              <span className="inline-block bg-[#4A2C18] text-[#FAF7F2] text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider mb-1.5">
+                Universal Cafe QR
+              </span>
+              <h4 className="font-extrabold text-lg sm:text-xl text-[#2C1810]">The Prime Cafe</h4>
+              <p className="text-xs text-[#7A685D] mt-0.5">
+                All tables and guests use this exact same QR code. No table selection or table configuration needed!
+              </p>
+            </div>
+
+            {/* Menu URL display & Copy */}
+            <div className="space-y-1.5">
+              <label className="block text-[11px] font-bold text-[#7A685D] uppercase tracking-wide">
+                Direct Digital Menu Link
+              </label>
+              <div className="flex items-center gap-2 max-w-md mx-auto md:mx-0">
                 <input
                   type="text"
-                  value={newTableNum}
-                  onChange={(e) => setNewTableNum(e.target.value)}
-                  placeholder="e.g. Table 06"
-                  required
-                  className="w-full p-2 bg-white border border-[#E6DCD3] rounded-xl"
+                  readOnly
+                  value={menuUrl}
+                  className="flex-1 text-xs font-mono bg-white border border-[#E6DCD3] rounded-xl px-3 py-2 text-[#4A2C18] select-all truncate"
                 />
-              </div>
-
-              <div>
-                <label className="block font-semibold mb-1">URL Identifier</label>
-                <input
-                  type="text"
-                  value={newTableId}
-                  onChange={(e) => setNewTableId(e.target.value)}
-                  placeholder="e.g. 06"
-                  required
-                  className="w-full p-2 bg-white border border-[#E6DCD3] rounded-xl font-mono"
-                />
-              </div>
-
-              <div>
-                <label className="block font-semibold mb-1">Seating Capacity</label>
-                <input
-                  type="number"
-                  min="1"
-                  value={newCapacity}
-                  onChange={(e) => setNewCapacity(e.target.value)}
-                  className="w-full p-2 bg-white border border-[#E6DCD3] rounded-xl"
-                />
+                <button
+                  type="button"
+                  onClick={handleCopyLink}
+                  className="bg-white border border-[#E6DCD3] hover:bg-[#F5EFEB] text-[#4A2C18] text-xs font-bold px-3 py-2 rounded-xl transition flex items-center gap-1 shrink-0"
+                  title="Copy link"
+                >
+                  <Copy size={13} />
+                  <span>{copied ? 'Copied!' : 'Copy'}</span>
+                </button>
               </div>
             </div>
 
-            <div className="flex gap-2 pt-1">
-              <button
-                type="submit"
-                className="bg-[#C85A32] hover:bg-[#B24E2A] text-white font-bold px-4 py-1.5 rounded-xl transition"
-              >
-                Generate QR & Save Table
-              </button>
+            {/* Action Buttons */}
+            <div className="flex flex-wrap gap-2.5 justify-center md:justify-start pt-1">
               <button
                 type="button"
-                onClick={() => setShowAddTable(false)}
-                className="px-3 border border-[#E6DCD3] rounded-xl bg-white"
+                onClick={handlePrintSingleStandee}
+                className="bg-[#C85A32] hover:bg-[#B24E2A] text-white font-bold text-xs px-4 py-2.5 rounded-xl transition shadow-xs flex items-center gap-1.5"
               >
-                Cancel
+                <Printer size={14} /> Print Standee Card
+              </button>
+
+              <button
+                type="button"
+                onClick={handleDownloadQR}
+                className="bg-[#4A2C18] hover:bg-[#382012] text-white font-bold text-xs px-4 py-2.5 rounded-xl transition shadow-xs flex items-center gap-1.5"
+              >
+                <Download size={14} /> Download PNG
+              </button>
+
+              <a
+                href={menuUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-white border border-[#E6DCD3] hover:bg-[#F5EFEB] text-[#4A2C18] font-bold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-1.5"
+              >
+                <ExternalLink size={14} /> Test Menu
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* Multiple QR Cards for Tables / Stands */}
+        <div className="space-y-3 pt-2">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <h4 className="font-extrabold text-sm text-[#2C1810]">
+                Table & Counter Stand Cards
+              </h4>
+              <p className="text-xs text-[#7A685D]">
+                Print multiple identical QR stand cards for all your tables at once.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <select
+                value={printCopies}
+                onChange={(e) => setPrintCopies(Number(e.target.value))}
+                className="text-xs bg-white border border-[#E6DCD3] rounded-xl px-2.5 py-1.5 font-bold text-[#4A2C18]"
+              >
+                <option value={5}>5 Cards</option>
+                <option value={10}>10 Cards</option>
+                <option value={15}>15 Cards</option>
+                <option value={20}>20 Cards</option>
+              </select>
+
+              <button
+                type="button"
+                onClick={() => handlePrintMultipleCards(printCopies)}
+                className="bg-[#4A2C18] hover:bg-[#382012] text-white text-xs font-bold px-3.5 py-1.5 rounded-xl transition flex items-center gap-1.5 shadow-xs"
+              >
+                <Printer size={13} /> Print {printCopies} Cards
               </button>
             </div>
-          </form>
-        )}
+          </div>
 
-        {/* Table Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          {tables.map((table) => (
-            <div
-              key={table._id}
-              className={`p-3.5 rounded-2xl border flex flex-col items-center text-center justify-between space-y-2.5 transition ${
-                table.isActive ? 'bg-[#FAF7F2] border-[#E6DCD3]' : 'bg-stone-100 border-stone-300 opacity-60'
-              }`}
-            >
-              <div>
-                <h4 className="font-extrabold text-sm text-[#2C1810]">{table.tableNumber}</h4>
-                <span className="text-[10px] text-[#7A685D] block">
-                  Capacity: {table.seatingCapacity} Guests
-                </span>
-              </div>
-
-              {table.qrCodeDataUrl && (
-                <div className="w-28 h-28 bg-white p-1 rounded-xl border border-[#E6DCD3] shadow-2xs">
-                  <img
-                    src={table.qrCodeDataUrl}
-                    alt={`${table.tableNumber} QR`}
-                    className="w-full h-full object-contain"
-                  />
+          {/* 5 Identical QR Cards Preview Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3.5 pt-1">
+            {[1, 2, 3, 4, 5].map((index) => (
+              <div
+                key={index}
+                className="bg-[#FAF7F2] p-3 rounded-2xl border border-[#E6DCD3] flex flex-col items-center text-center justify-between space-y-2 hover:border-[#C85A32] transition"
+              >
+                <div className="w-full">
+                  <span className="text-[10px] font-bold text-[#7A685D] uppercase tracking-wider block">
+                    Stand Card #{index}
+                  </span>
+                  <h5 className="font-extrabold text-xs text-[#2C1810] truncate mt-0.5">
+                    The Prime Cafe
+                  </h5>
                 </div>
-              )}
 
-              <div className="w-full space-y-1.5 text-xs">
+                {universalQrUrl && (
+                  <div className="w-24 h-24 bg-white p-1 rounded-xl border border-[#E6DCD3] shadow-2xs">
+                    <img
+                      src={universalQrUrl}
+                      alt={`Cafe QR Card ${index}`}
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                )}
+
+                <span className="text-[10px] text-[#7A685D]">All QRs Same Link</span>
+
                 <button
-                  onClick={() => handlePrintQR(table)}
-                  className="w-full bg-[#4A2C18] hover:bg-[#2C1810] text-white text-[11px] font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 transition shadow-2xs"
+                  type="button"
+                  onClick={handlePrintSingleStandee}
+                  className="w-full bg-white hover:bg-[#F5EFEB] border border-[#E6DCD3] text-[#4A2C18] text-[11px] font-bold py-1 rounded-lg flex items-center justify-center gap-1 transition"
                 >
-                  <Printer size={12} /> Print QR
+                  <Printer size={11} /> Print Card
                 </button>
-
-                <div className="flex gap-1 justify-center">
-                  <button
-                    onClick={() => handleToggleTable(table)}
-                    className={`text-[10px] font-bold px-2 py-0.5 rounded-md transition ${
-                      table.isActive ? 'bg-emerald-100 text-emerald-800' : 'bg-stone-200 text-stone-700'
-                    }`}
-                  >
-                    {table.isActive ? 'Active' : 'Disabled'}
-                  </button>
-
-                  <button
-                    onClick={() => handleDeleteTable(table)}
-                    className="text-[10px] text-rose-600 font-semibold p-1 hover:underline"
-                  >
-                    Delete
-                  </button>
-                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </div>

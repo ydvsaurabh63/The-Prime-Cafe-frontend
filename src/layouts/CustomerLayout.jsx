@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Outlet, useSearchParams } from 'react-router-dom';
 import CustomerHeader from '../components/CustomerHeader';
 import BottomNav from '../components/BottomNav';
+import PWAInstallBanner from '../components/PWAInstallBanner';
 import { useCart } from '../context/CartContext';
 import api from '../services/api';
 
@@ -54,9 +55,11 @@ const CustomerLayout = () => {
           </p>
         </footer>
       </main>
+      <PWAInstallBanner />
       <BottomNav />
     </div>
   );
 };
 
 export default CustomerLayout;
+

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Award, Phone, Mail, Calendar, LogOut, Edit3, CheckCircle2, ShieldCheck, ArrowRight } from 'lucide-react';
+import { User, Award, Phone, Mail, Calendar, LogOut, Edit3, CheckCircle2, ShieldCheck, ArrowRight, Download } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../../services/api';
@@ -214,6 +214,36 @@ const ProfilePage = () => {
           </Link>
         </div>
       )}
+
+      {/* PWA Mobile App Download Card */}
+      <div className="p-4 sm:p-5 bg-white border border-[#E6DCD3] rounded-3xl flex items-center justify-between gap-3 shadow-2xs">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="w-10 h-10 rounded-2xl bg-[#4A2C18] text-[#FAF7F2] flex items-center justify-center shrink-0 shadow-xs">
+            <Download size={18} />
+          </div>
+          <div className="min-w-0">
+            <h4 className="text-xs sm:text-sm font-bold text-[#2C1810] truncate">
+              Download Cafe Mobile App
+            </h4>
+            <p className="text-[11px] text-[#7A685D] truncate">
+              Install to your phone home screen for instant orders
+            </p>
+          </div>
+        </div>
+        <button
+          type="button"
+          onClick={() => {
+            if (window.pwaDeferredPrompt) {
+              window.pwaDeferredPrompt.prompt();
+            } else {
+              alert('To install on your phone, open the 3 dots (⋮) in your Chrome browser menu and tap "Install app".');
+            }
+          }}
+          className="bg-[#C85A32] hover:bg-[#B24E2A] text-white text-xs font-bold px-3.5 py-2 rounded-xl shrink-0 transition shadow-xs"
+        >
+          Install App
+        </button>
+      </div>
 
       {/* Logout button */}
       <button

@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Download, X, Sparkles, Smartphone, Check } from 'lucide-react';
+import { Download, X, Sparkles, Smartphone, CheckCircle2, Loader2 } from 'lucide-react';
 
 const PWAInstallBanner = () => {
   const [deferredPrompt, setDeferredPrompt] = useState(window.pwaDeferredPrompt || null);
   const [showBanner, setShowBanner] = useState(false);
   const [isStandalone, setIsStandalone] = useState(false);
   const [showHelpModal, setShowHelpModal] = useState(false);
+  const [isInstalling, setIsInstalling] = useState(false);
+  const [showSuccessToast, setShowSuccessToast] = useState(false);
 
   useEffect(() => {
     // Check if already running in standalone (installed) mode
@@ -24,7 +26,6 @@ const PWAInstallBanner = () => {
       return;
     }
 
-    // If global prompt is already available
     if (window.pwaDeferredPrompt) {
       setDeferredPrompt(window.pwaDeferredPrompt);
       setShowBanner(true);
@@ -47,7 +48,7 @@ const PWAInstallBanner = () => {
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     window.addEventListener('pwa-ready', handlePwaReady);
 
-    // On mobile screens, show banner after 2 seconds even if prompt is pending
+    // On mobile devices, show banner after brief delay
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || window.innerWidth < 768;
     let timer = null;
     if (isMobile) {
@@ -55,15 +56,18 @@ const PWAInstallBanner = () => {
         if (!sessionStorage.getItem('pwa_banner_dismissed')) {
           setShowBanner(true);
         }
-      }, 2000);
+      }, 1500);
     }
 
-    // App installed event
+    // App installed event listener
     const handleAppInstalled = () => {
+      setIsInstalling(false);
       setShowBanner(false);
       setDeferredPrompt(null);
       window.pwaDeferredPrompt = null;
-      console.log('[PWA] Prime Cafe App was successfully installed');
+      setShowSuccessToast(true);
+      setTimeout(() => setShowSuccessToast(false), 6000);
+      console.log('[PWA] The Prime Cafe App was successfully installed');
     };
 
     window.addEventListener('appinstalled', handleAppInstalled);
@@ -81,19 +85,30 @@ const PWAInstallBanner = () => {
 
     if (promptEvent && typeof promptEvent.prompt === 'function') {
       try {
+        setIsInstalling(true);
         await promptEvent.prompt();
         const choice = await promptEvent.userChoice;
         console.log('[PWA] User choice:', choice);
-        setDeferredPrompt(null);
-        window.pwaDeferredPrompt = null;
-        setShowBanner(false);
+
+        if (choice.outcome === 'accepted') {
+          // Keep showing installing state until OS finishes or timeout
+          setTimeout(() => {
+            setIsInstalling(false);
+            setShowBanner(false);
+            setShowSuccessToast(true);
+            setTimeout(() => setShowSuccessToast(false), 5000);
+          }, 3000);
+        } else {
+          setIsInstalling(false);
+        }
         return;
       } catch (err) {
         console.warn('[PWA] Prompt error:', err);
+        setIsInstalling(false);
       }
     }
 
-    // If prompt is not directly available, show visual help modal
+    // If browser prompt is not ready, show manual guide
     setShowHelpModal(true);
   };
 
@@ -108,6 +123,30 @@ const PWAInstallBanner = () => {
 
   return (
     <>
+      {/* Success Notification after Installation */}
+      {showSuccessToast && (
+        <div className="fixed top-4 left-4 right-4 sm:left-auto sm:right-6 sm:max-w-sm z-50 animate-in fade-in slide-in-from-top duration-300">
+          <div className="bg-emerald-800 text-white p-3.5 rounded-2xl shadow-2xl border border-emerald-600 flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-emerald-700 flex items-center justify-center shrink-0">
+              <CheckCircle2 size={20} className="text-emerald-200" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <h4 className="text-xs font-bold leading-tight">App Installed Successfully!</h4>
+              <p className="text-[11px] text-emerald-100 mt-0.5">
+                The Prime Cafe is now on your home screen.
+              </p>
+            </div>
+            <button
+              onClick={() => setShowSuccessToast(false)}
+              className="text-emerald-300 hover:text-white p-1"
+            >
+              <X size={16} />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Install Bottom Banner */}
       {showBanner && (
         <div className="fixed bottom-20 left-3 right-3 sm:left-auto sm:right-6 sm:bottom-6 sm:max-w-sm z-50 animate-in fade-in slide-in-from-bottom duration-300">
           <div className="bg-[#4A2C18] text-[#FAF7F2] rounded-2xl p-3 shadow-2xl border border-[#FAF7F2]/15 flex items-center justify-between gap-3">
@@ -129,7 +168,7 @@ const PWAInstallBanner = () => {
                 Install Prime Cafe App
               </h4>
               <p className="text-[11px] text-[#FAF7F2]/75 leading-tight mt-0.5 truncate">
-                Fast ordering & home screen access
+                {isInstalling ? 'Installing to home screen...' : 'Fast ordering & home screen access'}
               </p>
             </div>
 
@@ -137,11 +176,21 @@ const PWAInstallBanner = () => {
             <div className="flex items-center gap-1.5 shrink-0">
               <button
                 type="button"
+                disabled={isInstalling}
                 onClick={handleInstallClick}
-                className="bg-[#C85A32] hover:bg-[#B24E2A] active:scale-95 text-white font-bold text-xs px-3 py-1.5 rounded-xl shadow-sm transition flex items-center gap-1.5"
+                className="bg-[#C85A32] hover:bg-[#B24E2A] active:scale-95 disabled:opacity-80 text-white font-bold text-xs px-3.5 py-1.5 rounded-xl shadow-sm transition flex items-center gap-1.5"
               >
-                <Download size={13} />
-                <span>Install</span>
+                {isInstalling ? (
+                  <>
+                    <Loader2 size={13} className="animate-spin" />
+                    <span>Installing...</span>
+                  </>
+                ) : (
+                  <>
+                    <Download size={13} />
+                    <span>Install</span>
+                  </>
+                )}
               </button>
               <button
                 type="button"
@@ -156,7 +205,7 @@ const PWAInstallBanner = () => {
         </div>
       )}
 
-      {/* Manual Installation Guide Modal (Fallback if browser prompt is delayed) */}
+      {/* Manual Installation Guide Modal */}
       {showHelpModal && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-[#FAF7F2] text-[#2C1810] rounded-3xl p-6 max-w-sm w-full shadow-2xl border border-[#E6DCD3] relative">

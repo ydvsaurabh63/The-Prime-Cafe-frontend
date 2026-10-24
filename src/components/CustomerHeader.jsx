@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Coffee, Bell } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
-import { Link, NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import CustomerNotifyModal from './CustomerNotifyModal';
 
 const CustomerHeader = () => {
@@ -30,50 +30,6 @@ const CustomerHeader = () => {
             </div>
           </div>
 
-        {/* Desktop & Tablet Navigation Links */}
-        <nav className="hidden md:flex items-center gap-3 lg:gap-6 text-xs font-bold shrink-0">
-          <NavLink
-            to="/"
-            end
-            className={({ isActive }) =>
-              isActive ? 'text-[#C85A32] border-b-2 border-[#C85A32] pb-0.5' : 'text-[#7A685D] hover:text-[#4A2C18]'
-            }
-          >
-            Home
-          </NavLink>
-          <NavLink
-            to="/menu"
-            className={({ isActive }) =>
-              isActive ? 'text-[#C85A32] border-b-2 border-[#C85A32] pb-0.5' : 'text-[#7A685D] hover:text-[#4A2C18]'
-            }
-          >
-            Menu
-          </NavLink>
-          <NavLink
-            to="/offers"
-            className={({ isActive }) =>
-              isActive ? 'text-[#C85A32] border-b-2 border-[#C85A32] pb-0.5' : 'text-[#7A685D] hover:text-[#4A2C18]'
-            }
-          >
-            Special Offers
-          </NavLink>
-          <NavLink
-            to="/order"
-            className={({ isActive }) =>
-              isActive ? 'text-[#C85A32] border-b-2 border-[#C85A32] pb-0.5' : 'text-[#7A685D] hover:text-[#4A2C18]'
-            }
-          >
-            Your Cart ({itemCount})
-          </NavLink>
-          <NavLink
-            to="/profile"
-            className={({ isActive }) =>
-              isActive ? 'text-[#C85A32] border-b-2 border-[#C85A32] pb-0.5' : 'text-[#7A685D] hover:text-[#4A2C18]'
-            }
-          >
-            Profile
-          </NavLink>
-        </nav>
 
         {/* Header Right Actions */}
         <div className="flex items-center gap-2">

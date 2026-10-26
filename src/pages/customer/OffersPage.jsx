@@ -13,7 +13,11 @@ import {
   Pizza,
   Utensils,
   Crown,
-  ShieldCheck
+  ShieldCheck,
+  Lock,
+  X,
+  ArrowRight,
+  AlertTriangle
 } from 'lucide-react';
 import api from '../../services/api';
 import { useCart } from '../../context/CartContext';
@@ -24,38 +28,36 @@ import confetti from 'canvas-confetti';
 const DEFAULT_FALLBACK_MILESTONES = [
   {
     visitNumber: 1,
-    title: 'Welcome Treat',
+    title: '10% OFF Welcome Feast',
+    productName: '10% OFF All Cafe Favorites',
     discountType: 'percentage',
     discountValue: 10,
-    couponCode: 'PRIME10'
+    couponCode: 'PRIME10',
+    image: '/assets/welcome_discount.jpg',
+    description: 'Enjoy a flat 10% discount across our entire cafe menu on your 1st order!',
+    perkHighlight: 'Instant 10% OFF on Pizza, Burgers, Fries & Drinks'
   },
   {
     visitNumber: 3,
-    title: 'Coffee Perk',
-    discountType: 'percentage',
-    discountValue: 15,
-    couponCode: 'VISIT3COFFEE'
+    title: 'Free Artisan Coffee',
+    productName: 'Artisan Hot Brewed Cappuccino',
+    discountType: 'fixed',
+    discountValue: 120,
+    couponCode: 'FREECOFFEE',
+    image: '/assets/cappuccino.jpg',
+    description: 'Complimentary rich handcrafted espresso with steamed milk & frothy crema on your 3rd order!',
+    perkHighlight: '100% Free Artisan Coffee with zero minimum order'
   },
   {
     visitNumber: 5,
-    title: 'Foodie Treat',
-    discountType: 'percentage',
-    discountValue: 25,
-    couponCode: 'MEGA5BURGER'
-  },
-  {
-    visitNumber: 7,
-    title: 'Pizza Feast',
+    title: 'Free Gourmet Fried Rice',
+    productName: 'Wok-Tossed Gourmet Fried Rice',
     discountType: 'fixed',
-    discountValue: 200,
-    couponCode: 'GOLD7PIZZA'
-  },
-  {
-    visitNumber: 10,
-    title: 'VIP Royalty',
-    discountType: 'percentage',
-    discountValue: 30,
-    couponCode: 'VIP10FEAST'
+    discountValue: 160,
+    couponCode: 'FREEFRIEDRICE',
+    image: '/assets/fried_rice.jpg',
+    description: 'Complimentary sizzling wok-tossed fried rice with farm-fresh veggies & aromatic seasonings on your 5th order!',
+    perkHighlight: '100% Free Fried Rice Plate with zero minimum order'
   }
 ];
 
@@ -75,6 +77,7 @@ const OffersPage = () => {
   const { applyCouponCode } = useCart();
   const { isAuthenticated } = useAuth();
   const [applyMessage, setApplyMessage] = useState({ text: '', isError: false });
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
   // Dynamic check-in milestones from backend API
   const [dynamicMilestones, setDynamicMilestones] = useState(DEFAULT_FALLBACK_MILESTONES);
@@ -154,6 +157,20 @@ const OffersPage = () => {
   );
   const checkInCount = paidOrders.length;
 
+  const currentVisitNumbers = [1, 2, 3, 4, 5];
+
+  const getMilestoneDate = (visitNum) => {
+    const order = paidOrders[visitNum - 1];
+    if (order && order.createdAt) {
+      const d = new Date(order.createdAt);
+      return d.toLocaleDateString('en-US', { day: '2-digit', month: 'short' });
+    }
+    const baseDate = new Date();
+    const diffDays = (visitNum - Math.max(1, Math.min(checkInCount, 5))) * 6;
+    const calcDate = new Date(baseDate.getTime() + diffDays * 24 * 60 * 60 * 1000);
+    return calcDate.toLocaleDateString('en-US', { day: '2-digit', month: 'short' });
+  };
+
   const handleCopyCode = (code) => {
     navigator.clipboard.writeText(code);
     setCopiedCode(code);
@@ -214,157 +231,212 @@ const OffersPage = () => {
       )}
 
       {/* ========================================================= */}
-      {/* CUSTOMER VISIT CHECK-IN STAMPS (DYNAMICALLY CONNECTED) */}
+      {/* CUSTOMER VISIT CHECK-IN TIMELINE (MATCHING IMAGE 2) */}
       {/* ========================================================= */}
-      <section className="bg-white rounded-3xl border border-[#E6DCD3] p-5 sm:p-7 shadow-xs space-y-5">
+      <section className="bg-neutral-950/90 backdrop-blur-xl rounded-2xl sm:rounded-3xl border border-white/15 p-3 sm:p-6 md:p-7 shadow-2xl text-white space-y-3.5 sm:space-y-6">
         {/* Card Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#F5EFEB] pb-4">
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="p-2 rounded-xl bg-[#FAF7F2] text-[#C85A32] border border-[#E6DCD3]">
-                <Award size={20} />
-              </span>
-              <div>
-                <h3 className="text-lg sm:text-xl font-extrabold text-[#2C1810]">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-4 border-b border-white/10 pb-2.5 sm:pb-4">
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <span className="p-2 sm:p-2.5 rounded-xl sm:rounded-2xl bg-amber-500/10 text-amber-400 border border-amber-500/20 shrink-0 shadow-inner">
+              <Award size={18} className="sm:w-[22px] sm:h-[22px] stroke-[2.2]" />
+            </span>
+            <div>
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <h3 className="text-sm sm:text-lg md:text-xl font-extrabold text-white tracking-tight">
                   Customer Visit Check-In
                 </h3>
-                <p className="text-xs text-[#7A685D]">
-                  Har order aur payment par aapka visit tick (✅) hota rahega
-                </p>
+                {isAuthenticated && (
+                  <span className="text-[9px] sm:text-[10px] font-bold text-emerald-300 bg-emerald-950/80 border border-emerald-500/30 px-1.5 sm:px-2 py-0.5 rounded-full">
+                    {user?.name || 'Customer'}
+                  </span>
+                )}
               </div>
+              <p className="text-[10px] sm:text-xs text-neutral-400 mt-0.5 line-clamp-1 sm:line-clamp-none">
+                Har order aur payment par aapka visit tick (✅) hota rahega
+              </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-              <ShieldCheck size={13} /> Auto Check-In Active
+          <div className="flex items-center justify-between sm:justify-end gap-1.5 sm:gap-2 shrink-0">
+            <span className="inline-flex items-center gap-1 sm:gap-1.5 text-[9px] sm:text-[11px] font-bold px-2 py-0.5 sm:px-3 sm:py-1 rounded-full bg-emerald-950/80 text-emerald-400 border border-emerald-500/40 shadow-xs">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <ShieldCheck size={11} className="sm:w-[13px] sm:h-[13px] text-emerald-400" />
+              <span>Auto Check-In</span>
             </span>
 
             {isAuthenticated && (
               <button
                 onClick={() => fetchMyOrders(true)}
                 disabled={refreshing || loadingOrders}
-                className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl bg-[#FAF7F2] hover:bg-[#F0EAE3] text-[#4A2C18] border border-[#E6DCD3] transition disabled:opacity-50"
+                className="inline-flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-xs font-semibold px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/10 transition disabled:opacity-50 cursor-pointer"
                 title="Refresh Check-In Count"
               >
-                <RefreshCw size={13} className={refreshing ? 'animate-spin text-[#C85A32]' : ''} />
-                <span className="hidden sm:inline">Refresh</span>
+                <RefreshCw size={11} className={refreshing ? 'animate-spin text-amber-400' : ''} />
+                <span>Refresh</span>
               </button>
             )}
           </div>
         </div>
 
-        {/* 10-Step Check-In Stamps Grid */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-[#7A685D]">
-              Visit Roadmap (Stamps 1 to 10)
-            </h4>
-            <span className="text-[11px] font-bold text-[#C85A32]">
-              {checkInCount} / 10 Completed
+        {/* Visit Roadmap Header & Status */}
+        <div className="flex items-center justify-between pt-0.5">
+          <h4 className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-neutral-400">
+            Visit Roadmap (Orders 1 to 5)
+          </h4>
+
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] sm:text-xs font-extrabold text-amber-400">
+              {Math.min(checkInCount, 5)} / 5 Completed
             </span>
           </div>
+        </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-5 lg:grid-cols-10 gap-2.5">
-            {Array.from({ length: 10 }, (_, i) => {
-              const visitNum = i + 1;
+        {/* CONNECTED HORIZONTAL STEPPER TIMELINE (Matching Image 2 Style) */}
+        <div className="relative py-2 sm:py-4 px-0.5 sm:px-2">
+          {/* Connecting lines between the 5 nodes */}
+          <div className="absolute top-[34px] sm:top-[44px] md:top-[48px] left-[10%] right-[10%] -translate-y-1/2 flex pointer-events-none z-0">
+            {currentVisitNumbers.slice(0, 4).map((visitNum, i) => {
+              const nextNum = currentVisitNumbers[i + 1];
+              const isSegmentDone = checkInCount >= nextNum;
+              const isSegmentActive = checkInCount >= visitNum && checkInCount < nextNum;
+
+              return (
+                <div key={i} className="flex-1 flex items-center">
+                  {isSegmentDone ? (
+                    <div className="w-full h-[2.5px] sm:h-[3px] bg-[#00C888] shadow-[0_0_12px_rgba(0,200,136,0.9)] rounded-full" />
+                  ) : isSegmentActive ? (
+                    <div className="w-full h-[2.5px] sm:h-[3px] bg-gradient-to-r from-[#00C888] via-amber-400 to-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.7)] rounded-full" />
+                  ) : (
+                    <div className="w-full border-t border-dashed border-neutral-600/80" />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* The 5 Node Columns */}
+          <div className="grid grid-cols-5 relative z-10 gap-0.5 sm:gap-1">
+            {currentVisitNumbers.map((visitNum) => {
               const isDone = checkInCount >= visitNum;
               const isCurrentNext = checkInCount + 1 === visitNum;
+              const dateStr = getMilestoneDate(visitNum);
 
-              // Match dynamic milestone from DB/API
               const milestone = dynamicMilestones.find(
                 (m) => Number(m.visitNumber) === visitNum && m.isActive !== false
               );
 
               const discountBadge = milestone
-                ? milestone.discountType === 'percentage'
+                ? milestone.visitNumber === 1
+                  ? '10% OFF'
+                  : milestone.visitNumber === 3
+                  ? 'Free Coffee'
+                  : milestone.visitNumber === 5
+                  ? 'Free Fried Rice'
+                  : milestone.discountType === 'percentage'
                   ? `${milestone.discountValue}% OFF`
                   : `₹${milestone.discountValue} OFF`
                 : null;
 
-              const IconComponent = milestone ? getMilestoneIcon(visitNum) : null;
-
               return (
                 <div
                   key={visitNum}
-                  className={`relative rounded-2xl p-3 flex flex-col items-center text-center transition-all ${
-                    isDone
-                      ? 'bg-emerald-50/70 border-2 border-emerald-500 shadow-2xs'
-                      : isCurrentNext
-                      ? 'bg-amber-50/70 border-2 border-[#C85A32] shadow-sm ring-2 ring-[#C85A32]/20'
-                      : 'bg-[#FAF7F2] border border-dashed border-[#D6C7BC] opacity-75'
+                  onClick={() => {
+                    if (milestone) {
+                      setSelectedProduct(milestone);
+                      if (checkInCount < milestone.visitNumber) {
+                        setApplyMessage({
+                          text: 'first complete your order then claim offer',
+                          isError: true
+                        });
+                        setTimeout(() => setApplyMessage({ text: '', isError: false }), 4500);
+                      } else if (milestone.couponCode) {
+                        handleApplyOffer(milestone.couponCode);
+                      }
+                    }
+                  }}
+                  className={`flex flex-col items-center text-center group min-w-0 ${
+                    milestone?.couponCode || milestone?.image ? 'cursor-pointer' : ''
                   }`}
+                  title={milestone?.productName ? `Click to view ${milestone.productName} preview and claim` : undefined}
                 >
-                  {/* Milestone Badge Pill */}
-                  {discountBadge && (
-                    <span
-                      className={`absolute -top-2 px-1.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-tight shadow-xs ${
-                        isDone
-                          ? 'bg-emerald-600 text-white'
-                          : isCurrentNext
-                          ? 'bg-[#C85A32] text-white animate-bounce'
-                          : 'bg-[#7A685D] text-white'
-                      }`}
-                    >
-                      {discountBadge}
-                    </span>
-                  )}
+                  {/* Top Label: "Order 1", "Order 2", etc. (Image 2 style) */}
+                  <span className="text-[10px] sm:text-xs md:text-sm font-bold text-white mb-1.5 sm:mb-2.5 tracking-tight group-hover:text-amber-300 transition truncate max-w-full">
+                    Order {visitNum}
+                  </span>
 
-                  {/* Stamp Circle */}
-                  <div
-                    className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-xs mt-1 transition-all ${
-                      isDone
-                        ? 'bg-emerald-600 text-white shadow-xs'
-                        : isCurrentNext
-                        ? 'bg-[#C85A32] text-white shadow-xs ring-4 ring-[#C85A32]/20 animate-pulse'
-                        : 'bg-white text-[#7A685D] border border-[#E6DCD3]'
-                    }`}
-                  >
+                  {/* Stepper Node Circle */}
+                  <div className="relative">
                     {isDone ? (
-                      <CheckCircle2 size={22} className="stroke-[2.5]" />
+                      // Completed: Vibrant Emerald circle with white checkmark
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-11 md:h-11 rounded-full bg-[#00C888] text-white flex items-center justify-center shadow-[0_0_15px_rgba(0,200,136,0.75)] transition-transform duration-200 group-hover:scale-110">
+                        <Check size={16} className="sm:w-5 sm:h-5 stroke-[3] text-white" />
+                      </div>
                     ) : isCurrentNext ? (
-                      <Sparkles size={18} />
-                    ) : IconComponent ? (
-                      <IconComponent size={16} className="text-[#7A685D]" />
+                      // Active / Next Reward: Golden Amber circle with Gift box icon
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-11 md:h-11 rounded-full bg-gradient-to-tr from-amber-500 via-amber-400 to-yellow-300 text-neutral-950 flex items-center justify-center shadow-[0_0_20px_rgba(245,158,11,0.9)] ring-2 sm:ring-4 ring-amber-500/30 transition-transform duration-200 group-hover:scale-110 animate-pulse">
+                        <Gift size={16} className="sm:w-5 sm:h-5 stroke-[2.2] text-neutral-950" />
+                      </div>
                     ) : (
-                      <span>{visitNum}</span>
+                      // Future / Locked: Dark circle with Lock icon
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-11 md:h-11 rounded-full bg-[#121212] border border-neutral-700/90 text-neutral-400 flex items-center justify-center shadow-inner transition-colors duration-200 group-hover:border-neutral-500">
+                        <Lock size={12} className="sm:w-4 sm:h-4 text-neutral-400" />
+                      </div>
                     )}
                   </div>
 
-                  {/* Labels */}
-                  <div className="mt-2 text-center">
-                    <span className="text-[11px] font-extrabold text-[#2C1810] block">
-                      Visit #{visitNum}
+                  {/* Bottom Label: Date + Interactive Click-to-Claim Pill */}
+                  <div className="mt-1.5 sm:mt-2.5 flex flex-col items-center w-full max-w-[66px] sm:max-w-none">
+                    <span className="text-[9px] sm:text-[11px] md:text-xs font-semibold text-neutral-400 group-hover:text-neutral-200 transition">
+                      {dateStr}
                     </span>
-                    <span
-                      className={`text-[10px] font-semibold block leading-tight mt-0.5 ${
-                        isDone
-                          ? 'text-emerald-700 font-bold'
-                          : isCurrentNext
-                          ? 'text-[#C85A32] font-bold'
-                          : 'text-[#8C7A6B]'
-                      }`}
-                    >
-                      {isDone
-                        ? 'Checked In ✓'
-                        : isCurrentNext
-                        ? 'Next Goal'
-                        : milestone
-                        ? milestone.title
-                        : 'Stamp'}
-                    </span>
+                    {discountBadge && (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (milestone) {
+                            setSelectedProduct(milestone);
+                            if (checkInCount < milestone.visitNumber) {
+                              setApplyMessage({
+                                text: 'first complete your order then claim offer',
+                                isError: true
+                              });
+                              setTimeout(() => setApplyMessage({ text: '', isError: false }), 4500);
+                            } else if (milestone.couponCode) {
+                              handleApplyOffer(milestone.couponCode);
+                            }
+                          }
+                        }}
+                        className={`mt-1 sm:mt-1.5 px-1 sm:px-2.5 py-0.5 rounded-full text-[8px] sm:text-[10px] font-black tracking-tight transition-all duration-200 cursor-pointer flex items-center justify-center gap-0.5 sm:gap-1 shadow-sm w-full max-w-[62px] sm:max-w-none ${
+                          isDone
+                            ? 'bg-emerald-600 text-white shadow-[0_0_10px_rgba(16,185,129,0.7)]'
+                            : isCurrentNext
+                            ? 'bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 text-neutral-950 shadow-[0_0_12px_rgba(245,158,11,0.6)] animate-pulse'
+                            : 'bg-white/10 hover:bg-white/20 text-neutral-300 border border-white/15'
+                        }`}
+                        title={`Click to view image and claim ${discountBadge}`}
+                      >
+                        <span className="truncate">
+                          {milestone?.visitNumber === 1 ? (
+                            '10% OFF'
+                          ) : milestone?.visitNumber === 3 ? (
+                            <>
+                              <span className="sm:hidden">Coffee ☕</span>
+                              <span className="hidden sm:inline">Free Coffee</span>
+                            </>
+                          ) : milestone?.visitNumber === 5 ? (
+                            <>
+                              <span className="sm:hidden">Rice 🍚</span>
+                              <span className="hidden sm:inline">Free Fried Rice</span>
+                            </>
+                          ) : (
+                            discountBadge
+                          )}
+                        </span>
+                        <span className="text-[7px] sm:text-[8px] font-black opacity-95 shrink-0">✨</span>
+                      </button>
+                    )}
                   </div>
-
-                  {/* Unlocked Milestone Direct Action */}
-                  {milestone && isDone && (
-                    <button
-                      onClick={() => handleApplyOffer(milestone.couponCode)}
-                      className="mt-1.5 text-[9px] bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold px-1.5 py-0.5 rounded-md transition shadow-2xs"
-                      title={`Apply ${milestone.couponCode}`}
-                    >
-                      {milestone.couponCode}
-                    </button>
-                  )}
                 </div>
               );
             })}
@@ -476,6 +548,163 @@ const OffersPage = () => {
           </div>
         )}
       </div>
+
+      {/* DEDICATED PRODUCT PREVIEW & CLAIM MODAL */}
+      {selectedProduct && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 md:p-5 bg-black/85 backdrop-blur-md animate-in fade-in duration-200"
+          onClick={() => setSelectedProduct(null)}
+        >
+          <div
+            className="relative w-full max-w-md max-h-[92dvh] flex flex-col bg-gradient-to-b from-[#23150D] via-[#1A0E08] to-[#100905] border-2 border-amber-500/50 text-[#FAF7F2] rounded-2xl sm:rounded-3xl shadow-[0_0_60px_rgba(245,158,11,0.35)] overflow-hidden animate-in zoom-in-95 duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Top Close Button */}
+            <button
+              type="button"
+              onClick={() => setSelectedProduct(null)}
+              className="absolute top-2.5 right-2.5 sm:top-3.5 sm:right-3.5 z-30 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-black/70 hover:bg-black/95 text-white/80 hover:text-white border border-white/20 flex items-center justify-center backdrop-blur-sm transition-all cursor-pointer shadow-lg active:scale-90"
+              title="Close Preview"
+            >
+              <X size={16} className="sm:w-[18px] sm:h-[18px]" />
+            </button>
+
+            {/* Product Image Banner */}
+            {selectedProduct.image && (
+              <div className="relative w-full h-40 sm:h-52 md:h-60 overflow-hidden bg-black/60 shrink-0">
+                <img
+                  src={selectedProduct.image}
+                  alt={selectedProduct.productName || selectedProduct.title}
+                  className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#23150D] via-transparent to-black/40 pointer-events-none" />
+
+                <div className="absolute top-2.5 left-2.5 sm:top-3.5 sm:left-3.5 z-20 flex flex-wrap items-center gap-1.5 sm:gap-2">
+                  <span className="px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full bg-amber-500 text-neutral-950 text-[10px] sm:text-xs font-black uppercase tracking-wider shadow-[0_0_15px_rgba(245,158,11,0.9)] flex items-center gap-1">
+                    <Sparkles size={11} className="sm:w-[13px] sm:h-[13px] fill-neutral-950" />
+                    <span>Order #{selectedProduct.visitNumber} Reward</span>
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* Product Information Body (Scrollable for mobile screens) */}
+            <div className="p-3.5 sm:p-5 md:p-6 space-y-3 sm:space-y-4 overflow-y-auto flex-1">
+              <div>
+                <div className="flex items-center gap-1.5 text-[10px] sm:text-xs font-extrabold text-amber-400 uppercase tracking-widest">
+                  <Award size={13} className="sm:w-[15px] sm:h-[15px]" />
+                  <span>Customer Visit #{selectedProduct.visitNumber} Milestone</span>
+                </div>
+                <h3 className="text-base sm:text-xl md:text-2xl font-black text-white mt-0.5 sm:mt-1 tracking-tight">
+                  {selectedProduct.productName || selectedProduct.title}
+                </h3>
+                <p className="text-xs sm:text-sm text-neutral-300 mt-1 leading-relaxed">
+                  {selectedProduct.description}
+                </p>
+                {selectedProduct.perkHighlight && (
+                  <p className="text-[11px] sm:text-xs font-bold text-amber-300/90 mt-1.5 flex items-center gap-1.5">
+                    <CheckCircle2 size={13} className="sm:w-[15px] sm:h-[15px] text-emerald-400 shrink-0" />
+                    <span>{selectedProduct.perkHighlight}</span>
+                  </p>
+                )}
+              </div>
+
+              {/* Promo Code Box: Unlocked vs Locked */}
+              {selectedProduct.couponCode && (
+                checkInCount >= selectedProduct.visitNumber ? (
+                  <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-black/50 border border-amber-400/40 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 shadow-inner">
+                    <div>
+                      <span className="text-[9px] sm:text-[10px] font-bold text-neutral-400 block uppercase tracking-wider">
+                        Promo Coupon Code
+                      </span>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <span className="font-mono text-sm sm:text-base md:text-lg font-black text-amber-300 tracking-wider">
+                          {selectedProduct.couponCode}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => handleCopyCode(selectedProduct.couponCode)}
+                          className="p-1 rounded-md hover:bg-white/10 text-neutral-400 hover:text-white transition cursor-pointer"
+                          title="Copy code"
+                        >
+                          {copiedCode === selectedProduct.couponCode ? (
+                            <Check size={14} className="sm:w-4 sm:h-4 text-emerald-400" />
+                          ) : (
+                            <Copy size={14} className="sm:w-4 sm:h-4" />
+                          )}
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 self-stretch sm:self-auto">
+                      <button
+                        type="button"
+                        onClick={() => handleApplyOffer(selectedProduct.couponCode)}
+                        className="w-full sm:w-auto px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs font-black transition-all shadow-md active:scale-95 cursor-pointer flex items-center justify-center gap-1.5 bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 text-neutral-950 shadow-[0_0_15px_rgba(245,158,11,0.6)]"
+                      >
+                        <Sparkles size={13} className="sm:w-[14px] sm:h-[14px] stroke-[2.5]" />
+                        <span>Claim & Apply</span>
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-amber-950/70 border border-amber-500/50 space-y-2">
+                    <div className="flex items-center gap-1.5 sm:gap-2 text-amber-300 font-extrabold text-xs sm:text-sm">
+                      <AlertTriangle size={15} className="sm:w-[17px] sm:h-[17px] text-amber-400 shrink-0 animate-pulse" />
+                      <span>first complete your order then claim offer</span>
+                    </div>
+                    <p className="text-[11px] sm:text-xs text-neutral-300 leading-relaxed">
+                      Yeh reward claim karne ke liye pehle Order #{selectedProduct.visitNumber} complete karein. Aapka live progress: {Math.min(checkInCount, 5)}/5 orders.
+                    </p>
+                    <div className="pt-0.5 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2">
+                      <span className="font-mono text-[11px] sm:text-xs text-neutral-400 bg-black/40 px-2.5 py-1 rounded-lg border border-white/10 text-center sm:text-left">
+                        Code: ••••••••• (Locked)
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setApplyMessage({
+                            text: 'first complete your order then claim offer',
+                            isError: true
+                          });
+                          setTimeout(() => setApplyMessage({ text: '', isError: false }), 4500);
+                        }}
+                        className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-neutral-300 hover:text-white text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer"
+                      >
+                        <Lock size={12} className="text-amber-400" />
+                        <span>Claim Offer</span>
+                      </button>
+                    </div>
+                  </div>
+                )
+              )}
+
+              {/* Action Buttons: Order Now & Close */}
+              <div className="pt-1 sm:pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
+                <Link
+                  to="/order"
+                  onClick={() => setSelectedProduct(null)}
+                  className="flex-1 py-2.5 sm:py-3 px-4 rounded-xl sm:rounded-2xl bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-400 hover:to-yellow-300 text-neutral-950 font-black text-xs sm:text-sm text-center shadow-lg hover:shadow-[0_0_20px_rgba(245,158,11,0.6)] transition-all active:scale-95 flex items-center justify-center gap-1.5 sm:gap-2"
+                >
+                  <span>
+                    {checkInCount >= selectedProduct.visitNumber
+                      ? 'Order Now & Enjoy'
+                      : 'Complete Order to Unlock →'}
+                  </span>
+                  <ArrowRight size={14} className="sm:w-4 sm:h-4 stroke-[3]" />
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => setSelectedProduct(null)}
+                  className="py-2.5 sm:py-3 px-5 rounded-xl sm:rounded-2xl bg-white/10 hover:bg-white/20 text-neutral-300 hover:text-white font-bold text-xs transition cursor-pointer text-center"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

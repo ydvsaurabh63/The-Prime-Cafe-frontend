@@ -31,6 +31,7 @@ import {
 } from 'lucide-react';
 import api from '../../services/api';
 import { useCart } from '../../context/CartContext';
+import LoyaltyRewardHero from '../../components/LoyaltyRewardHero';
 
 // Crisp inline SVGs for Google and Instagram
 const GoogleIcon = ({ size = 20 }) => (
@@ -382,80 +383,9 @@ const HomePage = () => {
         )}
       </section>
 
-      {/* 2. HERO SECTION: Full-Bleed 3D Video Background */}
-      <section className="relative overflow-hidden rounded-3xl bg-[#0F0805] text-[#FAF7F2] p-6 sm:p-10 shadow-2xl border border-[#3D2314] min-h-[420px] sm:min-h-[480px] flex flex-col justify-between">
-        {/* Full-Bleed 3D Video Layer */}
-        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-          <video
-            ref={videoRef}
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="auto"
-            className="w-full h-full object-cover opacity-100"
-          >
-            <source src="/assets/gemini_generated_video_caa8d77b.mp4" type="video/mp4" />
-            <source src="/assets/burger-animation.mp4" type="video/mp4" />
-          </video>
-          {/* Subtle all-over cinematic vignette so whole video shines edge-to-edge */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-black/30" />
-          <div className="absolute inset-0 bg-black/20" />
-        </div>
+      {/* 2. HERO SECTION: Video Background with Interactive Loyalty Rewards (Order More, Get More!) */}
+      <LoyaltyRewardHero />
 
-        {/* Hero Content */}
-        <div className="relative z-10 max-w-xl space-y-4 drop-shadow-[0_2px_12px_rgba(0,0,0,0.95)]">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#C85A32] text-white text-[11px] sm:text-xs font-bold tracking-wide uppercase shadow-md">
-            <Sparkles size={13} className="animate-spin-slow shrink-0" />
-            <span>Welcome to The Prime Cafe</span>
-          </div>
-
-          <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-[1.15] text-white drop-shadow-lg">
-            Where Every Sip <br />
-            <span className="text-[#E08D5B] font-serif italic">Tells a Story</span>
-          </h1>
-
-          <p className="text-xs sm:text-sm md:text-base text-[#FAF7F2] leading-relaxed max-w-lg font-medium drop-shadow-md">
-            Step into a cozy sanctuary of rich artisanal coffee, warm comfort food, and unforgettable moments. Handcrafted fresh with every order.
-          </p>
-
-          {/* Quick Action CTAs */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
-            <Link
-              to="/menu"
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-2xl bg-[#C85A32] hover:bg-[#B24E2A] text-white font-bold text-xs sm:text-sm shadow-xl shadow-black/40 hover:scale-[1.02] active:scale-95 transition-all text-center"
-            >
-              <UtensilsCrossed size={16} />
-              <span>Explore Menu</span>
-              <ArrowRight size={15} />
-            </Link>
-
-            <Link
-              to="/offers"
-              className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-black/40 hover:bg-black/60 text-[#FAF7F2] font-semibold text-xs sm:text-sm border border-white/20 hover:border-white/40 backdrop-blur-md shadow-lg transition-all text-center"
-            >
-              <Tag size={15} className="text-[#E08D5B]" />
-              <span>Special Offers</span>
-            </Link>
-          </div>
-        </div>
-
-        {/* Quick Cafe Badges Bar */}
-        <div className="relative z-10 mt-8 pt-6 border-t border-white/20 grid grid-cols-2 sm:grid-cols-3 gap-4 text-xs text-[#FAF7F2] drop-shadow-md">
-          <div className="flex items-center gap-2">
-            <Clock size={16} className="text-[#E08D5B] shrink-0" />
-            <span>Open: 10:00 AM – 11:30 PM</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <MapPin size={16} className="text-[#E08D5B] shrink-0" />
-            <span>Dine-In & Takeaway</span>
-          </div>
-          <div className="flex items-center gap-2 col-span-2 sm:col-span-1">
-            <ShieldCheck size={16} className="text-[#E08D5B] shrink-0" />
-            <span>100% Fresh & Hygienic</span>
-          </div>
-        </div>
-      </section>
 
       {/* 3. SOCIAL PROOF & LIVE REPUTATION (Directly under Hero & Search) */}
       <section className="space-y-4">

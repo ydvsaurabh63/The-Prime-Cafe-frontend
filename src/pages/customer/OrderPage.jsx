@@ -7,6 +7,8 @@ import api from '../../services/api';
 import confetti from 'canvas-confetti';
 import { getSocket } from '../../services/socket';
 
+const DEFAULT_DISH_FALLBACK = 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=400&q=80';
+
 const OrderPage = () => {
   const {
     cartItems,
@@ -237,46 +239,72 @@ const OrderPage = () => {
                   <h4 className="text-xs font-bold text-[#7A685D] uppercase tracking-wider mb-3">
                     Selected Dishes & Beverages
                   </h4>
-                  {cartItems.map((item) => (
-                    <div
-                      key={item._id}
-                      className="flex items-center justify-between py-3.5 first:pt-1 last:pb-1"
-                    >
-                      <div className="flex-1 pr-4">
-                        <div className="flex items-center gap-2">
-                          <span
-                            className={`w-2 h-2 rounded-full ${
-                              item.isVeg ? 'bg-emerald-600' : 'bg-rose-600'
-                            }`}
-                          ></span>
-                          <h5 className="font-bold text-sm text-[#2C1810]">{item.name}</h5>
-                        </div>
-                        <p className="text-xs text-[#7A685D] mt-0.5">₹{item.price} each</p>
-                      </div>
+                  {cartItems.map((item) => {
+                    const fallbackImg = DEFAULT_DISH_FALLBACK;
+                    const itemImg = item.image || fallbackImg;
 
-                      <div className="flex items-center gap-4">
-                        <div className="flex items-center gap-3 bg-[#F5EFEB] border border-[#E6DCD3] rounded-xl px-2.5 py-1 text-xs font-bold text-[#4A2C18]">
-                          <button
-                            onClick={() => updateQuantity(item._id, -1)}
-                            className="hover:text-[#C85A32] p-0.5"
-                          >
-                            <Minus size={14} />
-                          </button>
-                          <span>{item.quantity}</span>
-                          <button
-                            onClick={() => updateQuantity(item._id, 1)}
-                            className="hover:text-[#C85A32] p-0.5"
-                          >
-                            <Plus size={14} />
-                          </button>
+                    return (
+                      <div
+                        key={item._id}
+                        className="flex items-center justify-between py-3.5 first:pt-1 last:pb-1 gap-3 sm:gap-4"
+                      >
+                        {/* Dish Image Thumbnail */}
+                        <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl overflow-hidden bg-[#FAF7F2] border border-[#E6DCD3] shrink-0 shadow-2xs">
+                          <img
+                            src={itemImg}
+                            alt={item.name}
+                            onError={(e) => {
+                              e.currentTarget.onerror = null;
+                              e.currentTarget.src = fallbackImg;
+                            }}
+                            className="w-full h-full object-cover"
+                            loading="lazy"
+                          />
                         </div>
 
-                        <span className="font-extrabold text-sm text-[#2C1810] min-w-[60px] text-right">
-                          ₹{item.price * item.quantity}
-                        </span>
+                        {/* Dish Details */}
+                        <div className="flex-1 min-w-0 pr-2">
+                          <div className="flex items-center gap-2">
+                            <span
+                              className={`w-2 h-2 rounded-full shrink-0 ${
+                                item.isVeg ? 'bg-emerald-600' : 'bg-rose-600'
+                              }`}
+                              title={item.isVeg ? 'Vegetarian' : 'Non-Vegetarian'}
+                            />
+                            <h5 className="font-bold text-sm text-[#2C1810] truncate">{item.name}</h5>
+                          </div>
+                          <p className="text-xs text-[#7A685D] mt-0.5">₹{item.price} each</p>
+                        </div>
+
+                        {/* Quantity Controller & Price */}
+                        <div className="flex items-center gap-3 sm:gap-4 shrink-0">
+                          <div className="flex items-center gap-2.5 sm:gap-3 bg-[#F5EFEB] border border-[#E6DCD3] rounded-xl px-2.5 py-1 text-xs font-bold text-[#4A2C18]">
+                            <button
+                              type="button"
+                              onClick={() => updateQuantity(item._id, -1)}
+                              className="hover:text-[#C85A32] p-0.5 transition active:scale-90"
+                              title="Decrease quantity"
+                            >
+                              <Minus size={14} />
+                            </button>
+                            <span className="w-4 text-center">{item.quantity}</span>
+                            <button
+                              type="button"
+                              onClick={() => updateQuantity(item._id, 1)}
+                              className="hover:text-[#C85A32] p-0.5 transition active:scale-90"
+                              title="Increase quantity"
+                            >
+                              <Plus size={14} />
+                            </button>
+                          </div>
+
+                          <span className="font-extrabold text-sm text-[#2C1810] min-w-[60px] text-right">
+                            ₹{item.price * item.quantity}
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
 
                 {/* Special Instructions */}
@@ -496,13 +524,27 @@ const OrderPage = () => {
                     </span>
                   </div>
 
-                  <div className="space-y-1.5 text-xs sm:text-sm">
+                  <div className="space-y-2 text-xs sm:text-sm">
                     {order.items.map((item, idx) => (
-                      <div key={idx} className="flex justify-between text-[#2C1810]">
-                        <span>
-                          {item.quantity}× {item.name}
-                        </span>
-                        <span className="text-[#7A685D] font-mono">₹{item.subtotal}</span>
+                      <div key={idx} className="flex items-center justify-between text-[#2C1810] gap-3">
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          {item.image ? (
+                            <img
+                              src={item.image}
+                              alt={item.name}
+                              onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                              className="w-8 h-8 rounded-lg object-cover border border-[#E6DCD3] shrink-0"
+                            />
+                          ) : (
+                            <div className="w-8 h-8 rounded-lg bg-[#FAF7F2] border border-[#E6DCD3] flex items-center justify-center text-xs shrink-0">
+                              ☕
+                            </div>
+                          )}
+                          <span className="truncate">
+                            <strong className="text-[#C85A32]">{item.quantity}×</strong> {item.name}
+                          </span>
+                        </div>
+                        <span className="text-[#7A685D] font-mono shrink-0">₹{item.subtotal}</span>
                       </div>
                     ))}
                   </div>

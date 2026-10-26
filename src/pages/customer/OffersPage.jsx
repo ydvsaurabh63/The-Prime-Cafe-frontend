@@ -75,7 +75,7 @@ const OffersPage = () => {
   const [error, setError] = useState('');
   const [copiedCode, setCopiedCode] = useState('');
   const { applyCouponCode } = useCart();
-  const { isAuthenticated } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const [applyMessage, setApplyMessage] = useState({ text: '', isError: false });
   const [selectedProduct, setSelectedProduct] = useState(null);
 

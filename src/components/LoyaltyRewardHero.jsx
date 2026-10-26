@@ -401,7 +401,7 @@ const LoyaltyRewardHero = () => {
                     ) : isSegmentActive ? (
                       <div className="w-full h-[2.5px] sm:h-[3px] bg-gradient-to-r from-[#00C888] via-amber-400 to-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.7)] rounded-full" />
                     ) : (
-                      <div className="w-full border-t border-dashed border-neutral-600/80" />
+                      <div className="w-full border-t-2 border-dashed border-amber-300/70 drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]" />
                     )}
                   </div>
                 );
@@ -443,9 +443,9 @@ const LoyaltyRewardHero = () => {
                           <Gift size={16} className="sm:w-5 sm:h-5 stroke-[2.2] text-neutral-950" />
                         </div>
                       ) : (
-                        // Future / Locked: Dark circle with Lock icon
-                        <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-11 md:h-11 rounded-full bg-black/60 border border-white/25 text-neutral-300 flex items-center justify-center backdrop-blur-xs transition-colors duration-200 group-hover:border-neutral-300 shadow-[0_2px_8px_rgba(0,0,0,0.7)]">
-                          <Lock size={12} className="sm:w-4 sm:h-4 text-neutral-300" />
+                        // Future / Locked: Dark circle with Lock icon and light golden-amber border
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-11 md:h-11 rounded-full bg-black/75 border-2 border-amber-200/80 text-amber-200 flex items-center justify-center backdrop-blur-xs transition-colors duration-200 group-hover:border-amber-300 shadow-[0_0_12px_rgba(253,230,138,0.25)]">
+                          <Lock size={12} className="sm:w-4 sm:h-4 text-amber-200" />
                         </div>
                       )}
                     </div>

@@ -241,7 +241,7 @@ const OffersPage = () => {
               <Award size={18} className="sm:w-[22px] sm:h-[22px] stroke-[2.2]" />
             </span>
             <div>
-              <h3 className="text-sm sm:text-lg md:text-xl font-extrabold text-white tracking-tight">
+              <h3 className="text-sm sm:text-lg md:text-xl font-extrabold text-amber-100 tracking-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
                 Customer Visit Check-In
               </h3>
             </div>
@@ -343,8 +343,8 @@ const OffersPage = () => {
                   }`}
                   title={milestone?.productName ? `Click to view ${milestone.productName} preview and claim` : undefined}
                 >
-                  {/* Top Label: "Order 1", "Order 2", etc. (Image 2 style) */}
-                  <span className="text-[10px] sm:text-xs md:text-sm font-bold text-white mb-1.5 sm:mb-2.5 tracking-tight group-hover:text-amber-300 transition truncate max-w-full">
+                  {/* Top Label: "Order 1", "Order 2", etc. (Image 2 style) - light amber for clear visibility */}
+                  <span className="text-[10px] sm:text-xs md:text-sm font-extrabold text-amber-200 mb-1.5 sm:mb-2.5 tracking-tight group-hover:text-amber-100 transition truncate max-w-full drop-shadow-[0_2px_6px_rgba(0,0,0,0.95)]">
                     Order {visitNum}
                   </span>
 

@@ -284,8 +284,8 @@ const LoyaltyRewardHero = () => {
           <source src="/assets/gemini_generated_video_caa8d77b.mp4" type="video/mp4" />
           <source src="/assets/burger-animation.mp4" type="video/mp4" />
         </video>
-        {/* Transparent cinematic vignette so video is clearly visible */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-black/50 pointer-events-none" />
+        {/* Transparent cinematic vignette with dark center protection so video and text are both clearly visible */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/55 to-black/65 pointer-events-none" />
       </div>
 
       {/* 2. FOREGROUND CONTENT: Sleek Timeline Stepper Matching Image 2 */}
@@ -340,7 +340,7 @@ const LoyaltyRewardHero = () => {
                 <Award size={18} className="sm:w-[22px] sm:h-[22px] stroke-[2.2]" />
               </span>
               <div>
-                <h3 className="text-sm sm:text-lg md:text-xl font-extrabold text-white tracking-tight">
+                <h3 className="text-sm sm:text-lg md:text-xl font-extrabold text-amber-100 tracking-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
                   Customer Visit Check-In
                 </h3>
               </div>
@@ -361,12 +361,12 @@ const LoyaltyRewardHero = () => {
 
           {/* Visit Roadmap Header & Status */}
           <div className="flex items-center justify-between pt-0.5">
-            <h4 className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-neutral-400">
+            <h4 className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-amber-200/80 drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)]">
               Visit Roadmap (Orders 1 to 5)
             </h4>
 
             <div className="flex items-center gap-2">
-              <span className="text-[11px] sm:text-xs font-extrabold text-amber-400">
+              <span className="text-[11px] sm:text-xs font-extrabold text-amber-400 drop-shadow-[0_1px_6px_rgba(0,0,0,0.9)]">
                 {Math.min(checkInCount, 5)} / 5 Completed
               </span>
               {isAuthenticated && (
@@ -425,8 +425,8 @@ const LoyaltyRewardHero = () => {
                     }`}
                     title={m.productName ? `Click to view ${m.productName} preview and claim` : undefined}
                   >
-                    {/* Top Label: "Order 1", "Order 2", etc. (Image 2 style) */}
-                    <span className="text-[10px] sm:text-xs md:text-sm font-bold text-white mb-1.5 sm:mb-2.5 tracking-tight group-hover:text-amber-300 transition truncate max-w-full">
+                    {/* Top Label: "Order 1", "Order 2", etc. (Image 2 style) - light amber for clear visibility */}
+                    <span className="text-[10px] sm:text-xs md:text-sm font-extrabold text-amber-200 mb-1.5 sm:mb-2.5 tracking-tight group-hover:text-amber-100 transition truncate max-w-full drop-shadow-[0_2px_6px_rgba(0,0,0,0.95)]">
                       Order {visitNum}
                     </span>
 
@@ -444,15 +444,15 @@ const LoyaltyRewardHero = () => {
                         </div>
                       ) : (
                         // Future / Locked: Dark circle with Lock icon
-                        <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-11 md:h-11 rounded-full bg-black/50 border border-white/20 text-neutral-400 flex items-center justify-center backdrop-blur-xs transition-colors duration-200 group-hover:border-neutral-400">
-                          <Lock size={12} className="sm:w-4 sm:h-4 text-neutral-400" />
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-11 md:h-11 rounded-full bg-black/60 border border-white/25 text-neutral-300 flex items-center justify-center backdrop-blur-xs transition-colors duration-200 group-hover:border-neutral-300 shadow-[0_2px_8px_rgba(0,0,0,0.7)]">
+                          <Lock size={12} className="sm:w-4 sm:h-4 text-neutral-300" />
                         </div>
                       )}
                     </div>
 
                     {/* Bottom Label: Date (Image 2 style) + Interactive Click-to-Claim Pill */}
                     <div className="mt-1.5 sm:mt-2.5 flex flex-col items-center w-full max-w-[66px] sm:max-w-none">
-                      <span className="text-[9px] sm:text-[11px] md:text-xs font-semibold text-neutral-400 group-hover:text-neutral-200 transition">
+                      <span className="text-[9px] sm:text-[11px] md:text-xs font-semibold text-neutral-300 group-hover:text-amber-200 transition drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)]">
                         {dateStr}
                       </span>
                       {m.discountBadge && (
@@ -499,7 +499,7 @@ const LoyaltyRewardHero = () => {
         </div>
 
         {/* BOTTOM INFO BAR */}
-        <div className="pt-2 grid grid-cols-3 gap-1 sm:flex sm:items-center sm:justify-between text-[10px] sm:text-xs text-[#FAF7F2] font-medium drop-shadow-[0_1px_6px_rgba(0,0,0,0.9)] text-center sm:text-left">
+        <div className="pt-2 grid grid-cols-3 gap-1 sm:flex sm:items-center sm:justify-between text-[10px] sm:text-xs text-amber-100/90 font-medium drop-shadow-[0_1px_6px_rgba(0,0,0,0.95)] text-center sm:text-left">
           <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-0.5 sm:gap-2">
             <Clock size={13} className="sm:w-[15px] sm:h-[15px] text-amber-400 shrink-0" />
             <span className="truncate max-w-full">10 AM – 11:30 PM</span>

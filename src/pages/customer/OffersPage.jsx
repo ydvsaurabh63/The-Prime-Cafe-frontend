@@ -235,35 +235,19 @@ const OffersPage = () => {
       {/* ========================================================= */}
       <section className="bg-neutral-950/90 backdrop-blur-xl rounded-2xl sm:rounded-3xl border border-white/15 p-3 sm:p-6 md:p-7 shadow-2xl text-white space-y-3.5 sm:space-y-6">
         {/* Card Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-4 border-b border-white/10 pb-2.5 sm:pb-4">
+        <div className="flex items-center justify-between gap-2.5 sm:gap-4 border-b border-white/10 pb-2.5 sm:pb-4">
           <div className="flex items-center gap-2.5 sm:gap-3">
             <span className="p-2 sm:p-2.5 rounded-xl sm:rounded-2xl bg-amber-500/10 text-amber-400 border border-amber-500/20 shrink-0 shadow-inner">
               <Award size={18} className="sm:w-[22px] sm:h-[22px] stroke-[2.2]" />
             </span>
             <div>
-              <div className="flex items-center gap-1.5 sm:gap-2">
-                <h3 className="text-sm sm:text-lg md:text-xl font-extrabold text-white tracking-tight">
-                  Customer Visit Check-In
-                </h3>
-                {isAuthenticated && (
-                  <span className="text-[9px] sm:text-[10px] font-bold text-emerald-300 bg-emerald-950/80 border border-emerald-500/30 px-1.5 sm:px-2 py-0.5 rounded-full">
-                    {user?.name || 'Customer'}
-                  </span>
-                )}
-              </div>
-              <p className="text-[10px] sm:text-xs text-neutral-400 mt-0.5 line-clamp-1 sm:line-clamp-none">
-                Har order aur payment par aapka visit tick (✅) hota rahega
-              </p>
+              <h3 className="text-sm sm:text-lg md:text-xl font-extrabold text-white tracking-tight">
+                Customer Visit Check-In
+              </h3>
             </div>
           </div>
 
-          <div className="flex items-center justify-between sm:justify-end gap-1.5 sm:gap-2 shrink-0">
-            <span className="inline-flex items-center gap-1 sm:gap-1.5 text-[9px] sm:text-[11px] font-bold px-2 py-0.5 sm:px-3 sm:py-1 rounded-full bg-emerald-950/80 text-emerald-400 border border-emerald-500/40 shadow-xs">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              <ShieldCheck size={11} className="sm:w-[13px] sm:h-[13px] text-emerald-400" />
-              <span>Auto Check-In</span>
-            </span>
-
+          <div className="flex items-center justify-end shrink-0">
             {isAuthenticated && (
               <button
                 onClick={() => fetchMyOrders(true)}

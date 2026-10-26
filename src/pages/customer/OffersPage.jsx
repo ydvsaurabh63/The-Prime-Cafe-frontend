@@ -233,7 +233,7 @@ const OffersPage = () => {
       {/* ========================================================= */}
       {/* CUSTOMER VISIT CHECK-IN TIMELINE (MATCHING IMAGE 2) */}
       {/* ========================================================= */}
-      <section className="bg-neutral-950/90 backdrop-blur-xl rounded-2xl sm:rounded-3xl border border-white/15 p-3 sm:p-6 md:p-7 shadow-2xl text-white space-y-3.5 sm:space-y-6">
+      <section className="bg-[#392113] rounded-2xl sm:rounded-3xl border border-[#523320] p-3 sm:p-6 md:p-7 shadow-2xl text-white space-y-3.5 sm:space-y-6">
         {/* Card Header */}
         <div className="flex items-center justify-between gap-2.5 sm:gap-4 border-b border-white/10 pb-2.5 sm:pb-4">
           <div className="flex items-center gap-2.5 sm:gap-3">
@@ -362,7 +362,7 @@ const OffersPage = () => {
                       </div>
                     ) : (
                       // Future / Locked: Dark circle with Lock icon
-                      <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-11 md:h-11 rounded-full bg-[#121212] border border-neutral-700/90 text-neutral-400 flex items-center justify-center shadow-inner transition-colors duration-200 group-hover:border-neutral-500">
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-11 md:h-11 rounded-full bg-[#24150C] border border-[#523320] text-neutral-400 flex items-center justify-center shadow-inner transition-colors duration-200 group-hover:border-neutral-400">
                         <Lock size={12} className="sm:w-4 sm:h-4 text-neutral-400" />
                       </div>
                     )}

@@ -74,9 +74,6 @@ const CustomerHeader = () => {
                   The Prime Cafe
                 </h1>
               </Link>
-              <p className="text-[10px] sm:text-[11px] text-[#7A685D] mt-0.5 font-medium truncate max-w-[140px] sm:max-w-none">
-                Artisanal Brews & Comfort Eats
-              </p>
             </div>
           </div>
 

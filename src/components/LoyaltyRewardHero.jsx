@@ -386,11 +386,7 @@ const LoyaltyRewardHero = () => {
           </div>
         </div>
 
-        {/* Motivating Subtitle from Image 2 */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 pt-1 border-t border-white/5">
-          <p className="text-xs sm:text-sm text-neutral-400 font-medium">
-            Complete your purchases and unlock exciting rewards.
-          </p>
+        <div className="flex items-center justify-between gap-1 pt-1 border-t border-white/5">
           <div className="text-[11px] sm:text-xs font-extrabold text-amber-400 flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
             <span>{Math.min(totalOrders, 5)} / 5 Completed</span>

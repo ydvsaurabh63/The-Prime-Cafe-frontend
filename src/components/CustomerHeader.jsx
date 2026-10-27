@@ -103,10 +103,10 @@ const CustomerHeader = () => {
             </button>
 
             <Link
-              to="/admin/login"
+              to="/client/login"
               className="hidden lg:inline-block text-[11px] text-[#7A685D] hover:text-[#4A2C18] font-semibold underline ml-1"
             >
-              Staff Portal
+              Management Portal
             </Link>
           </div>
         </div>

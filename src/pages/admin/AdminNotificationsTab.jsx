@@ -15,7 +15,8 @@ import {
   Users,
   MapPin,
   RefreshCw,
-  MessageSquare
+  MessageSquare,
+  X
 } from 'lucide-react';
 import api from '../../services/api';
 import { useNavigate } from 'react-router-dom';
@@ -233,46 +234,82 @@ const AdminNotificationsTab = () => {
     <div className="space-y-6">
       {/* Header & Main Mode Switcher */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#E6DCD3] pb-4">
-        <div>
-          <h2 className="text-xl font-extrabold text-[#2C1810] tracking-tight">
-            Cafe Notification & Messaging Center
-          </h2>
-          <p className="text-xs text-[#7A685D] mt-0.5">
-            Send real-time notices directly to customers or monitor incoming orders & staff calls.
-          </p>
+        <div className="flex items-start justify-between gap-3 w-full sm:w-auto">
+          <div>
+            <h2 className="text-xl font-extrabold text-[#2C1810] tracking-tight">
+              Cafe Notification & Messaging Center
+            </h2>
+            <p className="text-xs text-[#7A685D] mt-0.5">
+              Send real-time notices directly to customers or monitor incoming orders & staff calls.
+            </p>
+          </div>
+          {/* Mobile Close Button */}
+          <button
+            type="button"
+            onClick={() => {
+              if (window.history.length > 1) {
+                navigate(-1);
+              } else {
+                navigate('/admin/orders');
+              }
+            }}
+            className="sm:hidden p-2 rounded-xl bg-white hover:bg-neutral-100 border border-[#E6DCD3] text-[#7A685D] hover:text-[#2C1810] flex items-center justify-center transition shadow-2xs cursor-pointer active:scale-95 shrink-0"
+            title="Close / Go Back"
+          >
+            <X size={18} />
+          </button>
         </div>
 
-        {/* Tab Switcher */}
-        <div className="flex items-center gap-1.5 p-1 bg-[#FAF7F2] rounded-2xl border border-[#E6DCD3] self-start sm:self-auto">
-          <button
-            type="button"
-            onClick={() => setActiveSubTab('send_customer')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer ${
-              activeSubTab === 'send_customer'
-                ? 'bg-[#C85A32] text-white shadow-xs'
-                : 'text-[#7A685D] hover:text-[#2C1810]'
-            }`}
-          >
-            <Send size={14} />
-            <span>Send to Customers</span>
-          </button>
+        {/* Tab Switcher & Desktop Close Button */}
+        <div className="flex items-center gap-2.5 self-start sm:self-auto w-full sm:w-auto justify-between sm:justify-end flex-wrap">
+          <div className="flex items-center gap-1.5 p-1 bg-[#FAF7F2] rounded-2xl border border-[#E6DCD3]">
+            <button
+              type="button"
+              onClick={() => setActiveSubTab('send_customer')}
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer ${
+                activeSubTab === 'send_customer'
+                  ? 'bg-[#C85A32] text-white shadow-xs'
+                  : 'text-[#7A685D] hover:text-[#2C1810]'
+              }`}
+            >
+              <Send size={14} />
+              <span>Send to Customers</span>
+            </button>
 
+            <button
+              type="button"
+              onClick={() => setActiveSubTab('incoming_alerts')}
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer ${
+                activeSubTab === 'incoming_alerts'
+                  ? 'bg-[#4A2C18] text-white shadow-xs'
+                  : 'text-[#7A685D] hover:text-[#2C1810]'
+              }`}
+            >
+              <Bell size={14} />
+              <span>Incoming Alerts</span>
+              {unreadCount > 0 && (
+                <span className="bg-[#C85A32] text-white text-[10px] font-black px-1.5 py-0.2 rounded-full">
+                  {unreadCount}
+                </span>
+              )}
+            </button>
+          </div>
+
+          {/* Desktop Close Button */}
           <button
             type="button"
-            onClick={() => setActiveSubTab('incoming_alerts')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer ${
-              activeSubTab === 'incoming_alerts'
-                ? 'bg-[#4A2C18] text-white shadow-xs'
-                : 'text-[#7A685D] hover:text-[#2C1810]'
-            }`}
+            onClick={() => {
+              if (window.history.length > 1) {
+                navigate(-1);
+              } else {
+                navigate('/admin/orders');
+              }
+            }}
+            className="hidden sm:flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white hover:bg-[#FAF7F2] border border-[#E6DCD3] text-[#4A2C18] hover:text-[#C85A32] text-xs font-bold transition shadow-2xs cursor-pointer active:scale-95"
+            title="Close Notifications"
           >
-            <Bell size={14} />
-            <span>Incoming Alerts</span>
-            {unreadCount > 0 && (
-              <span className="bg-[#C85A32] text-white text-[10px] font-black px-1.5 py-0.2 rounded-full">
-                {unreadCount}
-              </span>
-            )}
+            <X size={15} />
+            <span>Close</span>
           </button>
         </div>
       </div>

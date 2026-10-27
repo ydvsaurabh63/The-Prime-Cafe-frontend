@@ -364,16 +364,9 @@ const AdminOffersTab = () => {
           <div className="bg-white rounded-3xl border border-[#E6DCD3] p-5 shadow-2xs space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#F5EFEB] pb-4">
               <div>
-                <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 mb-1">
-                  <ShieldCheck size={13} /> Real-Time Customer Sync
-                </span>
-                <h3 className="text-base font-extrabold text-[#2C1810]">
-                  Customer Visit Milestones (विज़िट चेक-इन ऑफर्स)
+                <h3 className="text-base sm:text-lg font-extrabold text-[#2C1810]">
+                  Customer Visit Milestones
                 </h3>
-                <p className="text-xs text-[#7A685D]">
-                  Customer jitni baar order le kar payment karega, uske check-in stamps tick honge
-                  aur yahan configured offers unlock honge.
-                </p>
               </div>
 
               <button

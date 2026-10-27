@@ -63,6 +63,14 @@ const PortalSwitcher = () => {
           <Coffee size={14} className="text-orange-300" />
           <span>Client Dashboard</span>
         </NavLink>
+
+        {/* Customer Menu Link */}
+        <NavLink
+          to="/"
+          className="hidden md:flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold text-neutral-300 hover:bg-[#3D2314] hover:text-white transition"
+        >
+          <span>Customer View ↗</span>
+        </NavLink>
       </div>
     </div>
   );

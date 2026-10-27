@@ -9,6 +9,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import PortalSwitcher from '../components/PortalSwitcher';
 
 const SuperAdminLayout = () => {
   const navigate = useNavigate();
@@ -16,8 +17,7 @@ const SuperAdminLayout = () => {
 
   useEffect(() => {
     if (!loading) {
-      const userEmail = (user?.email || '').toLowerCase();
-      const isSuper = user?.role === 'superadmin' || userEmail === 'superadmin@aajkalcafe.com';
+      const isSuper = user?.role === 'superadmin';
       if (!user || !isSuper) {
         navigate('/superadmin/login', { replace: true });
       }
@@ -38,6 +38,7 @@ const SuperAdminLayout = () => {
 
   return (
     <div className="min-h-screen bg-[#FAF7F2] text-[#2C1810] flex flex-col antialiased">
+      <PortalSwitcher />
       <div className="flex-1 flex flex-col md:flex-row">
         {/* Desktop Sidebar */}
         <aside className="hidden md:flex flex-col w-64 bg-white border-r border-[#E6DCD3] p-5 md:sticky md:top-0 md:h-screen justify-between overflow-y-auto shrink-0">

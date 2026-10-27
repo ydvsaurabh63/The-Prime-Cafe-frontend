@@ -79,12 +79,11 @@ const AdminLoginPage = ({ portal: propPortal }) => {
       const res = await login(email, password, portal);
       if (res?.success) {
         const loggedUser = res.user;
-        const userEmail = (loggedUser?.email || '').toLowerCase();
         const userRole = loggedUser?.role;
 
-        const isSuperAdmin = userRole === 'superadmin' || userEmail === 'superadmin@aajkalcafe.com';
-        const isClient = userRole === 'client' || userEmail.includes('theprimecafe') || userEmail === 'admin@theprimecafe.com';
-        const isAdmin = userEmail.includes('amit.sharma') || (userRole === 'admin' && !isSuperAdmin && !isClient);
+        const isSuperAdmin = userRole === 'superadmin';
+        const isAdmin = userRole === 'admin' || isSuperAdmin;
+        const isClient = userRole === 'client' || userRole === 'admin' || isSuperAdmin;
 
         if (portal === 'superadmin') {
           if (!isSuperAdmin) {
@@ -96,14 +95,14 @@ const AdminLoginPage = ({ portal: propPortal }) => {
         } else if (portal === 'admin') {
           if (!isAdmin) {
             await logout();
-            setError('Access denied! Only Admin can log in here.');
+            setError('Access denied! Only Admin accounts can log in here.');
             return;
           }
           navigate('/admin/overview', { replace: true });
         } else if (portal === 'client') {
           if (!isClient) {
             await logout();
-            setError('Access denied! Only Client can log in here.');
+            setError('Access denied! Only Client Cafe accounts can log in here.');
             return;
           }
           navigate('/client/orders', { replace: true });
@@ -116,9 +115,52 @@ const AdminLoginPage = ({ portal: propPortal }) => {
     }
   };
 
+  const fillDemo = (demoEmail, demoPwd) => {
+    setEmail(demoEmail);
+    setPassword(demoPwd);
+    setError('');
+  };
+
   return (
-    <div className="min-h-screen bg-[#FAF7F2] flex items-center justify-center p-4">
-      <div className="max-w-md w-full bg-white rounded-3xl border border-[#E6DCD3] p-6 shadow-sm space-y-5">
+    <div className="min-h-screen bg-[#FAF7F2] flex flex-col items-center justify-center p-4 space-y-4">
+      {/* Portal Switch Pills */}
+      <div className="flex items-center gap-1.5 p-1.5 bg-white border border-[#E6DCD3] rounded-2xl shadow-2xs">
+        <button
+          type="button"
+          onClick={() => navigate('/superadmin/login')}
+          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${
+            portal === 'superadmin'
+              ? 'bg-[#2C1810] text-amber-300 shadow-xs'
+              : 'text-[#7A685D] hover:text-[#2C1810]'
+          }`}
+        >
+          Superadmin
+        </button>
+        <button
+          type="button"
+          onClick={() => navigate('/admin/login')}
+          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${
+            portal === 'admin'
+              ? 'bg-[#4A2C18] text-emerald-300 shadow-xs'
+              : 'text-[#7A685D] hover:text-[#2C1810]'
+          }`}
+        >
+          Admin
+        </button>
+        <button
+          type="button"
+          onClick={() => navigate('/client/login')}
+          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${
+            portal === 'client'
+              ? 'bg-[#C85A32] text-white shadow-xs'
+              : 'text-[#7A685D] hover:text-[#2C1810]'
+          }`}
+        >
+          Client Cafe
+        </button>
+      </div>
+
+      <div className="max-w-md w-full bg-white rounded-3xl border border-[#E6DCD3] p-6 sm:p-7 shadow-sm space-y-5">
         <div className="text-center space-y-1.5">
           <div className={`w-14 h-14 rounded-2xl ${current.iconBg} flex items-center justify-center mx-auto shadow-md`}>
             <PortalIcon size={28} />
@@ -128,8 +170,8 @@ const AdminLoginPage = ({ portal: propPortal }) => {
         </div>
 
         {error && (
-          <div className="p-3 bg-red-50 text-red-700 text-xs rounded-xl border border-red-200 flex items-center gap-2">
-            <ShieldAlert size={16} className="shrink-0" />
+          <div className="p-3 bg-rose-50 text-rose-700 text-xs rounded-xl border border-rose-200 flex items-center gap-2">
+            <ShieldAlert size={16} className="shrink-0 text-rose-600" />
             <span>{error}</span>
           </div>
         )}
@@ -150,7 +192,7 @@ const AdminLoginPage = ({ portal: propPortal }) => {
                 autoComplete="off"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="email@aajkalcafe.com"
+                placeholder={portal === 'superadmin' ? 'superadmin@aajkalcafe.com' : portal === 'admin' ? 'admin@aajkalcafe.com' : 'owner@cafe.com'}
                 required
                 className="w-full pl-9 pr-3 py-2.5 bg-[#FAF7F2] border border-[#E6DCD3] rounded-xl focus:outline-none focus:border-[#C85A32]"
               />
@@ -179,12 +221,56 @@ const AdminLoginPage = ({ portal: propPortal }) => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-[#4A2C18] hover:bg-[#2C1810] text-white font-bold py-3 rounded-xl transition shadow-xs text-xs cursor-pointer"
+              className="w-full bg-[#4A2C18] hover:bg-[#2C1810] text-white font-bold py-3 rounded-xl transition shadow-xs text-xs cursor-pointer active:scale-98"
             >
               {loading ? 'Authenticating...' : current.btnText}
             </button>
           </div>
         </form>
+
+        {/* Quick Demo Autofill Hint */}
+        <div className="pt-3 border-t border-[#F5EFEB] space-y-2">
+          <p className="text-[11px] font-bold text-[#7A685D] text-center">Quick Demo Credentials:</p>
+          <div className="flex flex-wrap gap-2 justify-center">
+            {portal === 'superadmin' && (
+              <button
+                type="button"
+                onClick={() => fillDemo('superadmin@aajkalcafe.com', 'SuperAdmin@123')}
+                className="text-[10px] font-bold px-2.5 py-1 bg-[#FAF7F2] hover:bg-[#F5EFEB] border border-[#E6DCD3] rounded-lg text-[#4A2C18]"
+              >
+                Auto-fill Superadmin
+              </button>
+            )}
+            {portal === 'admin' && (
+              <button
+                type="button"
+                onClick={() => fillDemo('amit.sharma@aajkalcafe.com', 'Admin@123')}
+                className="text-[10px] font-bold px-2.5 py-1 bg-[#FAF7F2] hover:bg-[#F5EFEB] border border-[#E6DCD3] rounded-lg text-[#4A2C18]"
+              >
+                Auto-fill Admin
+              </button>
+            )}
+            {portal === 'client' && (
+              <button
+                type="button"
+                onClick={() => fillDemo('vikas@theprimecafe.com', 'Admin@123')}
+                className="text-[10px] font-bold px-2.5 py-1 bg-[#FAF7F2] hover:bg-[#F5EFEB] border border-[#E6DCD3] rounded-lg text-[#4A2C18]"
+              >
+                Auto-fill The Prime Cafe
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div className="text-center pt-1">
+          <button
+            type="button"
+            onClick={() => navigate('/')}
+            className="text-[11px] font-semibold text-[#7A685D] hover:text-[#C85A32] underline"
+          >
+            ← Back to Customer Menu & Cafe View
+          </button>
+        </div>
       </div>
     </div>
   );

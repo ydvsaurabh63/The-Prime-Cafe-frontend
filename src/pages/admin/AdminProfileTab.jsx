@@ -35,8 +35,8 @@ const AdminProfileTab = () => {
   const [printCopies, setPrintCopies] = useState(5);
 
   const menuUrl = typeof window !== 'undefined'
-    ? `${window.location.origin}/menu`
-    : 'https://the-prime-cafe-frontend.vercel.app/menu';
+    ? `${window.location.origin}/cafe`
+    : 'https://the-prime-cafe-frontend.vercel.app/cafe';
 
   useEffect(() => {
     QRCode.toDataURL(menuUrl, {

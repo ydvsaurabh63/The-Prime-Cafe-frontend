@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Search,
   Filter,
@@ -11,12 +12,17 @@ import {
   Eye,
   IndianRupee,
   ShoppingBag,
-  SlidersHorizontal
+  SlidersHorizontal,
+  Star,
+  Sparkles,
+  ArrowRight,
+  Users
 } from 'lucide-react';
 import api from '../../services/api';
 import { getSocket } from '../../services/socket';
 
 const AdminOrdersTab = () => {
+  const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -26,6 +32,8 @@ const AdminOrdersTab = () => {
   const [rejectReason, setRejectReason] = useState('');
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [rejectOrderId, setRejectOrderId] = useState(null);
+  const [latestReview, setLatestReview] = useState(null);
+  const [latestCustomer, setLatestCustomer] = useState(null);
 
   const fetchOrdersAndStats = async () => {
     try {
@@ -76,9 +84,19 @@ const AdminOrdersTab = () => {
       }
     });
 
+    socket.on('new_review', (rev) => {
+      setLatestReview(rev);
+    });
+
+    socket.on('new_customer', (cust) => {
+      setLatestCustomer(cust);
+    });
+
     return () => {
       socket.off('new_order');
       socket.off('order_status_updated');
+      socket.off('new_review');
+      socket.off('new_customer');
     };
   }, [selectedOrder]);
 
@@ -180,6 +198,106 @@ const AdminOrdersTab = () => {
             <span className="text-[11px] text-[#7A685D]">Waiting for service</span>
           </div>
         </div>
+      )}
+
+      {/* Live Guest Review Notification Banner (Updates in Real-Time when customer submits review) */}
+      {latestReview && (
+        <aside
+          role="status"
+          aria-live="polite"
+          className="bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border-2 border-amber-300 rounded-2xl p-3.5 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-in slide-in-from-top-3 duration-300"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-amber-400 text-amber-950 flex items-center justify-center font-black shadow-xs shrink-0">
+              <Star size={18} className="fill-amber-950" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-[10px] uppercase font-black tracking-wider bg-amber-500 text-white px-2 py-0.5 rounded-full animate-pulse">
+                  Live Review
+                </span>
+                <span className="text-xs font-black text-[#2C1810]">
+                  {latestReview.name} rated {latestReview.rating}★
+                </span>
+                <span className="text-[11px] text-[#7A685D] font-medium">
+                  ({latestReview.tag || 'Verified Diner'})
+                </span>
+              </div>
+              <p className="text-xs text-[#4A3B32] mt-0.5 italic line-clamp-1">
+                "{latestReview.review}"
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
+            <button
+              type="button"
+              onClick={() => navigate('/client/reviews')}
+              className="px-3 py-1.5 rounded-xl bg-[#2C1810] hover:bg-[#1A0E08] text-white text-xs font-bold transition flex items-center gap-1 cursor-pointer shadow-2xs"
+            >
+              <span>Manage Reviews</span>
+              <ArrowRight size={12} />
+            </button>
+            <button
+              type="button"
+              onClick={() => setLatestReview(null)}
+              className="p-1.5 rounded-xl text-[#7A685D] hover:bg-black/5 transition cursor-pointer"
+              title="Dismiss"
+            >
+              <X size={14} />
+            </button>
+          </div>
+        </aside>
+      )}
+
+      {/* Live Customer QR Check-In Banner */}
+      {latestCustomer && (
+        <aside
+          role="status"
+          aria-live="polite"
+          className="bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50 border-2 border-emerald-300 rounded-2xl p-3.5 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-in slide-in-from-top-3 duration-300"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-black shadow-xs shrink-0">
+              <Users size={18} />
+            </div>
+            <div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-[10px] uppercase font-black tracking-wider bg-emerald-600 text-white px-2 py-0.5 rounded-full animate-pulse">
+                  QR Check-In
+                </span>
+                <span className="text-xs font-black text-[#2C1810]">
+                  {latestCustomer.name} (+91 {latestCustomer.phone})
+                </span>
+                <span className="text-[11px] text-[#7A685D] font-medium">
+                  • Table: {latestCustomer.scannedTable || 'Stand Card'} • {latestCustomer.foodPreference || 'Both'}
+                </span>
+              </div>
+              <p className="text-xs text-[#4A3B32] mt-0.5">
+                Customer scanned stand QR & registered on website.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
+            <button
+              type="button"
+              onClick={() => navigate('/client/customers')}
+              className="px-3 py-1.5 rounded-xl bg-[#2C1810] hover:bg-[#1A0E08] text-white text-xs font-bold transition flex items-center gap-1 cursor-pointer shadow-2xs"
+            >
+              <span>View Customers</span>
+              <ArrowRight size={12} />
+            </button>
+            <button
+              type="button"
+              onClick={() => setLatestCustomer(null)}
+              className="p-1.5 rounded-xl text-[#7A685D] hover:bg-black/5 transition cursor-pointer"
+              title="Dismiss"
+            >
+              <X size={14} />
+            </button>
+          </div>
+        </aside>
       )}
 
       {/* Filter Bar & Search */}

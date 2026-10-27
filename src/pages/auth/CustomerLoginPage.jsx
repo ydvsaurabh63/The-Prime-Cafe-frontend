@@ -67,7 +67,8 @@ const CustomerLoginPage = () => {
         area: area.trim(),
         city: city.trim(),
         pincode: pincode.trim(),
-        foodPreference
+        foodPreference,
+        table: tableParam || ''
       };
 
       const res = await register(payload);

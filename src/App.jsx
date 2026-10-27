@@ -23,10 +23,11 @@ import ProfilePage from './pages/customer/ProfilePage';
 import CustomerLoginPage from './pages/auth/CustomerLoginPage';
 import AdminLoginPage from './pages/auth/AdminLoginPage';
 
-// Client Dashboard Pages (5 Tabs from Screenshot - preserved untouched)
 import AdminOrdersTab from './pages/admin/AdminOrdersTab';
 import AdminMenuTab from './pages/admin/AdminMenuTab';
 import AdminOffersTab from './pages/admin/AdminOffersTab';
+import AdminReviewsTab from './pages/admin/AdminReviewsTab';
+import AdminCustomersTab from './pages/admin/AdminCustomersTab';
 import AdminNotificationsTab from './pages/admin/AdminNotificationsTab';
 import AdminProfileTab from './pages/admin/AdminProfileTab';
 
@@ -94,12 +95,14 @@ function App() {
               <Route path="manage-client" element={<Navigate to="/admin/clients" replace />} />
             </Route>
 
-            {/* Client Dashboard (The Screenshot Dashboard - 5 Tabs: orders, menu, offers, notifications, profile) */}
+            {/* Client Dashboard (The Screenshot Dashboard) */}
             <Route path="/client" element={<AdminLayout />}>
               <Route index element={<Navigate to="/client/orders" replace />} />
               <Route path="orders" element={<AdminOrdersTab />} />
               <Route path="menu" element={<AdminMenuTab />} />
               <Route path="offers" element={<AdminOffersTab />} />
+              <Route path="reviews" element={<AdminReviewsTab />} />
+              <Route path="customers" element={<AdminCustomersTab />} />
               <Route path="notifications" element={<AdminNotificationsTab />} />
               <Route path="profile" element={<AdminProfileTab />} />
             </Route>
@@ -108,6 +111,8 @@ function App() {
             <Route path="/admin/orders" element={<Navigate to="/client/orders" replace />} />
             <Route path="/admin/menu" element={<Navigate to="/client/menu" replace />} />
             <Route path="/admin/offers" element={<Navigate to="/client/offers" replace />} />
+            <Route path="/admin/reviews" element={<Navigate to="/client/reviews" replace />} />
+            <Route path="/admin/customers" element={<Navigate to="/client/customers" replace />} />
             <Route path="/admin/notifications" element={<Navigate to="/client/notifications" replace />} />
             <Route path="/admin/profile" element={<Navigate to="/client/profile" replace />} />
 

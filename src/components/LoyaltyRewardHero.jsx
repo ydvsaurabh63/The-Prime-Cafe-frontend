@@ -314,10 +314,10 @@ const LoyaltyRewardHero = () => {
   };
 
   return (
-    <section className="relative overflow-hidden rounded-3xl bg-gradient-to-b from-[#1C1109] via-[#140C07] to-[#0D0704] border border-[#3E2314] shadow-2xl text-white p-3.5 sm:p-6 md:p-7 space-y-4 sm:space-y-6">
+    <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#54331D] via-[#402515] to-[#2E180D] border border-[#784627]/80 shadow-2xl text-white p-3.5 sm:p-6 md:p-7 space-y-4 sm:space-y-6">
       {/* Background warm ambient radial glow */}
-      <div className="absolute -top-32 -left-32 w-96 h-96 bg-amber-600/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-orange-600/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -top-24 -left-24 w-80 h-80 bg-amber-500/25 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-24 -right-24 w-80 h-80 bg-orange-500/20 rounded-full blur-3xl pointer-events-none" />
 
       {/* Floating Claim Toast Notification */}
       {claimToast && (
@@ -465,8 +465,8 @@ const LoyaltyRewardHero = () => {
                     </div>
                   ) : (
                     // Future / Locked: Dark circle with light lock icon
-                    <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-11 md:h-11 rounded-full bg-[#20130C] border-2 border-white/20 text-neutral-400 flex items-center justify-center transition-colors duration-200 group-hover:border-amber-400/50">
-                      <Lock size={13} className="sm:w-4 sm:h-4 text-neutral-400" />
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-11 md:h-11 rounded-full bg-[#3D2314] border-2 border-amber-500/30 text-amber-200/70 flex items-center justify-center transition-colors duration-200 group-hover:border-amber-400/60">
+                      <Lock size={13} className="sm:w-4 sm:h-4 text-amber-200/70" />
                     </div>
                   )}
                 </div>
@@ -530,10 +530,10 @@ const LoyaltyRewardHero = () => {
                 onClick={() => setSelectedProduct(stage)}
                 className={`relative flex flex-col justify-between rounded-2xl p-2.5 sm:p-3 transition-all duration-300 snap-center shrink-0 w-[160px] min-w-[160px] sm:w-auto sm:min-w-0 cursor-pointer group ${
                   isHighlight
-                    ? 'bg-gradient-to-b from-[#2E1A0E] to-[#1E1109] border-2 border-[#F59E0B] shadow-[0_0_30px_rgba(245,158,11,0.4)] ring-1 ring-amber-400/50 scale-[1.02]'
+                    ? 'bg-gradient-to-b from-[#6D3F22] to-[#502B16] border-2 border-[#F59E0B] shadow-[0_0_25px_rgba(245,158,11,0.45)] ring-1 ring-amber-400/50 scale-[1.02]'
                     : isClaimed
-                    ? 'bg-[#180E08]/90 border border-emerald-500/50 shadow-md hover:border-emerald-400'
-                    : 'bg-[#150D07]/90 border border-white/10 hover:border-white/20'
+                    ? 'bg-[#482816]/95 border border-emerald-500/50 shadow-md hover:border-emerald-400'
+                    : 'bg-[#402212]/95 border border-[#6B3B20]/80 hover:border-amber-400/50 shadow-sm'
                 }`}
               >
                 {/* Card Top: Stage Badge (Pill) */}
@@ -578,8 +578,8 @@ const LoyaltyRewardHero = () => {
                     </div>
                   ) : (
                     // 🔒 Locked (Dark Pill with lock icon)
-                    <div className="w-full py-1 px-2 rounded-full bg-white/5 border border-white/10 text-neutral-400 text-[11px] sm:text-xs font-bold flex items-center justify-center gap-1">
-                      <Lock size={12} className="text-neutral-400" />
+                    <div className="w-full py-1 px-2 rounded-full bg-black/20 border border-amber-600/30 text-amber-200/80 text-[11px] sm:text-xs font-bold flex items-center justify-center gap-1">
+                      <Lock size={12} className="text-amber-300/80" />
                       <span>Locked</span>
                     </div>
                   )}
@@ -629,7 +629,7 @@ const LoyaltyRewardHero = () => {
                     </button>
                   ) : (
                     // Locked: Dark Pill with dynamic lock icon & concise text
-                    <div className="w-full py-1.5 px-1.5 rounded-xl bg-white/5 border border-white/5 text-neutral-400 text-[10px] sm:text-[11px] font-semibold flex items-center justify-center gap-1">
+                    <div className="w-full py-1.5 px-1.5 rounded-xl bg-black/20 border border-amber-600/30 text-amber-200/80 text-[10px] sm:text-[11px] font-semibold flex items-center justify-center gap-1">
                       <Lock size={10} className="text-amber-400/80 shrink-0" />
                       <span className="truncate">{stage.requiredOrders - totalOrders} more order{stage.requiredOrders - totalOrders > 1 ? 's' : ''}</span>
                     </div>
@@ -679,7 +679,7 @@ const LoyaltyRewardHero = () => {
           onClick={() => setSelectedProduct(null)}
         >
           <div
-            className="relative w-full max-w-sm sm:max-w-md max-h-[92dvh] flex flex-col bg-gradient-to-b from-[#25150C] via-[#1A0E08] to-[#100804] border border-amber-500/40 text-[#FAF7F2] rounded-3xl shadow-[0_0_50px_rgba(245,158,11,0.3)] overflow-hidden animate-in zoom-in-95 duration-200"
+            className="relative w-full max-w-sm sm:max-w-md max-h-[92dvh] flex flex-col bg-gradient-to-b from-[#3D2517] via-[#2E1A10] to-[#20110A] border border-amber-500/40 text-[#FAF7F2] rounded-3xl shadow-[0_0_50px_rgba(245,158,11,0.3)] overflow-hidden animate-in zoom-in-95 duration-200"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Top Close Button */}
@@ -826,11 +826,11 @@ const LoyaltyRewardHero = () => {
           onClick={() => setIsModalOpen(false)}
         >
           <div
-            className="relative w-full max-w-2xl max-h-[90vh] flex flex-col bg-[#1C120B] border border-[#3D2314] text-[#FAF7F2] rounded-3xl shadow-2xl overflow-hidden"
+            className="relative w-full max-w-2xl max-h-[90vh] flex flex-col bg-[#2D1B10] border border-[#5A351E] text-[#FAF7F2] rounded-3xl shadow-2xl overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
-            <div className="flex items-center justify-between border-b border-white/10 px-5 sm:px-6 py-4 bg-[#23150D] shrink-0">
+            <div className="flex items-center justify-between border-b border-white/10 px-5 sm:px-6 py-4 bg-[#382012] shrink-0">
               <div className="flex items-center gap-2.5 text-amber-400 font-extrabold text-base sm:text-lg">
                 <Gift size={22} className="text-amber-400 shrink-0" />
                 <span>Visit Rewards Roadmap • 5 Exciting Milestones</span>
@@ -846,7 +846,7 @@ const LoyaltyRewardHero = () => {
 
             {/* Modal Content */}
             <div className="p-4 sm:p-6 overflow-y-auto space-y-4">
-              <div className="p-3.5 rounded-2xl bg-[#2A180E] border border-amber-400/30 flex items-center justify-between">
+              <div className="p-3.5 rounded-2xl bg-[#402414] border border-amber-400/30 flex items-center justify-between">
                 <div>
                   <span className="text-xs text-amber-200 block font-bold">Your Live Progress</span>
                   <p className="text-sm font-extrabold text-white mt-0.5">
@@ -870,10 +870,10 @@ const LoyaltyRewardHero = () => {
                       key={stage.stageNumber}
                       className={`p-3.5 sm:p-4 rounded-2xl border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
                         isAvailable
-                          ? 'bg-[#2E1A0E] border-amber-400/80 shadow-md ring-1 ring-amber-400/40'
+                          ? 'bg-[#482816] border-amber-400/80 shadow-md ring-1 ring-amber-400/40'
                           : isClaimed
-                          ? 'bg-[#1D130B] border-emerald-500/50'
-                          : 'bg-[#150D07] border-white/10 opacity-75'
+                          ? 'bg-[#351E10] border-emerald-500/50'
+                          : 'bg-[#28160B] border-white/10 opacity-75'
                       }`}
                     >
                       <div className="flex items-center gap-3">

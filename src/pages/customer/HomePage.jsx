@@ -451,27 +451,11 @@ const HomePage = () => {
           {/* Panoramic Hero Banner Graphic */}
           <img
             src="/prime-cafe-banner.png"
-            alt="The Prime Café - Every Bite, A Little Happiness - Pani Tanki Chowk, Muzaffarpur"
-            className="w-full h-auto object-cover group-hover:scale-[1.015] transition-transform duration-500 block"
+            alt="The Prime Café - Every Bite, A Little Happiness"
+            className="w-full h-auto object-cover group-hover:scale-[1.012] transition-transform duration-500 block"
             loading="eager"
             fetchPriority="high"
           />
-
-          {/* Interactive Bottom Glass Bar / Location & Quick Menu Pill */}
-          <div className="absolute bottom-2.5 sm:bottom-4 left-2.5 sm:left-4 right-2.5 sm:right-4 flex flex-wrap items-center justify-between gap-2 pointer-events-none">
-            <div className="pointer-events-auto bg-black/65 backdrop-blur-md text-white border border-white/20 px-3 sm:px-4 py-1.5 rounded-full flex items-center gap-1.5 shadow-lg text-[10px] sm:text-xs font-bold">
-              <MapPin size={13} className="text-[#E08D5B] shrink-0" />
-              <span>Pani Tanki Chowk, Muzaffarpur</span>
-            </div>
-
-            <div className="pointer-events-auto hidden sm:flex items-center gap-2">
-              <span className="bg-[#C85A32] hover:bg-[#B24E2A] text-white px-4 py-1.5 rounded-full text-xs font-extrabold shadow-lg flex items-center gap-1.5 transition active:scale-95">
-                <UtensilsCrossed size={13} />
-                <span>Explore Live Menu</span>
-                <ArrowRight size={13} />
-              </span>
-            </div>
-          </div>
         </div>
       </section>
 

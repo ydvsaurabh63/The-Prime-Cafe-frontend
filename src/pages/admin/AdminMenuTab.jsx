@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Plus, Edit2, Trash2, Search, Check, AlertCircle, X, Image as ImageIcon, Upload, Camera, Link as LinkIcon, RefreshCw } from 'lucide-react';
+import { Plus, Edit2, Trash2, Search, Check, AlertCircle, X, Image as ImageIcon, Upload, Camera, Link as LinkIcon, RefreshCw, ChevronDown, Sparkles } from 'lucide-react';
 import api from '../../services/api';
 
 // Helper to compress and convert image files to optimized Base64
@@ -76,6 +76,12 @@ const AdminMenuTab = () => {
   const [catUploading, setCatUploading] = useState(false);
   const catFileInputRef = useRef(null);
 
+  // Inline Category State inside Item Modal
+  const [showInlineNewCat, setShowInlineNewCat] = useState(false);
+  const [inlineCatName, setInlineCatName] = useState('');
+  const [inlineCatLoading, setInlineCatLoading] = useState(false);
+  const [showAdvancedOptions, setShowAdvancedOptions] = useState(false);
+
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 
@@ -99,6 +105,28 @@ const AdminMenuTab = () => {
     fetchData();
   }, []);
 
+  const handleQuickAddCategory = async (e) => {
+    e?.preventDefault();
+    if (!inlineCatName.trim()) return;
+    try {
+      setInlineCatLoading(true);
+      const res = await api.post('/admin/categories', {
+        name: inlineCatName.trim()
+      });
+      if (res.data?.success && res.data.data) {
+        const newCat = res.data.data;
+        setCategories((prev) => [...prev, newCat]);
+        setFormData((prev) => ({ ...prev, category: newCat._id }));
+        setInlineCatName('');
+        setShowInlineNewCat(false);
+      }
+    } catch (err) {
+      alert(err.response?.data?.message || 'Failed to create category');
+    } finally {
+      setInlineCatLoading(false);
+    }
+  };
+
   const openAddItemModal = () => {
     setEditingItem(null);
     setFormData({
@@ -113,6 +141,9 @@ const AdminMenuTab = () => {
       availability: true
     });
     setImageInputMode('gallery');
+    setShowInlineNewCat(false);
+    setInlineCatName('');
+    setShowAdvancedOptions(false);
     setError('');
     setShowItemModal(true);
   };
@@ -131,6 +162,9 @@ const AdminMenuTab = () => {
       availability: item.availability
     });
     setImageInputMode(item.image?.startsWith('data:') ? 'gallery' : item.image ? 'url' : 'gallery');
+    setShowInlineNewCat(false);
+    setInlineCatName('');
+    setShowAdvancedOptions(!!(item.description || item.tags?.length));
     setError('');
     setShowItemModal(true);
   };
@@ -452,51 +486,53 @@ const AdminMenuTab = () => {
               </div>
             )}
 
-            <form onSubmit={handleSaveItem} className="space-y-3 text-xs">
-              <div>
-                <label className="block font-bold text-[#4A2C18] mb-1">Item Name</label>
-                <input
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="e.g. Vanilla Bean Gelato Cappuccino"
-                  required
-                  className="w-full p-2.5 bg-[#FAF7F2] border border-[#E6DCD3] rounded-xl focus:outline-none focus:border-[#C85A32]"
-                />
-              </div>
-
-              <div>
-                <label className="block font-bold text-[#4A2C18] mb-1">Description</label>
-                <textarea
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  placeholder="Tell customers about the flavor notes, roast, or garnish..."
-                  rows="2"
-                  className="w-full p-2.5 bg-[#FAF7F2] border border-[#E6DCD3] rounded-xl focus:outline-none focus:border-[#C85A32]"
-                ></textarea>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-bold text-[#4A2C18] mb-1">Price (₹)</label>
-                  <input
-                    type="number"
-                    min="0"
-                    value={formData.price}
-                    onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                    placeholder="180"
-                    required
-                    className="w-full p-2.5 bg-[#FAF7F2] border border-[#E6DCD3] rounded-xl focus:outline-none focus:border-[#C85A32]"
-                  />
+            <form onSubmit={handleSaveItem} className="space-y-3.5 text-xs">
+              {/* 1. Category Selection & Quick Inline Category Creator */}
+              <div className="bg-[#FAF7F2] p-3 rounded-2xl border border-[#E6DCD3]/80 space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="block font-bold text-[#4A2C18]">
+                    Category <span className="text-rose-500">*</span>
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setShowInlineNewCat(!showInlineNewCat)}
+                    className="text-[11px] font-bold text-[#C85A32] hover:underline flex items-center gap-1 cursor-pointer"
+                  >
+                    <Plus size={12} />
+                    {showInlineNewCat ? 'Choose existing' : '+ Add New Category'}
+                  </button>
                 </div>
 
-                <div>
-                  <label className="block font-bold text-[#4A2C18] mb-1">Category</label>
+                {showInlineNewCat ? (
+                  <div className="flex gap-2 pt-0.5">
+                    <input
+                      type="text"
+                      value={inlineCatName}
+                      onChange={(e) => setInlineCatName(e.target.value)}
+                      placeholder="e.g. Instant Hunger, Chinees, Combo..."
+                      className="flex-1 p-2 bg-white border border-[#C85A32] rounded-xl focus:outline-none text-xs"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          handleQuickAddCategory();
+                        }
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={handleQuickAddCategory}
+                      disabled={inlineCatLoading || !inlineCatName.trim()}
+                      className="px-3.5 py-2 bg-[#C85A32] text-white rounded-xl font-bold text-xs hover:bg-[#B24E2A] transition disabled:opacity-50 shrink-0"
+                    >
+                      {inlineCatLoading ? 'Adding...' : 'Add'}
+                    </button>
+                  </div>
+                ) : (
                   <select
                     value={formData.category}
                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                     required
-                    className="w-full p-2.5 bg-[#FAF7F2] border border-[#E6DCD3] rounded-xl focus:outline-none focus:border-[#C85A32]"
+                    className="w-full p-2.5 bg-white border border-[#E6DCD3] rounded-xl focus:outline-none focus:border-[#C85A32] font-semibold text-[#2C1810]"
                   >
                     <option value="">Select Category</option>
                     {categories.map((c) => (
@@ -505,37 +541,93 @@ const AdminMenuTab = () => {
                       </option>
                     ))}
                   </select>
-                </div>
+                )}
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              {/* 2. Item Name */}
+              <div>
+                <label className="block font-bold text-[#4A2C18] mb-1">
+                  Item Name <span className="text-rose-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  placeholder="e.g. Bun Maska, Egg Roll Double, Peri-Peri, Mojito..."
+                  required
+                  className="w-full p-2.5 bg-[#FAF7F2] border border-[#E6DCD3] rounded-xl focus:outline-none focus:border-[#C85A32] font-medium"
+                />
+              </div>
+
+              {/* 3. Price & Dietary Classification */}
+              <div className="grid grid-cols-2 gap-3 items-center">
                 <div>
-                  <label className="block font-bold text-[#4A2C18] mb-1">Prep Time</label>
+                  <label className="block font-bold text-[#4A2C18] mb-1">
+                    Price (₹) <span className="text-rose-500">*</span>
+                  </label>
                   <input
-                    type="text"
-                    value={formData.prepTime}
-                    onChange={(e) => setFormData({ ...formData, prepTime: e.target.value })}
-                    placeholder="7-10 mins"
-                    className="w-full p-2.5 bg-[#FAF7F2] border border-[#E6DCD3] rounded-xl focus:outline-none focus:border-[#C85A32]"
+                    type="number"
+                    min="0"
+                    value={formData.price}
+                    onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                    placeholder="e.g. 49"
+                    required
+                    className="w-full p-2.5 bg-[#FAF7F2] border border-[#E6DCD3] rounded-xl focus:outline-none focus:border-[#C85A32] font-bold text-sm text-[#C85A32]"
                   />
                 </div>
 
                 <div>
-                  <label className="block font-bold text-[#4A2C18] mb-1">Tags (Comma-separated)</label>
-                  <input
-                    type="text"
-                    value={formData.tags}
-                    onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
-                    placeholder="Bestseller, Hot, New"
-                    className="w-full p-2.5 bg-[#FAF7F2] border border-[#E6DCD3] rounded-xl focus:outline-none focus:border-[#C85A32]"
-                  />
+                  <label className="block font-bold text-[#4A2C18] mb-1.5">Dietary</label>
+                  <div className="flex items-center gap-3 pt-1">
+                    <label className="flex items-center gap-1.5 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="isVegRadio"
+                        checked={formData.isVeg === true}
+                        onChange={() => setFormData({ ...formData, isVeg: true })}
+                        className="text-emerald-600 focus:ring-0"
+                      />
+                      <span className="font-bold text-emerald-800 flex items-center gap-1 text-xs">
+                        <span className="w-2.5 h-2.5 rounded-full bg-emerald-600"></span> Veg
+                      </span>
+                    </label>
+
+                    <label className="flex items-center gap-1.5 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="isVegRadio"
+                        checked={formData.isVeg === false}
+                        onChange={() => setFormData({ ...formData, isVeg: false })}
+                        className="text-rose-600 focus:ring-0"
+                      />
+                      <span className="font-bold text-rose-800 flex items-center gap-1 text-xs">
+                        <span className="w-2.5 h-2.5 rounded-full bg-rose-600"></span> Non-Veg
+                      </span>
+                    </label>
+                  </div>
                 </div>
               </div>
 
-              {/* Food Image Selection: Gallery Upload or URL */}
+              {/* 4. Availability Status */}
+              <div className="flex items-center justify-between p-2.5 bg-[#FAF7F2] rounded-xl border border-[#E6DCD3]/70">
+                <span className="font-bold text-xs text-[#4A2C18]">Item Availability</span>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={formData.availability}
+                    onChange={(e) => setFormData({ ...formData, availability: e.target.checked })}
+                    className="w-4 h-4 text-[#C85A32] rounded"
+                  />
+                  <span className={`text-xs font-bold ${formData.availability ? 'text-emerald-700' : 'text-rose-600'}`}>
+                    {formData.availability ? 'In Stock (Active)' : 'Sold Out (Hidden)'}
+                  </span>
+                </label>
+              </div>
+
+              {/* 5. Food Image Selection: Gallery Upload or URL */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <label className="block font-bold text-[#4A2C18]">Item Photo</label>
+                  <label className="block font-bold text-[#4A2C18]">Item Photo (Optional)</label>
                   <div className="flex items-center bg-[#FAF7F2] p-0.5 rounded-lg border border-[#E6DCD3] text-[11px] font-semibold">
                     <button
                       type="button"
@@ -618,20 +710,20 @@ const AdminMenuTab = () => {
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
                         disabled={uploadingImage}
-                        className="w-full border-2 border-dashed border-[#E6DCD3] hover:border-[#C85A32] bg-[#FAF7F2]/60 hover:bg-[#FAF7F2] rounded-2xl p-4 text-center transition group cursor-pointer"
+                        className="w-full border-2 border-dashed border-[#E6DCD3] hover:border-[#C85A32] bg-[#FAF7F2]/60 hover:bg-[#FAF7F2] rounded-2xl p-3.5 text-center transition group cursor-pointer"
                       >
-                        <div className="w-10 h-10 rounded-2xl bg-white text-[#C85A32] mx-auto flex items-center justify-center shadow-2xs group-hover:scale-110 transition mb-2">
+                        <div className="w-9 h-9 rounded-xl bg-white text-[#C85A32] mx-auto flex items-center justify-center shadow-2xs group-hover:scale-110 transition mb-1.5">
                           {uploadingImage ? (
-                            <RefreshCw size={20} className="animate-spin text-[#C85A32]" />
+                            <RefreshCw size={18} className="animate-spin text-[#C85A32]" />
                           ) : (
-                            <Upload size={20} />
+                            <Upload size={18} />
                           )}
                         </div>
                         <p className="text-xs font-bold text-[#2C1810]">
-                          {uploadingImage ? 'Optimizing photo...' : 'Choose Photo from Gallery / Files'}
+                          {uploadingImage ? 'Optimizing photo...' : 'Choose Photo (Optional)'}
                         </p>
                         <p className="text-[10px] text-[#7A685D] mt-0.5">
-                          Tap to select photo • JPG, PNG, WEBP auto-compressed
+                          Tap to select photo • JPG, PNG, WEBP
                         </p>
                       </button>
                     )}
@@ -660,50 +752,55 @@ const AdminMenuTab = () => {
                 )}
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-4 pt-1">
-                <div>
-                  <label className="block font-bold text-[#4A2C18] mb-1.5">Dietary Classification</label>
-                  <div className="flex items-center gap-3">
-                    <label className="flex items-center gap-1.5 cursor-pointer">
-                      <input
-                        type="radio"
-                        name="isVegRadio"
-                        checked={formData.isVeg === true}
-                        onChange={() => setFormData({ ...formData, isVeg: true })}
-                        className="text-emerald-600 focus:ring-0"
-                      />
-                      <span className="font-bold text-emerald-800 flex items-center gap-1 text-xs">
-                        <span className="w-2 h-2 rounded-full bg-emerald-600"></span> Veg
-                      </span>
-                    </label>
+              {/* 6. Optional Collapsible Details: Description, Prep Time, Tags */}
+              <div className="pt-0.5">
+                <button
+                  type="button"
+                  onClick={() => setShowAdvancedOptions(!showAdvancedOptions)}
+                  className="text-[11px] font-bold text-[#7A685D] hover:text-[#C85A32] flex items-center gap-1 cursor-pointer transition"
+                >
+                  <ChevronDown size={14} className={`transition-transform duration-200 ${showAdvancedOptions ? 'rotate-180' : ''}`} />
+                  <span>{showAdvancedOptions ? 'Hide Optional Details' : '+ Add Description, Prep Time or Tags (Optional)'}</span>
+                </button>
 
-                    <label className="flex items-center gap-1.5 cursor-pointer">
-                      <input
-                        type="radio"
-                        name="isVegRadio"
-                        checked={formData.isVeg === false}
-                        onChange={() => setFormData({ ...formData, isVeg: false })}
-                        className="text-rose-600 focus:ring-0"
-                      />
-                      <span className="font-bold text-rose-800 flex items-center gap-1 text-xs">
-                        <span className="w-2 h-2 rounded-full bg-rose-600"></span> Non-Veg
-                      </span>
-                    </label>
+                {showAdvancedOptions && (
+                  <div className="space-y-3 pt-2.5 pl-3 border-l-2 border-[#E6DCD3] mt-2">
+                    <div>
+                      <label className="block font-bold text-[#7A685D] mb-1">Description (Optional)</label>
+                      <textarea
+                        value={formData.description}
+                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                        placeholder="Short notes about flavor, garnish, or ingredients..."
+                        rows="2"
+                        className="w-full p-2 bg-[#FAF7F2] border border-[#E6DCD3] rounded-xl focus:outline-none text-xs"
+                      ></textarea>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block font-bold text-[#7A685D] mb-1">Prep Time</label>
+                        <input
+                          type="text"
+                          value={formData.prepTime}
+                          onChange={(e) => setFormData({ ...formData, prepTime: e.target.value })}
+                          placeholder="e.g. 10-15 mins"
+                          className="w-full p-2 bg-[#FAF7F2] border border-[#E6DCD3] rounded-xl focus:outline-none text-xs"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block font-bold text-[#7A685D] mb-1">Tags</label>
+                        <input
+                          type="text"
+                          value={formData.tags}
+                          onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
+                          placeholder="Bestseller, Hot, Special"
+                          className="w-full p-2 bg-[#FAF7F2] border border-[#E6DCD3] rounded-xl focus:outline-none text-xs"
+                        />
+                      </div>
+                    </div>
                   </div>
-                </div>
-
-                <div className="sm:ml-auto">
-                  <label className="block font-bold text-[#4A2C18] mb-1.5">Availability Status</label>
-                  <label className="flex items-center gap-2 cursor-pointer pt-0.5">
-                    <input
-                      type="checkbox"
-                      checked={formData.availability}
-                      onChange={(e) => setFormData({ ...formData, availability: e.target.checked })}
-                      className="w-4 h-4 text-[#C85A32] rounded"
-                    />
-                    <span className="font-semibold text-[#4A2C18]">In Stock / Orderable</span>
-                  </label>
-                </div>
+                )}
               </div>
 
               <div className="flex gap-2 pt-3 border-t border-[#F5EFEB]">

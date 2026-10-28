@@ -35,7 +35,7 @@ const GoogleIcon = () => (
 
 const CustomerLoginPage = () => {
   const [searchParams] = useSearchParams();
-  const redirect = searchParams.get('redirect') || '/menu';
+  const redirect = searchParams.get('redirect') || '/home';
   const tableParam = searchParams.get('table');
 
   const { register, googleLogin } = useAuth();
@@ -73,7 +73,7 @@ const CustomerLoginPage = () => {
   const [error, setError] = useState('');
 
   const handleSuccessfulEntry = () => {
-    const target = redirect || '/menu';
+    const target = redirect || '/home';
     if (tableParam) {
       navigate(`${target}${target.includes('?') ? '&' : '?'}table=${encodeURIComponent(tableParam)}`);
     } else {

@@ -47,9 +47,9 @@ const CafeQREntry = () => {
   const { isAuthenticated } = useAuth();
 
   if (isAuthenticated) {
-    return <Navigate to={`/menu${table ? `?table=${encodeURIComponent(table)}` : ''}`} replace />;
+    return <Navigate to={`/home${table ? `?table=${encodeURIComponent(table)}` : ''}`} replace />;
   }
-  return <Navigate to={`/login?table=${encodeURIComponent(table)}&redirect=/menu`} replace />;
+  return <Navigate to={`/login?table=${encodeURIComponent(table)}&redirect=/home`} replace />;
 };
 
 function App() {
@@ -64,7 +64,7 @@ function App() {
             {/* Customer Facing 5 Tabs Layout */}
             <Route element={<CustomerLayout />}>
               <Route path="/" element={<HomePage />} />
-              <Route path="/home" element={<Navigate to="/" replace />} />
+              <Route path="/home" element={<HomePage />} />
               <Route path="/menu" element={<MenuPage />} />
               <Route path="/offers" element={<OffersPage />} />
               <Route path="/order" element={<OrderPage />} />

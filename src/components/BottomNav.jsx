@@ -1,36 +1,42 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { Home, UtensilsCrossed, Tag, ShoppingBag, User } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 
 const BottomNav = () => {
   const { itemCount } = useCart();
+  const location = useLocation();
 
   const navItems = [
-    { label: 'Home', path: '/', icon: Home, exact: true },
+    { label: 'Home', path: '/home', icon: Home },
     { label: 'Menu', path: '/menu', icon: UtensilsCrossed },
     { label: 'Offers', path: '/offers', icon: Tag },
     { label: 'Order', path: '/order', icon: ShoppingBag, badge: itemCount },
     { label: 'Profile', path: '/profile', icon: User }
   ];
 
+  const isItemActive = (itemPath) => {
+    if (itemPath === '/home') {
+      return location.pathname === '/' || location.pathname === '/home';
+    }
+    return location.pathname.startsWith(itemPath);
+  };
+
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-40 bg-[#FAF7F2]/95 backdrop-blur-md border-t border-[#E6DCD3] shadow-[0_-4px_20px_rgba(44,24,16,0.06)] pb-[env(safe-area-inset-bottom)]">
       <div className="max-w-md mx-auto grid grid-cols-5 h-16">
         {navItems.map((item) => {
           const Icon = item.icon;
+          const active = isItemActive(item.path);
           return (
             <NavLink
               key={item.label}
               to={item.path}
-              end={item.exact}
-              className={({ isActive }) =>
-                `flex flex-col items-center justify-center transition-all duration-200 relative ${
-                  isActive
-                    ? 'text-[#C85A32] font-semibold scale-105'
-                    : 'text-[#7A685D] hover:text-[#4A2C18]'
-                }`
-              }
+              className={`flex flex-col items-center justify-center transition-all duration-200 relative ${
+                active
+                  ? 'text-[#C85A32] font-semibold scale-105'
+                  : 'text-[#7A685D] hover:text-[#4A2C18]'
+              }`}
             >
               <div className="relative">
                 <Icon size={22} strokeWidth={2} />

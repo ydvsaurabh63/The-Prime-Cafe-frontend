@@ -216,9 +216,6 @@ const CustomerLoginPage = () => {
         <h2 className="text-2xl font-extrabold text-[#2C1810] tracking-tight">
           Welcome to The Prime Cafe
         </h2>
-        <p className="text-xs text-[#7A685D] max-w-sm mx-auto">
-          Sign in with Google for quick 1-click access, or enter your details below to start ordering.
-        </p>
       </div>
 
       {/* Table Scanned Notification Banner */}
@@ -288,9 +285,6 @@ const CustomerLoginPage = () => {
         {/* --- GOOGLE LOGIN SECTION --- */}
         <div className="space-y-3">
           <div className="text-center">
-            <p className="text-xs font-bold text-[#4A2C18] mb-2.5">
-              Instant 1-Click Entry with your Google Account
-            </p>
 
             {/* Official Google Identity Services Container */}
             <div

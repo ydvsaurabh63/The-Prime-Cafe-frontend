@@ -64,9 +64,9 @@ const CustomerHeader = () => {
           <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
             <Link
               to="/"
-              className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-[#4A2C18] text-[#FAF7F2] flex items-center justify-center shadow-md shrink-0"
+              className="w-9 h-9 sm:w-10 sm:h-10 rounded-full overflow-hidden shadow-md shrink-0 ring-1 ring-[#C85A32]/30 flex items-center justify-center bg-black"
             >
-              <Coffee size={19} className="text-[#FAF7F2]" />
+              <img src="/logo.png" alt="The Prime Cafe Logo" className="w-full h-full object-cover" />
             </Link>
             <div className="min-w-0">
               <Link to="/">

@@ -221,9 +221,9 @@ const CustomerLoginPage = () => {
   return (
     <div className="max-w-xl mx-auto py-4 sm:py-8 space-y-6">
       {/* Brand Header */}
-      <div className="text-center space-y-2">
-        <div className="w-14 h-14 rounded-3xl bg-[#4A2C18] text-[#FAF7F2] flex items-center justify-center mx-auto shadow-md">
-          <Coffee size={28} />
+      <div className="text-center space-y-3">
+        <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden mx-auto shadow-lg ring-2 ring-[#C85A32]/30 bg-black flex items-center justify-center">
+          <img src="/logo.png" alt="The Prime Cafe Logo" className="w-full h-full object-cover" />
         </div>
         <h2 className="text-2xl font-extrabold text-[#2C1810] tracking-tight">
           Welcome to The Prime Cafe

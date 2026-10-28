@@ -139,8 +139,8 @@ const AdminLayout = () => {
         <div className="space-y-6">
           {/* Brand */}
           <div className="flex items-center gap-3 pb-2 border-b border-[#E6DCD3]/60">
-            <div className="w-10 h-10 rounded-2xl bg-[#4A2C18] text-white flex items-center justify-center shadow-xs shrink-0">
-              <Coffee size={22} />
+            <div className="w-10 h-10 rounded-full overflow-hidden shadow-xs shrink-0 ring-1 ring-[#C85A32]/30 bg-black flex items-center justify-center">
+              <img src="/logo.png" alt="The Prime Cafe" className="w-full h-full object-cover" />
             </div>
             <div>
               <h1 className="font-extrabold text-sm text-[#2C1810] tracking-tight">The Prime Cafe</h1>
@@ -200,8 +200,8 @@ const AdminLayout = () => {
       {/* Mobile Top Header with Notification Hub */}
       <header className="md:hidden bg-white/95 backdrop-blur-md border-b border-[#E6DCD3] px-3.5 py-2.5 flex items-center justify-between sticky top-0 z-40 shadow-xs">
         <div className="flex items-center gap-2.5 min-w-0">
-          <div className="w-8 h-8 rounded-xl bg-[#4A2C18] text-white flex items-center justify-center shrink-0 shadow-xs">
-            <Coffee size={17} />
+          <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 shadow-xs ring-1 ring-[#C85A32]/30 bg-black flex items-center justify-center">
+            <img src="/logo.png" alt="The Prime Cafe" className="w-full h-full object-cover" />
           </div>
           <div className="min-w-0">
             <h2 className="font-extrabold text-xs sm:text-sm text-[#2C1810] tracking-tight truncate">

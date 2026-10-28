@@ -162,9 +162,15 @@ const AdminLoginPage = ({ portal: propPortal }) => {
 
       <div className="max-w-md w-full bg-white rounded-3xl border border-[#E6DCD3] p-6 sm:p-7 shadow-sm space-y-5">
         <div className="text-center space-y-1.5">
-          <div className={`w-14 h-14 rounded-2xl ${current.iconBg} flex items-center justify-center mx-auto shadow-md`}>
-            <PortalIcon size={28} />
-          </div>
+          {portal === 'client' ? (
+            <div className="w-16 h-16 rounded-full overflow-hidden mx-auto shadow-md ring-2 ring-[#C85A32]/30 bg-black flex items-center justify-center">
+              <img src="/logo.png" alt="The Prime Cafe" className="w-full h-full object-cover" />
+            </div>
+          ) : (
+            <div className={`w-14 h-14 rounded-2xl ${current.iconBg} flex items-center justify-center mx-auto shadow-md`}>
+              <PortalIcon size={28} />
+            </div>
+          )}
           <h2 className="text-xl font-extrabold text-[#2C1810]">{current.title}</h2>
           <p className="text-xs text-[#7A685D]">{current.subtitle}</p>
         </div>

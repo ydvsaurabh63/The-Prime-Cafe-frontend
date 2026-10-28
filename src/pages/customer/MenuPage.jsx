@@ -86,19 +86,14 @@ const MenuPage = () => {
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      {/* Hero Welcome Banner on Full Screen / Desktop */}
-      <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-r from-[#3D2314] via-[#4A2C18] to-[#2C1810] text-[#FAF7F2] p-5 sm:p-7 md:p-8 shadow-xs">
-        <div className="relative z-10 max-w-2xl">
-          <span className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-bold px-3 py-1 rounded-full bg-[#C85A32] text-white shadow-2xs mb-2">
-            <Sparkles size={12} /> The Prime Artisanal Roastery
-          </span>
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight">
-            Handcrafted Coffee & Comfort Food
-          </h2>
-          <p className="text-xs sm:text-sm text-[#E6DCD3] mt-2 leading-relaxed">
-            Freshly brewed single-origin beans, authentic Chinese dishes, and instant hunger combos handcrafted with love.
-          </p>
-        </div>
+      {/* Official Cafe Panoramic Banner Header */}
+      <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl shadow-sm border border-[#E6DCD3] bg-[#2C1810]">
+        <img
+          src="/prime-cafe-banner.png"
+          alt="The Prime Café - Every Bite, A Little Happiness - Pani Tanki Chowk, Muzaffarpur"
+          className="w-full h-auto object-cover block"
+          loading="eager"
+        />
       </div>
 
       {/* Search & Category Filter Controls */}

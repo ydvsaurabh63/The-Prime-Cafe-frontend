@@ -39,3 +39,4 @@ export const playOrderChime = () => {
     // Graceful fallback if audio permissions are restricted
   }
 };
+

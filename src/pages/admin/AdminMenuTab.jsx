@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Plus, Edit2, Trash2, Search, Check, AlertCircle, X, Image as ImageIcon, Upload, Camera, Link as LinkIcon, RefreshCw, ChevronDown, Sparkles } from 'lucide-react';
 import api from '../../services/api';
+import { getCategoryPresetItems } from '../../data/categoryPresetItems';
 
 // Helper to compress and convert image files to optimized Base64
 const compressImageFile = (file) => {
@@ -82,8 +83,15 @@ const AdminMenuTab = () => {
   const [inlineCatLoading, setInlineCatLoading] = useState(false);
   const [showAdvancedOptions, setShowAdvancedOptions] = useState(false);
 
+  // Predefined Item selection vs Custom text input
+  const [showCustomItemName, setShowCustomItemName] = useState(false);
+
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+
+  // Selected category object & its predefined items
+  const selectedCategoryObj = categories.find((c) => c._id === formData.category);
+  const currentPresetItems = getCategoryPresetItems(selectedCategoryObj);
 
   const fetchData = async () => {
     try {
@@ -105,6 +113,43 @@ const AdminMenuTab = () => {
     fetchData();
   }, []);
 
+  const handleCategoryChange = (newCatId) => {
+    const newCatObj = categories.find((c) => c._id === newCatId);
+    const newPresets = getCategoryPresetItems(newCatObj);
+    const isCurrentInNew = newPresets.some((p) => p.name === formData.name);
+
+    setFormData((prev) => ({
+      ...prev,
+      category: newCatId,
+      name: isCurrentInNew ? prev.name : ''
+    }));
+
+    if (newPresets.length > 0) {
+      setShowCustomItemName(false);
+    } else {
+      setShowCustomItemName(true);
+    }
+  };
+
+  const handlePresetItemSelect = (e) => {
+    const selectedName = e.target.value;
+    if (!selectedName) {
+      setFormData((prev) => ({ ...prev, name: '' }));
+      return;
+    }
+    const matched = currentPresetItems.find((p) => p.name === selectedName);
+    if (matched) {
+      setFormData((prev) => ({
+        ...prev,
+        name: matched.name,
+        price: matched.price !== undefined ? String(matched.price) : prev.price,
+        isVeg: matched.isVeg !== undefined ? matched.isVeg : prev.isVeg
+      }));
+    } else {
+      setFormData((prev) => ({ ...prev, name: selectedName }));
+    }
+  };
+
   const handleQuickAddCategory = async (e) => {
     e?.preventDefault();
     if (!inlineCatName.trim()) return;
@@ -116,9 +161,10 @@ const AdminMenuTab = () => {
       if (res.data?.success && res.data.data) {
         const newCat = res.data.data;
         setCategories((prev) => [...prev, newCat]);
-        setFormData((prev) => ({ ...prev, category: newCat._id }));
+        setFormData((prev) => ({ ...prev, category: newCat._id, name: '' }));
         setInlineCatName('');
         setShowInlineNewCat(false);
+        setShowCustomItemName(true);
       }
     } catch (err) {
       alert(err.response?.data?.message || 'Failed to create category');
@@ -128,12 +174,16 @@ const AdminMenuTab = () => {
   };
 
   const openAddItemModal = () => {
+    const defaultCatId = categories[0]?._id || '';
+    const defaultCatObj = categories[0];
+    const presets = getCategoryPresetItems(defaultCatObj);
+
     setEditingItem(null);
     setFormData({
       name: '',
       description: '',
       price: '',
-      category: categories[0]?._id || '',
+      category: defaultCatId,
       isVeg: true,
       prepTime: '10-15 mins',
       tags: '',
@@ -143,6 +193,7 @@ const AdminMenuTab = () => {
     setImageInputMode('gallery');
     setShowInlineNewCat(false);
     setInlineCatName('');
+    setShowCustomItemName(presets.length === 0);
     setShowAdvancedOptions(false);
     setError('');
     setShowItemModal(true);
@@ -150,21 +201,27 @@ const AdminMenuTab = () => {
 
   const openEditItemModal = (item) => {
     setEditingItem(item);
+    const catId = item.category?._id || item.category;
+    const catObj = categories.find((c) => c._id === catId);
+    const presets = getCategoryPresetItems(catObj);
+    const isPresetMatch = presets.some((p) => p.name.toLowerCase() === (item.name || '').toLowerCase());
+
     setFormData({
       name: item.name,
       description: item.description || '',
       price: item.price,
-      category: item.category?._id || item.category,
+      category: catId,
       isVeg: item.isVeg,
       prepTime: item.prepTime || '10-15 mins',
       tags: item.tags ? item.tags.join(', ') : '',
       image: item.image || '',
       availability: item.availability
     });
+    setShowCustomItemName(!isPresetMatch);
     setImageInputMode(item.image?.startsWith('data:') ? 'gallery' : item.image ? 'url' : 'gallery');
     setShowInlineNewCat(false);
     setInlineCatName('');
-    setShowAdvancedOptions(!!(item.description || item.tags?.length));
+    setShowAdvancedOptions(!!item.tags?.length);
     setError('');
     setShowItemModal(true);
   };
@@ -530,7 +587,7 @@ const AdminMenuTab = () => {
                 ) : (
                   <select
                     value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                    onChange={(e) => handleCategoryChange(e.target.value)}
                     required
                     className="w-full p-2.5 bg-white border border-[#E6DCD3] rounded-xl focus:outline-none focus:border-[#C85A32] font-semibold text-[#2C1810]"
                   >
@@ -544,22 +601,74 @@ const AdminMenuTab = () => {
                 )}
               </div>
 
-              {/* 2. Item Name */}
-              <div>
-                <label className="block font-bold text-[#4A2C18] mb-1">
-                  Item Name <span className="text-rose-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="e.g. Bun Maska, Egg Roll Double, Peri-Peri, Mojito..."
-                  required
-                  className="w-full p-2.5 bg-[#FAF7F2] border border-[#E6DCD3] rounded-xl focus:outline-none focus:border-[#C85A32] font-medium"
-                />
+              {/* 2. Item Name (Predefined Dropdown like Category + Custom Item Option) */}
+              <div className="bg-[#FAF7F2] p-3 rounded-2xl border border-[#E6DCD3]/80 space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="block font-bold text-[#4A2C18]">
+                    Item Name <span className="text-rose-500">*</span>
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setShowCustomItemName(!showCustomItemName)}
+                    className="text-[11px] font-bold text-[#C85A32] hover:underline flex items-center gap-1 cursor-pointer"
+                  >
+                    <Plus size={12} />
+                    {showCustomItemName
+                      ? (currentPresetItems.length > 0 ? 'Choose from list' : 'Type name')
+                      : '+ Add Custom Item'}
+                  </button>
+                </div>
+
+                {showCustomItemName || currentPresetItems.length === 0 ? (
+                  <div className="space-y-1">
+                    <input
+                      type="text"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      placeholder="e.g. Bun Maska, Egg Roll Double, Peri-Peri, Mojito..."
+                      required
+                      className="w-full p-2.5 bg-white border border-[#E6DCD3] rounded-xl focus:outline-none focus:border-[#C85A32] font-semibold text-[#2C1810]"
+                    />
+                    {currentPresetItems.length === 0 && (
+                      <p className="text-[11px] text-[#7A685D]">
+                        No preset items for this category yet — enter custom name.
+                      </p>
+                    )}
+                  </div>
+                ) : (
+                  <select
+                    value={formData.name}
+                    onChange={handlePresetItemSelect}
+                    required
+                    className="w-full p-2.5 bg-white border border-[#E6DCD3] rounded-xl focus:outline-none focus:border-[#C85A32] font-semibold text-[#2C1810]"
+                  >
+                    <option value="">
+                      Select Item ({currentPresetItems.length} items available)
+                    </option>
+                    {currentPresetItems.map((item, idx) => (
+                      <option key={idx} value={item.name}>
+                        {idx + 1}. {item.name} — ₹{item.price} ({item.isVeg ? 'Veg' : 'Non-Veg'})
+                      </option>
+                    ))}
+                  </select>
+                )}
               </div>
 
-              {/* 3. Price & Dietary Classification */}
+              {/* 3. Description Field */}
+              <div>
+                <label className="block font-bold text-[#4A2C18] mb-1">
+                  Description <span className="text-[#7A685D] font-normal text-[11px]">(Optional)</span>
+                </label>
+                <textarea
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  placeholder="Short notes about flavor, garnish, or ingredients..."
+                  rows="2"
+                  className="w-full p-2.5 bg-[#FAF7F2] border border-[#E6DCD3] rounded-xl focus:outline-none focus:border-[#C85A32] text-xs font-medium resize-none"
+                ></textarea>
+              </div>
+
+              {/* 4. Price & Dietary Classification */}
               <div className="grid grid-cols-2 gap-3 items-center">
                 <div>
                   <label className="block font-bold text-[#4A2C18] mb-1">
@@ -752,7 +861,7 @@ const AdminMenuTab = () => {
                 )}
               </div>
 
-              {/* 6. Optional Collapsible Details: Description, Prep Time, Tags */}
+              {/* 6. Optional Collapsible Details: Prep Time, Tags */}
               <div className="pt-0.5">
                 <button
                   type="button"
@@ -760,22 +869,11 @@ const AdminMenuTab = () => {
                   className="text-[11px] font-bold text-[#7A685D] hover:text-[#C85A32] flex items-center gap-1 cursor-pointer transition"
                 >
                   <ChevronDown size={14} className={`transition-transform duration-200 ${showAdvancedOptions ? 'rotate-180' : ''}`} />
-                  <span>{showAdvancedOptions ? 'Hide Optional Details' : '+ Add Description, Prep Time or Tags (Optional)'}</span>
+                  <span>{showAdvancedOptions ? 'Hide Prep Time & Tags' : '+ Add Prep Time or Tags (Optional)'}</span>
                 </button>
 
                 {showAdvancedOptions && (
                   <div className="space-y-3 pt-2.5 pl-3 border-l-2 border-[#E6DCD3] mt-2">
-                    <div>
-                      <label className="block font-bold text-[#7A685D] mb-1">Description (Optional)</label>
-                      <textarea
-                        value={formData.description}
-                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                        placeholder="Short notes about flavor, garnish, or ingredients..."
-                        rows="2"
-                        className="w-full p-2 bg-[#FAF7F2] border border-[#E6DCD3] rounded-xl focus:outline-none text-xs"
-                      ></textarea>
-                    </div>
-
                     <div className="grid grid-cols-2 gap-3">
                       <div>
                         <label className="block font-bold text-[#7A685D] mb-1">Prep Time</label>

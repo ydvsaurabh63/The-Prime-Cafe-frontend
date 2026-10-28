@@ -1,16 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
-  Coffee,
   Check,
   ArrowRight,
   Utensils,
   QrCode,
   Sparkles,
-  AlertCircle
+  AlertCircle,
+  UserCheck
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
+import api from '../../services/api';
 
 const GoogleIcon = () => (
   <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24">
@@ -38,7 +39,7 @@ const CustomerLoginPage = () => {
   const redirect = searchParams.get('redirect') || '/home';
   const tableParam = searchParams.get('table');
 
-  const { register, googleLogin } = useAuth();
+  const { register, googleLogin, logout, updateCurrentUser } = useAuth();
   const { setTable } = useCart();
   const navigate = useNavigate();
 
@@ -49,6 +50,10 @@ const CustomerLoginPage = () => {
   const [gisRendered, setGisRendered] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [showConfigNotice, setShowConfigNotice] = useState(false);
+
+  // Flow Step: 'login' (Google sign-in only) -> 'details' (Customer details form)
+  const [step, setStep] = useState('login');
+  const [googleAccount, setGoogleAccount] = useState(null);
 
   // If table parameter is present (from scanning table QR), auto-link it
   useEffect(() => {
@@ -92,7 +97,16 @@ const CustomerLoginPage = () => {
         foodPreference
       });
       if (res && res.success) {
-        handleSuccessfulEntry();
+        const loggedUser = res.user;
+        setGoogleAccount(loggedUser);
+        if (loggedUser?.name) setName(loggedUser.name);
+        if (loggedUser?.phone) setPhone(loggedUser.phone);
+        if (loggedUser?.area) setArea(loggedUser.area);
+        if (loggedUser?.city) setCity(loggedUser.city);
+        if (loggedUser?.pincode) setPincode(loggedUser.pincode);
+        if (loggedUser?.foodPreference) setFoodPreference(loggedUser.foodPreference);
+        // Switch to the form immediately after Google sign-in
+        setStep('details');
       } else {
         setError(res?.message || 'Google login failed. Please try again.');
       }
@@ -105,7 +119,7 @@ const CustomerLoginPage = () => {
 
   // Initialize Google Identity Services
   useEffect(() => {
-    if (!googleClientId) return;
+    if (!googleClientId || step !== 'login') return;
 
     const interval = setInterval(() => {
       if (window.google?.accounts?.id && googleBtnContainerRef.current) {
@@ -140,7 +154,7 @@ const CustomerLoginPage = () => {
       clearInterval(interval);
       clearTimeout(timeout);
     };
-  }, [googleClientId, foodPreference, tableParam]);
+  }, [googleClientId, step, foodPreference, tableParam]);
 
   // Click handler for fallback button
   const handleGoogleClick = () => {
@@ -175,7 +189,10 @@ const CustomerLoginPage = () => {
         foodPreference
       });
       if (res && res.success) {
-        handleSuccessfulEntry();
+        const loggedUser = res.user;
+        setGoogleAccount(loggedUser);
+        setName(loggedUser?.name || 'Guest Customer');
+        setStep('details');
       } else {
         setError(res?.message || 'Demo login failed');
       }
@@ -186,7 +203,7 @@ const CustomerLoginPage = () => {
     }
   };
 
-  // Handle Form Submission with real personal & food preference details
+  // Handle Form Submission after Google Login
   const handleSubmitDetails = async (e) => {
     e.preventDefault();
     if (!name.trim() || !phone.trim()) {
@@ -207,9 +224,24 @@ const CustomerLoginPage = () => {
         table: tableParam || ''
       };
 
-      const res = await register(payload);
-      if (res.success) {
-        handleSuccessfulEntry();
+      const token = localStorage.getItem('akc_token');
+      if (token) {
+        const res = await api.patch('/profile', payload);
+        if (res.data?.success) {
+          if (updateCurrentUser) {
+            updateCurrentUser(res.data.data);
+          }
+          handleSuccessfulEntry();
+        } else {
+          setError(res.data?.message || 'Failed to update profile details');
+        }
+      } else {
+        const res = await register(payload);
+        if (res.success) {
+          handleSuccessfulEntry();
+        } else {
+          setError(res.message || 'Registration failed');
+        }
       }
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to submit details');
@@ -220,257 +252,334 @@ const CustomerLoginPage = () => {
 
   return (
     <div className="max-w-xl mx-auto py-4 sm:py-8 space-y-6">
-      {/* Brand Header */}
-      <div className="text-center space-y-3">
-        <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden mx-auto shadow-lg ring-2 ring-[#C85A32]/30 bg-black flex items-center justify-center">
-          <img src="/logo.png" alt="The Prime Cafe Logo" className="w-full h-full object-cover" />
-        </div>
-        <h2 className="text-2xl font-extrabold text-[#2C1810] tracking-tight">
-          Welcome to The Prime Cafe
-        </h2>
-      </div>
 
-      {/* Table Scanned Notification Banner */}
-      {tableParam && (
-        <div className="bg-[#FAF7F2] border-2 border-[#C85A32]/40 rounded-2xl p-4 flex items-center justify-between shadow-2xs">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#4A2C18] text-white flex items-center justify-center font-bold shadow-xs">
-              <QrCode size={20} className="text-[#FAF7F2]" />
+      {/* ============================================================== */}
+      {/* STEP 1: INITIAL GOOGLE SIGN IN SCREEN                          */}
+      {/* ============================================================== */}
+      {step === 'login' && (
+        <>
+          {/* Brand Header */}
+          <div className="text-center space-y-3">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden mx-auto shadow-lg ring-2 ring-[#C85A32]/30 bg-black flex items-center justify-center">
+              <img src="/logo.png" alt="The Prime Cafe Logo" className="w-full h-full object-cover" />
             </div>
-            <div>
-              <p className="text-[11px] font-semibold text-[#7A685D] uppercase tracking-wider">
-                Table QR Scanned
-              </p>
-              <h4 className="text-sm sm:text-base font-extrabold text-[#2C1810]">
-                {tableParam.toLowerCase().startsWith('table') ? tableParam : `Table ${tableParam}`}
-              </h4>
-            </div>
-          </div>
-          <span className="text-[11px] font-bold text-emerald-800 bg-emerald-100 border border-emerald-300 px-3 py-1 rounded-full flex items-center gap-1 shadow-2xs">
-            <Check size={13} /> Table Linked
-          </span>
-        </div>
-      )}
-
-      {error && (
-        <div className="p-3.5 bg-red-50 text-red-700 text-xs rounded-2xl border border-red-200">
-          {error}
-        </div>
-      )}
-
-      {/* Google Setup Guide / Demo Notice Modal */}
-      {showConfigNotice && (
-        <div className="p-4 bg-amber-50 border border-amber-200 rounded-2xl text-xs text-amber-900 space-y-3 shadow-xs">
-          <div className="flex items-start gap-2.5">
-            <AlertCircle size={18} className="text-amber-600 shrink-0 mt-0.5" />
-            <div className="space-y-1">
-              <p className="font-bold">Google Client ID Setup Required</p>
-              <p className="text-[11px] text-amber-800 leading-relaxed">
-                Google Login ko live chalane ke liye frontend <code className="bg-amber-100 px-1 py-0.5 rounded font-mono font-bold">.env</code> file me <code className="bg-amber-100 px-1 py-0.5 rounded font-mono font-bold">VITE_GOOGLE_CLIENT_ID</code> add karein.
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2 pt-1">
-            <button
-              type="button"
-              onClick={handleDemoGoogleLogin}
-              disabled={googleLoading}
-              className="px-3.5 py-2 bg-[#4A2C18] text-white rounded-xl font-bold hover:bg-[#381F10] transition text-[11px] cursor-pointer flex items-center gap-1.5 shadow-2xs"
-            >
-              <Sparkles size={13} />
-              {googleLoading ? 'Logging in...' : 'Test Demo Google Login Now'}
-            </button>
-            <button
-              type="button"
-              onClick={() => setShowConfigNotice(false)}
-              className="px-3 py-2 bg-transparent text-amber-800 rounded-xl font-semibold hover:bg-amber-100/60 transition text-[11px] cursor-pointer"
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Main Form Card */}
-      <div className="bg-white rounded-3xl border border-[#E6DCD3] p-6 sm:p-8 shadow-xs space-y-6">
-
-        {/* --- GOOGLE LOGIN SECTION --- */}
-        <div className="space-y-3">
-          <div className="text-center">
-
-            {/* Official Google Identity Services Container */}
-            <div
-              ref={googleBtnContainerRef}
-              id="googleSignInContainer"
-              className={`flex justify-center w-full min-h-[44px] ${gisRendered ? 'block' : 'hidden'}`}
-            ></div>
-
-            {/* Premium Branded Google Button (Active when GIS button not rendered or awaiting client ID) */}
-            {!gisRendered && (
-              <button
-                type="button"
-                onClick={handleGoogleClick}
-                disabled={googleLoading}
-                className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-white hover:bg-neutral-50 active:bg-neutral-100 text-[#2C1810] font-bold text-xs sm:text-sm border-2 border-[#E6DCD3] hover:border-[#4A2C18]/40 rounded-2xl shadow-xs transition cursor-pointer"
-              >
-                <GoogleIcon />
-                <span>{googleLoading ? 'Signing in with Google...' : 'Continue with Google'}</span>
-              </button>
-            )}
+            <h2 className="text-2xl font-extrabold text-[#2C1810] tracking-tight">
+              Welcome to The Prime Cafe
+            </h2>
+            <p className="text-xs sm:text-sm text-[#7A685D] max-w-sm mx-auto">
+              Sign in with Google to explore our menu, customize dishes & start ordering.
+            </p>
           </div>
 
-          {/* Elegant "OR" Divider */}
-          <div className="relative flex items-center justify-center my-4">
-            <div className="border-t border-[#E6DCD3] w-full"></div>
-            <span className="bg-white px-3 text-[11px] font-extrabold text-[#7A685D] uppercase tracking-wider shrink-0">
-              Or Enter Details Manually
-            </span>
-            <div className="border-t border-[#E6DCD3] w-full"></div>
-          </div>
-        </div>
-
-        {/* --- MANUAL FORM --- */}
-        <form onSubmit={handleSubmitDetails} className="space-y-4 text-xs sm:text-sm">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-            {/* 1. Name */}
-            <div>
-              <label className="block font-bold text-[#4A2C18] mb-1">
-                1. Full Name <span className="text-rose-500">*</span>
-              </label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="e.g. Rohan Sharma"
-                required
-                className="w-full p-3 bg-[#FAF7F2] border border-[#E6DCD3] rounded-2xl focus:outline-none focus:border-[#C85A32]"
-              />
+          {/* Table Scanned Notification Banner */}
+          {tableParam && (
+            <div className="bg-[#FAF7F2] border-2 border-[#C85A32]/40 rounded-2xl p-4 flex items-center justify-between shadow-2xs">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-[#4A2C18] text-white flex items-center justify-center font-bold shadow-xs">
+                  <QrCode size={20} className="text-[#FAF7F2]" />
+                </div>
+                <div>
+                  <p className="text-[11px] font-semibold text-[#7A685D] uppercase tracking-wider">
+                    Table QR Scanned
+                  </p>
+                  <h4 className="text-sm sm:text-base font-extrabold text-[#2C1810]">
+                    {tableParam.toLowerCase().startsWith('table') ? tableParam : `Table ${tableParam}`}
+                  </h4>
+                </div>
+              </div>
+              <span className="text-[11px] font-bold text-emerald-800 bg-emerald-100 border border-emerald-300 px-3 py-1 rounded-full flex items-center gap-1 shadow-2xs">
+                <Check size={13} /> Table Linked
+              </span>
             </div>
+          )}
 
-            {/* 2. Mobile Number */}
-            <div>
-              <label className="block font-bold text-[#4A2C18] mb-1">
-                2. Mobile Number <span className="text-rose-500">*</span>
-              </label>
-              <input
-                type="tel"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="e.g. 9812345678"
-                required
-                className="w-full p-3 bg-[#FAF7F2] border border-[#E6DCD3] rounded-2xl focus:outline-none focus:border-[#C85A32]"
-              />
+          {error && (
+            <div className="p-3.5 bg-red-50 text-red-700 text-xs rounded-2xl border border-red-200">
+              {error}
             </div>
-          </div>
+          )}
 
-          {/* 3. Area, 4. City, 5. Pincode */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-            <div>
-              <label className="block font-bold text-[#4A2C18] mb-1">3. Area / Locality</label>
-              <input
-                type="text"
-                value={area}
-                onChange={(e) => setArea(e.target.value)}
-                placeholder="e.g. Swaroop Nagar"
-                className="w-full p-3 bg-[#FAF7F2] border border-[#E6DCD3] rounded-2xl focus:outline-none focus:border-[#C85A32]"
-              />
+          {/* Google Setup Guide / Demo Notice Modal */}
+          {showConfigNotice && (
+            <div className="p-4 bg-amber-50 border border-amber-200 rounded-2xl text-xs text-amber-900 space-y-3 shadow-xs">
+              <div className="flex items-start gap-2.5">
+                <AlertCircle size={18} className="text-amber-600 shrink-0 mt-0.5" />
+                <div className="space-y-1">
+                  <p className="font-bold">Google Client ID Setup Required</p>
+                  <p className="text-[11px] text-amber-800 leading-relaxed">
+                    Google Login ko live chalane ke liye frontend <code className="bg-amber-100 px-1 py-0.5 rounded font-mono font-bold">.env</code> file me <code className="bg-amber-100 px-1 py-0.5 rounded font-mono font-bold">VITE_GOOGLE_CLIENT_ID</code> add karein.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 pt-1">
+                <button
+                  type="button"
+                  onClick={handleDemoGoogleLogin}
+                  disabled={googleLoading}
+                  className="px-3.5 py-2 bg-[#4A2C18] text-white rounded-xl font-bold hover:bg-[#381F10] transition text-[11px] cursor-pointer flex items-center gap-1.5 shadow-2xs"
+                >
+                  <Sparkles size={13} />
+                  {googleLoading ? 'Logging in...' : 'Test Demo Google Login Now'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowConfigNotice(false)}
+                  className="px-3 py-2 bg-transparent text-amber-800 rounded-xl font-semibold hover:bg-amber-100/60 transition text-[11px] cursor-pointer"
+                >
+                  Close
+                </button>
+              </div>
             </div>
+          )}
 
-            <div>
-              <label className="block font-bold text-[#4A2C18] mb-1">4. City</label>
-              <input
-                type="text"
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-                placeholder="e.g. Kanpur"
-                className="w-full p-3 bg-[#FAF7F2] border border-[#E6DCD3] rounded-2xl focus:outline-none focus:border-[#C85A32]"
-              />
-            </div>
+          {/* Google Sign In Card */}
+          <div className="bg-white rounded-3xl border border-[#E6DCD3] p-6 sm:p-8 shadow-xs space-y-4">
+            <div className="text-center space-y-3">
+              {/* Official Google Identity Services Container */}
+              <div
+                ref={googleBtnContainerRef}
+                id="googleSignInContainer"
+                className={`flex justify-center w-full min-h-[44px] ${gisRendered ? 'block' : 'hidden'}`}
+              ></div>
 
-            <div>
-              <label className="block font-bold text-[#4A2C18] mb-1">5. Pincode</label>
-              <input
-                type="text"
-                value={pincode}
-                onChange={(e) => setPincode(e.target.value)}
-                placeholder="e.g. 208002"
-                className="w-full p-3 bg-[#FAF7F2] border border-[#E6DCD3] rounded-2xl focus:outline-none focus:border-[#C85A32]"
-              />
-            </div>
-          </div>
-
-          {/* FOOD CHOOSE: Veg, Non Veg, Both */}
-          <div className="pt-2">
-            <label className="block font-extrabold text-[#4A2C18] mb-2 flex items-center gap-1.5">
-              <Utensils size={16} className="text-[#C85A32]" />
-              Food Choose (Dietary Preference)
-            </label>
-            <div className="grid grid-cols-3 gap-3">
-              {/* Veg */}
-              <button
-                type="button"
-                onClick={() => setFoodPreference('Veg')}
-                className={`py-3 px-2 rounded-2xl border flex flex-col items-center justify-center gap-1.5 transition ${
-                  foodPreference === 'Veg'
-                    ? 'border-emerald-600 bg-emerald-50 text-emerald-900 font-extrabold shadow-xs'
-                    : 'border-[#E6DCD3] bg-[#FAF7F2] text-[#7A685D] hover:bg-[#F5EFEB]'
-                }`}
-              >
-                <span className="w-3.5 h-3.5 rounded-full bg-emerald-600 border border-white shadow-2xs"></span>
-                <span className="text-xs">Veg</span>
-              </button>
-
-              {/* Non Veg */}
-              <button
-                type="button"
-                onClick={() => setFoodPreference('Non Veg')}
-                className={`py-3 px-2 rounded-2xl border flex flex-col items-center justify-center gap-1.5 transition ${
-                  foodPreference === 'Non Veg'
-                    ? 'border-rose-600 bg-rose-50 text-rose-900 font-extrabold shadow-xs'
-                    : 'border-[#E6DCD3] bg-[#FAF7F2] text-[#7A685D] hover:bg-[#F5EFEB]'
-                }`}
-              >
-                <span className="w-3.5 h-3.5 rounded-full bg-rose-600 border border-white shadow-2xs"></span>
-                <span className="text-xs">Non Veg</span>
-              </button>
-
-              {/* Both */}
-              <button
-                type="button"
-                onClick={() => setFoodPreference('Both')}
-                className={`py-3 px-2 rounded-2xl border flex flex-col items-center justify-center gap-1.5 transition ${
-                  foodPreference === 'Both'
-                    ? 'border-[#4A2C18] bg-[#F5EFEB] text-[#2C1810] font-extrabold shadow-xs'
-                    : 'border-[#E6DCD3] bg-[#FAF7F2] text-[#7A685D] hover:bg-[#F5EFEB]'
-                }`}
-              >
-                <span className="flex gap-1">
-                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-600"></span>
-                  <span className="w-2.5 h-2.5 rounded-full bg-rose-600"></span>
-                </span>
-                <span className="text-xs">Both (All Food)</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Submit Button to proceed to Landing / Menu Page */}
-          <div className="pt-3">
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-[#C85A32] hover:bg-[#B24E2A] text-white font-extrabold py-3.5 rounded-2xl shadow-md transition flex items-center justify-center gap-2 text-xs sm:text-sm cursor-pointer"
-            >
-              {loading ? (
-                'Saving & Entering Cafe...'
-              ) : (
-                <>
-                  Enter Cafe & Start Ordering <ArrowRight size={16} />
-                </>
+              {/* Premium Branded Google Button */}
+              {!gisRendered && (
+                <button
+                  type="button"
+                  onClick={handleGoogleClick}
+                  disabled={googleLoading}
+                  className="w-full flex items-center justify-center gap-3 py-3.5 px-4 bg-white hover:bg-neutral-50 active:bg-neutral-100 text-[#2C1810] font-bold text-xs sm:text-sm border-2 border-[#E6DCD3] hover:border-[#4A2C18]/40 rounded-2xl shadow-xs transition cursor-pointer"
+                >
+                  <GoogleIcon />
+                  <span>{googleLoading ? 'Signing in with Google...' : 'Continue with Google'}</span>
+                </button>
               )}
-            </button>
+            </div>
+
+            {/* Subtle fallback option */}
+            <div className="text-center pt-2 border-t border-[#F5EFEB]">
+              <button
+                type="button"
+                onClick={() => {
+                  setError('');
+                  setStep('details');
+                }}
+                className="text-[11px] text-[#7A685D] hover:text-[#C85A32] font-semibold underline cursor-pointer"
+              >
+                Or enter details manually
+              </button>
+            </div>
           </div>
-        </form>
-      </div>
+        </>
+      )}
+
+      {/* ============================================================== */}
+      {/* STEP 2: CUSTOMER DETAILS FORM (OPENS RIGHT AFTER GOOGLE LOGIN) */}
+      {/* ============================================================== */}
+      {step === 'details' && (
+        <>
+          {/* Brand Header */}
+          <div className="text-center space-y-2">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden mx-auto shadow-md ring-2 ring-[#C85A32]/30 bg-black flex items-center justify-center">
+              <img src="/logo.png" alt="The Prime Cafe Logo" className="w-full h-full object-cover" />
+            </div>
+            <h2 className="text-xl sm:text-2xl font-extrabold text-[#2C1810] tracking-tight">
+              Complete Your Details
+            </h2>
+            <p className="text-xs text-[#7A685D]">
+              Please fill your details below to enter the cafe and start ordering.
+            </p>
+          </div>
+
+          {/* Google Account Profile Chip */}
+          {googleAccount && (
+            <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-3 flex items-center justify-between shadow-2xs">
+              <div className="flex items-center gap-2.5 min-w-0">
+                {googleAccount.profileImage ? (
+                  <img
+                    src={googleAccount.profileImage}
+                    alt={googleAccount.name || 'User'}
+                    className="w-9 h-9 rounded-full object-cover ring-2 ring-emerald-400 shrink-0"
+                  />
+                ) : (
+                  <div className="w-9 h-9 rounded-full bg-emerald-600 text-white font-bold flex items-center justify-center text-xs shrink-0">
+                    <UserCheck size={16} />
+                  </div>
+                )}
+                <div className="min-w-0">
+                  <p className="text-xs font-bold text-emerald-950 truncate">
+                    {googleAccount.name || 'Google User'}
+                  </p>
+                  <p className="text-[11px] text-emerald-700 truncate">
+                    {googleAccount.email}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={async () => {
+                  await logout();
+                  setGoogleAccount(null);
+                  setStep('login');
+                }}
+                className="text-[10px] font-bold text-emerald-800 hover:text-emerald-950 bg-white border border-emerald-300 px-2.5 py-1 rounded-lg shrink-0 cursor-pointer"
+              >
+                Switch
+              </button>
+            </div>
+          )}
+
+          {error && (
+            <div className="p-3.5 bg-red-50 text-red-700 text-xs rounded-2xl border border-red-200">
+              {error}
+            </div>
+          )}
+
+          {/* Details Form Card */}
+          <div className="bg-white rounded-3xl border border-[#E6DCD3] p-6 sm:p-8 shadow-xs">
+            <form onSubmit={handleSubmitDetails} className="space-y-4 text-xs sm:text-sm">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                {/* 1. Name */}
+                <div>
+                  <label className="block font-bold text-[#4A2C18] mb-1">
+                    1. Full Name <span className="text-rose-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="e.g. Rohan Sharma"
+                    required
+                    className="w-full p-3 bg-[#FAF7F2] border border-[#E6DCD3] rounded-2xl focus:outline-none focus:border-[#C85A32]"
+                  />
+                </div>
+
+                {/* 2. Mobile Number */}
+                <div>
+                  <label className="block font-bold text-[#4A2C18] mb-1">
+                    2. Mobile Number <span className="text-rose-500">*</span>
+                  </label>
+                  <input
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="e.g. 9812345678"
+                    required
+                    className="w-full p-3 bg-[#FAF7F2] border border-[#E6DCD3] rounded-2xl focus:outline-none focus:border-[#C85A32]"
+                  />
+                </div>
+              </div>
+
+              {/* 3. Area, 4. City, 5. Pincode */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+                <div>
+                  <label className="block font-bold text-[#4A2C18] mb-1">3. Area / Locality</label>
+                  <input
+                    type="text"
+                    value={area}
+                    onChange={(e) => setArea(e.target.value)}
+                    placeholder="e.g. Swaroop Nagar"
+                    className="w-full p-3 bg-[#FAF7F2] border border-[#E6DCD3] rounded-2xl focus:outline-none focus:border-[#C85A32]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold text-[#4A2C18] mb-1">4. City</label>
+                  <input
+                    type="text"
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                    placeholder="e.g. Kanpur"
+                    className="w-full p-3 bg-[#FAF7F2] border border-[#E6DCD3] rounded-2xl focus:outline-none focus:border-[#C85A32]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold text-[#4A2C18] mb-1">5. Pincode</label>
+                  <input
+                    type="text"
+                    value={pincode}
+                    onChange={(e) => setPincode(e.target.value)}
+                    placeholder="e.g. 208002"
+                    className="w-full p-3 bg-[#FAF7F2] border border-[#E6DCD3] rounded-2xl focus:outline-none focus:border-[#C85A32]"
+                  />
+                </div>
+              </div>
+
+              {/* FOOD CHOOSE: Veg, Non Veg, Both */}
+              <div className="pt-2">
+                <label className="block font-extrabold text-[#4A2C18] mb-2 flex items-center gap-1.5">
+                  <Utensils size={16} className="text-[#C85A32]" />
+                  Food Choose (Dietary Preference)
+                </label>
+                <div className="grid grid-cols-3 gap-3">
+                  {/* Veg */}
+                  <button
+                    type="button"
+                    onClick={() => setFoodPreference('Veg')}
+                    className={`py-3 px-2 rounded-2xl border flex flex-col items-center justify-center gap-1.5 transition cursor-pointer ${
+                      foodPreference === 'Veg'
+                        ? 'border-emerald-600 bg-emerald-50 text-emerald-900 font-extrabold shadow-xs'
+                        : 'border-[#E6DCD3] bg-[#FAF7F2] text-[#7A685D] hover:bg-[#F5EFEB]'
+                    }`}
+                  >
+                    <span className="w-3.5 h-3.5 rounded-full bg-emerald-600 border border-white shadow-2xs"></span>
+                    <span className="text-xs">Veg</span>
+                  </button>
+
+                  {/* Non Veg */}
+                  <button
+                    type="button"
+                    onClick={() => setFoodPreference('Non Veg')}
+                    className={`py-3 px-2 rounded-2xl border flex flex-col items-center justify-center gap-1.5 transition cursor-pointer ${
+                      foodPreference === 'Non Veg'
+                        ? 'border-rose-600 bg-rose-50 text-rose-900 font-extrabold shadow-xs'
+                        : 'border-[#E6DCD3] bg-[#FAF7F2] text-[#7A685D] hover:bg-[#F5EFEB]'
+                    }`}
+                  >
+                    <span className="w-3.5 h-3.5 rounded-full bg-rose-600 border border-white shadow-2xs"></span>
+                    <span className="text-xs">Non Veg</span>
+                  </button>
+
+                  {/* Both */}
+                  <button
+                    type="button"
+                    onClick={() => setFoodPreference('Both')}
+                    className={`py-3 px-2 rounded-2xl border flex flex-col items-center justify-center gap-1.5 transition cursor-pointer ${
+                      foodPreference === 'Both'
+                        ? 'border-[#4A2C18] bg-[#F5EFEB] text-[#2C1810] font-extrabold shadow-xs'
+                        : 'border-[#E6DCD3] bg-[#FAF7F2] text-[#7A685D] hover:bg-[#F5EFEB]'
+                    }`}
+                  >
+                    <span className="flex gap-1">
+                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-600"></span>
+                      <span className="w-2.5 h-2.5 rounded-full bg-rose-600"></span>
+                    </span>
+                    <span className="text-xs">Both (All Food)</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Submit Button to proceed to Landing / Menu Page */}
+              <div className="pt-3">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full bg-[#C85A32] hover:bg-[#B24E2A] text-white font-extrabold py-3.5 rounded-2xl shadow-md transition flex items-center justify-center gap-2 text-xs sm:text-sm cursor-pointer"
+                >
+                  {loading ? (
+                    'Saving & Entering Cafe...'
+                  ) : (
+                    <>
+                      Enter Cafe & Start Ordering <ArrowRight size={16} />
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </>
+      )}
 
     </div>
   );

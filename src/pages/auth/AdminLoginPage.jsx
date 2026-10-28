@@ -115,51 +115,8 @@ const AdminLoginPage = ({ portal: propPortal }) => {
     }
   };
 
-  const fillDemo = (demoEmail, demoPwd) => {
-    setEmail(demoEmail);
-    setPassword(demoPwd);
-    setError('');
-  };
-
   return (
-    <div className="min-h-screen bg-[#FAF7F2] flex flex-col items-center justify-center p-4 space-y-4">
-      {/* Portal Switch Pills */}
-      <div className="flex items-center gap-1.5 p-1.5 bg-white border border-[#E6DCD3] rounded-2xl shadow-2xs">
-        <button
-          type="button"
-          onClick={() => navigate('/superadmin/login')}
-          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${
-            portal === 'superadmin'
-              ? 'bg-[#2C1810] text-amber-300 shadow-xs'
-              : 'text-[#7A685D] hover:text-[#2C1810]'
-          }`}
-        >
-          Superadmin
-        </button>
-        <button
-          type="button"
-          onClick={() => navigate('/admin/login')}
-          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${
-            portal === 'admin'
-              ? 'bg-[#4A2C18] text-emerald-300 shadow-xs'
-              : 'text-[#7A685D] hover:text-[#2C1810]'
-          }`}
-        >
-          Admin
-        </button>
-        <button
-          type="button"
-          onClick={() => navigate('/client/login')}
-          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${
-            portal === 'client'
-              ? 'bg-[#C85A32] text-white shadow-xs'
-              : 'text-[#7A685D] hover:text-[#2C1810]'
-          }`}
-        >
-          Client Cafe
-        </button>
-      </div>
-
+    <div className="min-h-screen bg-[#FAF7F2] flex flex-col items-center justify-center p-4">
       <div className="max-w-md w-full bg-white rounded-3xl border border-[#E6DCD3] p-6 sm:p-7 shadow-sm space-y-5">
         <div className="text-center space-y-1.5">
           {portal === 'client' ? (
@@ -172,7 +129,6 @@ const AdminLoginPage = ({ portal: propPortal }) => {
             </div>
           )}
           <h2 className="text-xl font-extrabold text-[#2C1810]">{current.title}</h2>
-          <p className="text-xs text-[#7A685D]">{current.subtitle}</p>
         </div>
 
         {error && (
@@ -233,50 +189,6 @@ const AdminLoginPage = ({ portal: propPortal }) => {
             </button>
           </div>
         </form>
-
-        {/* Quick Demo Autofill Hint */}
-        <div className="pt-3 border-t border-[#F5EFEB] space-y-2">
-          <p className="text-[11px] font-bold text-[#7A685D] text-center">Quick Demo Credentials:</p>
-          <div className="flex flex-wrap gap-2 justify-center">
-            {portal === 'superadmin' && (
-              <button
-                type="button"
-                onClick={() => fillDemo('superadmin@aajkalcafe.com', 'SuperAdmin@123')}
-                className="text-[10px] font-bold px-2.5 py-1 bg-[#FAF7F2] hover:bg-[#F5EFEB] border border-[#E6DCD3] rounded-lg text-[#4A2C18]"
-              >
-                Auto-fill Superadmin
-              </button>
-            )}
-            {portal === 'admin' && (
-              <button
-                type="button"
-                onClick={() => fillDemo('amit.sharma@aajkalcafe.com', 'Admin@123')}
-                className="text-[10px] font-bold px-2.5 py-1 bg-[#FAF7F2] hover:bg-[#F5EFEB] border border-[#E6DCD3] rounded-lg text-[#4A2C18]"
-              >
-                Auto-fill Admin
-              </button>
-            )}
-            {portal === 'client' && (
-              <button
-                type="button"
-                onClick={() => fillDemo('vikas@theprimecafe.com', 'Admin@123')}
-                className="text-[10px] font-bold px-2.5 py-1 bg-[#FAF7F2] hover:bg-[#F5EFEB] border border-[#E6DCD3] rounded-lg text-[#4A2C18]"
-              >
-                Auto-fill The Prime Cafe
-              </button>
-            )}
-          </div>
-        </div>
-
-        <div className="text-center pt-1">
-          <button
-            type="button"
-            onClick={() => navigate('/')}
-            className="text-[11px] font-semibold text-[#7A685D] hover:text-[#C85A32] underline"
-          >
-            ← Back to Customer Menu & Cafe View
-          </button>
-        </div>
       </div>
     </div>
   );

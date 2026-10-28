@@ -385,7 +385,7 @@ const AdminMenuTab = () => {
           </p>
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex flex-wrap sm:flex-nowrap gap-2 self-start sm:self-auto">
           <button
             onClick={() => setShowCatModal(true)}
             className="text-xs bg-[#FAF7F2] border border-[#E6DCD3] hover:bg-[#F5EFEB] text-[#4A2C18] font-bold px-3 py-2 rounded-xl transition shadow-2xs"
@@ -453,7 +453,7 @@ const AdminMenuTab = () => {
           <p className="text-xs text-[#7A685D] mt-1">Try modifying your search or add a new dish.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4">
           {filteredItems.map((item) => (
             <div
               key={item._id}

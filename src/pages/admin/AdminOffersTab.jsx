@@ -18,6 +18,7 @@ import {
   CheckCircle2
 } from 'lucide-react';
 import api from '../../services/api';
+import { getSocket } from '../../services/socket';
 
 const AdminOffersTab = () => {
   // Sub-tab: 'offers' (Seasonal) or 'milestones' (Check-In Visit Rewards)
@@ -98,6 +99,19 @@ const AdminOffersTab = () => {
   useEffect(() => {
     fetchOffers();
     fetchMilestones();
+
+    const socket = getSocket();
+    socket.emit('join_admin');
+
+    const handleOfferSync = () => {
+      fetchOffers();
+    };
+
+    socket.on('offer_updated', handleOfferSync);
+
+    return () => {
+      socket.off('offer_updated', handleOfferSync);
+    };
   }, []);
 
   // ---------------- SEASONAL OFFERS HANDLERS ----------------

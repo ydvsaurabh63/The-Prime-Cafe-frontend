@@ -17,6 +17,7 @@ import {
 import { useAuth } from '../context/AuthContext';
 import { getSocket } from '../services/socket';
 import api from '../services/api';
+import { playOrderChime } from '../utils/audioAlert';
 
 const AdminLayout = () => {
   const { user, isAdmin, logout, loading } = useAuth();
@@ -26,6 +27,7 @@ const AdminLayout = () => {
   const [newCustomerBadge, setNewCustomerBadge] = useState(0);
   const [reviewToast, setReviewToast] = useState(null);
   const [customerToast, setCustomerToast] = useState(null);
+  const [orderToast, setOrderToast] = useState(null);
 
   // Fetch unread notifications count
   const fetchUnread = async () => {
@@ -62,8 +64,15 @@ const AdminLayout = () => {
         setUnreadCount((prev) => prev + 1);
       });
 
-      socket.on('new_order', () => {
+      socket.on('new_order', (ord) => {
+        playOrderChime();
         fetchUnread();
+        if (ord) {
+          setOrderToast(ord);
+          setTimeout(() => {
+            setOrderToast((curr) => (curr?._id === ord._id ? null : curr));
+          }, 7000);
+        }
       });
 
       socket.on('new_review', (rev) => {
@@ -132,23 +141,23 @@ const AdminLayout = () => {
   return (
     <div className="min-h-screen bg-[#FAF7F2] text-[#2C1810] flex flex-col antialiased">
       <div className="flex-1 flex flex-col md:flex-row">
-      {/* Sidebar for Desktop */}
-      <aside className="hidden md:flex flex-col w-64 bg-white border-r border-[#E6DCD3] p-5 md:sticky md:top-0 md:h-screen justify-between overflow-y-auto shrink-0">
+      {/* Sidebar for Desktop & Tablet */}
+      <aside className="hidden md:flex flex-col md:w-56 lg:w-64 bg-white border-r border-[#E6DCD3] p-4 lg:p-5 md:sticky md:top-0 md:h-screen justify-between overflow-y-auto shrink-0 shadow-2xs">
         <div className="space-y-6">
           {/* Brand */}
           <div className="flex items-center gap-3 pb-2 border-b border-[#E6DCD3]/60">
             <div className="w-10 h-10 rounded-full overflow-hidden shadow-xs shrink-0 ring-1 ring-[#C85A32]/30 bg-black flex items-center justify-center">
               <img src="/logo.png" alt="The Prime Cafe" className="w-full h-full object-cover" />
             </div>
-            <div>
-              <h1 className="font-extrabold text-sm text-[#2C1810] tracking-tight">The Prime Cafe</h1>
-              <span className="text-[10px] font-semibold text-[#C85A32] bg-[#FAF7F2] px-2 py-0.5 rounded-full border border-[#E6DCD3]">
+            <div className="min-w-0">
+              <h1 className="font-extrabold text-xs lg:text-sm text-[#2C1810] tracking-tight truncate">The Prime Cafe</h1>
+              <span className="text-[10px] font-semibold text-[#C85A32] bg-[#FAF7F2] px-2 py-0.5 rounded-full border border-[#E6DCD3] block truncate">
                 Management Panel
               </span>
             </div>
           </div>
 
-          {/* 5 Navigation Tabs Section */}
+          {/* Navigation Tabs Section */}
           <div className="space-y-1.5">
             <span className="text-[10px] uppercase font-bold text-[#7A685D] px-2 tracking-wider">
               Navigation Tabs
@@ -161,19 +170,19 @@ const AdminLayout = () => {
                     key={item.label}
                     to={item.path}
                     className={({ isActive }) =>
-                      `flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition ${
+                      `flex items-center justify-between px-3 lg:px-3.5 py-2.5 rounded-xl text-xs font-bold transition ${
                         isActive
                           ? 'bg-[#4A2C18] text-white shadow-xs'
                           : 'text-[#7A685D] hover:bg-[#F5EFEB] hover:text-[#2C1810]'
                       }`
                     }
                   >
-                    <div className="flex items-center gap-3">
-                      <Icon size={17} />
-                      <span>{item.label}</span>
+                    <div className="flex items-center gap-2.5 lg:gap-3 min-w-0">
+                      <Icon size={17} className="shrink-0" />
+                      <span className="truncate">{item.label}</span>
                     </div>
                     {item.badge > 0 && (
-                      <span className="bg-[#C85A32] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                      <span className="bg-[#C85A32] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full shrink-0">
                         {item.badge}
                       </span>
                     )}
@@ -263,8 +272,8 @@ const AdminLayout = () => {
       </header>
 
       {/* Main Content Area */}
-      <main className="flex-1 p-4 md:p-8 max-w-6xl w-full mx-auto pb-24 md:pb-8 flex flex-col justify-between">
-        <div className="flex-1">
+      <main className="flex-1 min-w-0 p-3.5 sm:p-5 md:p-6 lg:p-8 max-w-7xl w-full mx-auto pb-28 md:pb-8 flex flex-col justify-between">
+        <div className="flex-1 min-w-0">
           <Outlet />
         </div>
         <footer className="mt-12 pt-4 border-t border-[#E6DCD3] text-center text-xs text-[#7A685D]">
@@ -272,12 +281,59 @@ const AdminLayout = () => {
         </footer>
       </main>
 
+      {/* Real-Time Live Order Alert Toast */}
+      {orderToast && (
+        <aside
+          role="status"
+          aria-live="polite"
+          className="fixed bottom-20 md:bottom-6 right-3 sm:right-4 md:right-6 z-50 max-w-[calc(100vw-24px)] sm:max-w-sm w-full bg-white text-[#2C1810] p-4 rounded-2xl sm:rounded-3xl shadow-2xl border-2 border-[#C85A32] ring-4 ring-[#C85A32]/20 animate-in slide-in-from-bottom-5 duration-300"
+        >
+          <div className="flex items-start justify-between gap-2.5">
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-xl bg-[#C85A32] text-white flex items-center justify-center font-black shrink-0 shadow-xs">
+                <ShoppingBag size={18} />
+              </div>
+              <div className="min-w-0">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <h4 className="text-xs font-black text-[#2C1810]">
+                    New Order #{orderToast.orderNumber}!
+                  </h4>
+                  <span className="px-1.5 py-0.2 rounded-full bg-rose-500 text-white text-[9px] font-black animate-pulse">
+                    NEW
+                  </span>
+                </div>
+                <p className="text-[11px] text-[#7A685D] font-bold truncate">
+                  {orderToast.tableNumber || 'Table'} • ₹{orderToast.totalAmount} • {orderToast.customerName || 'Diner'}
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => setOrderToast(null)}
+              className="text-[#7A685D] hover:text-[#2C1810] p-1 cursor-pointer shrink-0"
+            >
+              <X size={14} />
+            </button>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setOrderToast(null);
+              navigate(`${basePath}/orders`);
+            }}
+            className="w-full mt-2.5 py-2 rounded-xl bg-[#C85A32] hover:bg-[#B24E2A] text-white text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer shadow-xs"
+          >
+            <span>Open Live Orders</span>
+          </button>
+        </aside>
+      )}
+
       {/* Real-Time Live Review Toast Notification */}
       {reviewToast && (
         <aside
           role="status"
           aria-live="polite"
-          className="fixed bottom-20 md:bottom-6 right-4 md:right-6 z-50 max-w-sm w-full bg-white text-[#2C1810] p-4 rounded-2xl shadow-2xl border-2 border-amber-400 ring-4 ring-amber-400/20 animate-in slide-in-from-bottom-5 duration-300"
+          className="fixed bottom-20 md:bottom-6 right-3 sm:right-4 md:right-6 z-50 max-w-[calc(100vw-24px)] sm:max-w-sm w-full bg-white text-[#2C1810] p-4 rounded-2xl sm:rounded-3xl shadow-2xl border-2 border-amber-400 ring-4 ring-amber-400/20 animate-in slide-in-from-bottom-5 duration-300"
         >
           <div className="flex items-start justify-between gap-2.5">
             <div className="flex items-center gap-2">
@@ -322,7 +378,7 @@ const AdminLayout = () => {
         <aside
           role="status"
           aria-live="polite"
-          className="fixed bottom-20 md:bottom-6 right-4 md:right-6 z-50 max-w-sm w-full bg-white text-[#2C1810] p-4 rounded-2xl shadow-2xl border-2 border-emerald-500 ring-4 ring-emerald-500/20 animate-in slide-in-from-bottom-5 duration-300"
+          className="fixed bottom-20 md:bottom-6 right-3 sm:right-4 md:right-6 z-50 max-w-[calc(100vw-24px)] sm:max-w-sm w-full bg-white text-[#2C1810] p-4 rounded-2xl sm:rounded-3xl shadow-2xl border-2 border-emerald-500 ring-4 ring-emerald-500/20 animate-in slide-in-from-bottom-5 duration-300"
         >
           <div className="flex items-start justify-between gap-2.5">
             <div className="flex items-center gap-2.5">
@@ -368,8 +424,8 @@ const AdminLayout = () => {
         </aside>
       )}
 
-      {/* Mobile Fixed Bottom Nav (Spacious 6 columns without notifications) */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t border-[#E6DCD3] grid grid-cols-6 h-16 shadow-[0_-4px_20px_rgba(44,24,16,0.06)] px-1">
+      {/* Mobile Fixed Bottom Nav (Spacious 6 columns with safe-area support) */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t border-[#E6DCD3] grid grid-cols-6 h-16 shadow-[0_-4px_20px_rgba(44,24,16,0.06)] px-0.5 pb-[env(safe-area-inset-bottom)]">
         {bottomNavTabs.map((item) => {
           const Icon = item.icon;
           return (
@@ -377,22 +433,22 @@ const AdminLayout = () => {
               key={item.label}
               to={item.path}
               className={({ isActive }) =>
-                `flex flex-col items-center justify-center relative transition ${
+                `flex flex-col items-center justify-center relative transition py-1 ${
                   isActive
-                    ? 'text-[#4A2C18] font-bold'
+                    ? 'text-[#C85A32] font-black'
                     : 'text-[#7A685D] hover:text-[#4A2C18]'
                 }`
               }
             >
               <div className="relative">
-                <Icon size={19} />
+                <Icon size={18} />
                 {item.badge > 0 && (
-                  <span className="absolute -top-1.5 -right-2 bg-[#C85A32] text-white text-[9px] font-bold w-3.5 h-3.5 rounded-full flex items-center justify-center">
+                  <span className="absolute -top-1.5 -right-2 bg-[#C85A32] text-white text-[9px] font-bold min-w-3.5 h-3.5 px-0.5 rounded-full flex items-center justify-center">
                     {item.badge}
                   </span>
                 )}
               </div>
-              <span className="text-[10px] mt-1 truncate max-w-full px-0.5">{item.label}</span>
+              <span className="text-[9px] sm:text-[10px] mt-1 truncate max-w-full px-0.5 tracking-tight">{item.label}</span>
             </NavLink>
           );
         })}

@@ -34,6 +34,7 @@ import api from '../../services/api';
 import { useCart } from '../../context/CartContext';
 import LoyaltyRewardHero from '../../components/LoyaltyRewardHero';
 import ReviewModal from '../../components/ReviewModal';
+import { getSocket } from '../../services/socket';
 
 // Crisp inline SVGs for Google and Instagram
 const GoogleIcon = ({ size = 20 }) => (
@@ -232,6 +233,22 @@ const HomePage = () => {
     };
 
     fetchHomeData();
+
+    // 100% Dynamic Sync with Cafe Management Panel
+    const socket = getSocket();
+    const handleSync = () => {
+      fetchHomeData();
+    };
+
+    socket.on('menu_updated', handleSync);
+    socket.on('offer_updated', handleSync);
+    socket.on('new_review', handleSync);
+
+    return () => {
+      socket.off('menu_updated', handleSync);
+      socket.off('offer_updated', handleSync);
+      socket.off('new_review', handleSync);
+    };
   }, []);
 
   const handleReviewSubmitted = (newReview) => {

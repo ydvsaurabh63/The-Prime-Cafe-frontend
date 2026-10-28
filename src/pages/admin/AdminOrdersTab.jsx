@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import api from '../../services/api';
 import { getSocket } from '../../services/socket';
+import { playOrderChime } from '../../utils/audioAlert';
 
 const AdminOrdersTab = () => {
   const navigate = useNavigate();
@@ -35,6 +36,13 @@ const AdminOrdersTab = () => {
   const [latestReview, setLatestReview] = useState(null);
   const [latestCustomer, setLatestCustomer] = useState(null);
 
+  const refreshDashboardStats = async () => {
+    try {
+      const res = await api.get('/admin/dashboard');
+      if (res.data?.success) setStats(res.data.data);
+    } catch (e) {}
+  };
+
   const fetchOrdersAndStats = async () => {
     try {
       setLoading(true);
@@ -43,8 +51,8 @@ const AdminOrdersTab = () => {
         api.get('/admin/dashboard')
       ]);
 
-      if (ordersRes.data.success) setOrders(ordersRes.data.data);
-      if (statsRes.data.success) setStats(statsRes.data.data);
+      if (ordersRes.data?.success) setOrders(ordersRes.data.data || []);
+      if (statsRes.data?.success) setStats(statsRes.data.data);
     } catch (err) {
       console.error('Failed to fetch admin orders:', err);
     } finally {
@@ -62,19 +70,9 @@ const AdminOrdersTab = () => {
     socket.emit('join_admin');
 
     socket.on('new_order', (newOrder) => {
-      setOrders((prev) => [newOrder, ...prev]);
-      // Update quick stats
-      setStats((prev) =>
-        prev
-          ? {
-              ...prev,
-              totalOrders: prev.totalOrders + 1,
-              pendingOrders: prev.pendingOrders + 1,
-              todayCount: prev.todayCount + 1,
-              todaySales: prev.todaySales + newOrder.totalAmount
-            }
-          : prev
-      );
+      playOrderChime();
+      setOrders((prev) => [newOrder, ...prev.filter((o) => o._id !== newOrder._id)]);
+      refreshDashboardStats();
     });
 
     socket.on('order_status_updated', (updated) => {
@@ -82,6 +80,7 @@ const AdminOrdersTab = () => {
       if (selectedOrder && selectedOrder._id === updated._id) {
         setSelectedOrder(updated);
       }
+      refreshDashboardStats();
     });
 
     socket.on('new_review', (rev) => {
@@ -108,6 +107,7 @@ const AdminOrdersTab = () => {
         if (selectedOrder && selectedOrder._id === orderId) {
           setSelectedOrder(res.data.data);
         }
+        refreshDashboardStats();
       }
     } catch (err) {
       alert(err.response?.data?.message || 'Failed to update order status');
@@ -131,6 +131,7 @@ const AdminOrdersTab = () => {
         setOrders((prev) => prev.map((o) => (o._id === rejectOrderId ? res.data.data : o)));
         setShowRejectModal(false);
         setRejectOrderId(null);
+        refreshDashboardStats();
       }
     } catch (err) {
       alert(err.response?.data?.message || 'Failed to reject order');

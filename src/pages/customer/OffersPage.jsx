@@ -25,6 +25,7 @@ import { useAuth } from '../../context/AuthContext';
 import { Link } from 'react-router-dom';
 import confetti from 'canvas-confetti';
 import LoyaltyRewardHero from '../../components/LoyaltyRewardHero';
+import { getSocket } from '../../services/socket';
 
 const DEFAULT_FALLBACK_MILESTONES = [
   {
@@ -104,6 +105,16 @@ const OffersPage = () => {
       }
     };
     fetchOffers();
+
+    const socket = getSocket();
+    const handleOfferSync = () => {
+      fetchOffers();
+    };
+    socket.on('offer_updated', handleOfferSync);
+
+    return () => {
+      socket.off('offer_updated', handleOfferSync);
+    };
   }, []);
 
   // Fetch dynamic check-in milestones from backend API

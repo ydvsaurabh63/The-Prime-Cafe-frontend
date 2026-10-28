@@ -39,9 +39,9 @@ const CustomerLayout = () => {
   return (
     <div className="min-h-screen bg-[#FAF7F2] text-[#2C1810] flex flex-col antialiased">
       <CustomerHeader />
-      {/* Responsive Container: expands on desktop/laptop with pb-24 for bottom navigation bar */}
-      <main className="flex-1 w-full max-w-7xl mx-auto pb-24 px-4 sm:px-6 lg:px-8 pt-4 flex flex-col justify-between">
-        <div className="flex-1">
+      {/* Responsive Container: expands on mobile, tablet & laptop with pb-28 to avoid bottom nav clipping */}
+      <main className="flex-1 w-full max-w-7xl mx-auto pb-28 sm:pb-24 px-3 sm:px-6 lg:px-8 pt-3 sm:pt-4 flex flex-col justify-between min-w-0">
+        <div className="flex-1 min-w-0">
           <Outlet />
         </div>
 

@@ -42,7 +42,9 @@ const CustomerLoginPage = () => {
   const { setTable } = useCart();
   const navigate = useNavigate();
 
-  const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+  const googleClientId =
+    import.meta.env.VITE_GOOGLE_CLIENT_ID ||
+    '970179278240-9ov5n9q46vg5p5ejhaa2c3fnps85g38p.apps.googleusercontent.com';
   const googleBtnContainerRef = useRef(null);
   const [gisRendered, setGisRendered] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
@@ -142,8 +144,18 @@ const CustomerLoginPage = () => {
 
   // Click handler for fallback button
   const handleGoogleClick = () => {
-    if (googleClientId && window.google?.accounts?.id) {
-      window.google.accounts.id.prompt();
+    if (window.google?.accounts?.id) {
+      try {
+        window.google.accounts.id.initialize({
+          client_id: googleClientId,
+          callback: handleGoogleCredentialResponse,
+          auto_select: false,
+          cancel_on_tap_outside: true
+        });
+        window.google.accounts.id.prompt();
+      } catch (e) {
+        console.warn('Google prompt error:', e);
+      }
     } else {
       setShowConfigNotice(true);
     }

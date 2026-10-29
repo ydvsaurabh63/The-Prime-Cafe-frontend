@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Search, Plus, Minus, Check, Clock, Sparkles, AlertCircle, Leaf, Drumstick } from 'lucide-react';
+import { Search, Plus, Minus, Check, Clock, Sparkles, AlertCircle, Leaf, Drumstick, ArrowUpDown, ChevronDown } from 'lucide-react';
 import api from '../../services/api';
 import { useCart } from '../../context/CartContext';
 import { getSocket } from '../../services/socket';
@@ -59,6 +59,7 @@ const MenuPage = () => {
 
   // Dietary filter: 'all', 'veg', 'non-veg'
   const [dietaryFilter, setDietaryFilter] = useState('all');
+  const [sortBy, setSortBy] = useState('default');
 
   // Filter items
   const filteredItems = menuItems.filter((item) => {
@@ -78,6 +79,23 @@ const MenuPage = () => {
     if (dietaryFilter === 'non-veg') matchesDiet = item.isVeg === false;
 
     return matchesCategory && matchesSearch && matchesDiet;
+  });
+
+  // Sort items
+  const sortedItems = [...filteredItems].sort((a, b) => {
+    if (sortBy === 'price-low') {
+      return (Number(a.price) || 0) - (Number(b.price) || 0);
+    }
+    if (sortBy === 'price-high') {
+      return (Number(b.price) || 0) - (Number(a.price) || 0);
+    }
+    if (sortBy === 'name-az') {
+      return a.name.localeCompare(b.name);
+    }
+    if (sortBy === 'name-za') {
+      return b.name.localeCompare(a.name);
+    }
+    return 0;
   });
 
   const getItemQuantityInCart = (itemId) => {
@@ -104,7 +122,7 @@ const MenuPage = () => {
 
       {/* Search & Category Filter Controls */}
       <div className="bg-white p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl border border-[#E6DCD3] shadow-2xs space-y-3">
-        <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3">
+        <div className="flex flex-col md:flex-row gap-2.5 sm:gap-3 items-stretch md:items-center justify-between">
           <div className="relative flex-1">
             <Search size={17} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#7A685D]" />
             <input
@@ -116,28 +134,53 @@ const MenuPage = () => {
             />
           </div>
 
-          {/* Dedicated Veg & Non-Veg Filter Buttons */}
-          <div className="flex items-center gap-1.5 bg-[#FAF7F2] p-1 rounded-xl sm:rounded-2xl border border-[#E6DCD3] shrink-0 self-start sm:self-auto overflow-x-auto w-full sm:w-auto">
-            <button
-              onClick={() => setDietaryFilter((prev) => (prev === 'veg' ? 'all' : 'veg'))}
-              className={`flex-1 sm:flex-initial px-3 py-1.5 rounded-lg sm:rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition whitespace-nowrap ${dietaryFilter === 'veg'
-                ? 'bg-emerald-600 text-white shadow-xs'
-                : 'text-emerald-800 hover:bg-white'
-                }`}
-            >
-              <Leaf size={14} className={dietaryFilter === 'veg' ? 'text-white' : 'text-emerald-600'} />
-              Veg
-            </button>
-            <button
-              onClick={() => setDietaryFilter((prev) => (prev === 'non-veg' ? 'all' : 'non-veg'))}
-              className={`flex-1 sm:flex-initial px-3 py-1.5 rounded-lg sm:rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition whitespace-nowrap ${dietaryFilter === 'non-veg'
-                ? 'bg-rose-600 text-white shadow-xs'
-                : 'text-rose-800 hover:bg-white'
-                }`}
-            >
-              <Drumstick size={14} className={dietaryFilter === 'non-veg' ? 'text-white' : 'text-rose-600'} />
-              Non-Veg
-            </button>
+          {/* Controls: Dietary Filters & Sorting */}
+          <div className="flex items-center justify-between sm:justify-end gap-2 shrink-0">
+            {/* Dedicated Veg & Non-Veg Filter Buttons */}
+            <div className="flex items-center gap-1.5 bg-[#FAF7F2] p-1 rounded-xl sm:rounded-2xl border border-[#E6DCD3]">
+              <button
+                onClick={() => setDietaryFilter((prev) => (prev === 'veg' ? 'all' : 'veg'))}
+                className={`px-3 py-1.5 rounded-lg sm:rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition whitespace-nowrap ${dietaryFilter === 'veg'
+                  ? 'bg-emerald-600 text-white shadow-xs'
+                  : 'text-emerald-800 hover:bg-white'
+                  }`}
+              >
+                <Leaf size={14} className={dietaryFilter === 'veg' ? 'text-white' : 'text-emerald-600'} />
+                Veg
+              </button>
+              <button
+                onClick={() => setDietaryFilter((prev) => (prev === 'non-veg' ? 'all' : 'non-veg'))}
+                className={`px-3 py-1.5 rounded-lg sm:rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition whitespace-nowrap ${dietaryFilter === 'non-veg'
+                  ? 'bg-rose-600 text-white shadow-xs'
+                  : 'text-rose-800 hover:bg-white'
+                  }`}
+              >
+                <Drumstick size={14} className={dietaryFilter === 'non-veg' ? 'text-white' : 'text-rose-600'} />
+                Non-Veg
+              </button>
+            </div>
+
+            {/* Sorting Dropdown */}
+            <div className={`relative flex items-center gap-1.5 px-3 py-1.5 rounded-xl sm:rounded-2xl transition cursor-pointer text-xs font-bold shadow-2xs border ${
+              sortBy !== 'default'
+                ? 'bg-amber-50 border-amber-300 text-amber-950'
+                : 'bg-[#FAF7F2] hover:bg-[#F5EFEB] border-[#E6DCD3] text-[#4A2C18]'
+            }`}>
+              <ArrowUpDown size={13} className={sortBy !== 'default' ? 'text-amber-700' : 'text-[#C85A32]'} />
+              <span className="text-[11px] text-[#7A685D] font-medium hidden sm:inline">Sort:</span>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="bg-transparent text-xs font-bold text-[#4A2C18] focus:outline-none cursor-pointer pr-4 appearance-none"
+              >
+                <option value="default">Recommended</option>
+                <option value="price-low">Price: Low to High</option>
+                <option value="price-high">Price: High to Low</option>
+                <option value="name-az">Name: A to Z</option>
+                <option value="name-za">Name: Z to A</option>
+              </select>
+              <ChevronDown size={13} className="text-[#7A685D] pointer-events-none -ml-3.5 shrink-0" />
+            </div>
           </div>
         </div>
 
@@ -173,14 +216,14 @@ const MenuPage = () => {
           <div className="w-8 h-8 sm:w-9 sm:h-9 border-3 border-[#C85A32] border-t-transparent rounded-full animate-spin"></div>
           <p className="mt-3 text-xs font-semibold text-[#7A685D]">Loading The Prime Cafe live menu...</p>
         </div>
-      ) : filteredItems.length === 0 ? (
+      ) : sortedItems.length === 0 ? (
         <div className="p-8 sm:p-12 text-center bg-white rounded-2xl sm:rounded-3xl border border-[#E6DCD3]">
           <p className="text-base font-bold text-[#2C1810]">No menu items found</p>
           <p className="text-xs text-[#7A685D] mt-1">Try another search keyword or switch categories.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4 md:gap-5">
-          {filteredItems.map((item) => {
+          {sortedItems.map((item) => {
             const qtyInCart = getItemQuantityInCart(item._id);
             const isAvailable = item.availability !== false && item.isAvailable !== false;
 

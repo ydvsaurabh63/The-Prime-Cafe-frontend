@@ -449,198 +449,7 @@ const HomePage = () => {
       <CafeVideoShowcase />
 
 
-      {/* 3. SOCIAL PROOF & LIVE REPUTATION (Directly under Hero & Search) */}
-      <section className="space-y-4">
-        {/* Rating Score & Instagram Follow Banner */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-          {/* Left: Rating Snapshot with Live Review Button */}
-          <div className="lg:col-span-5 bg-white rounded-3xl p-5 border border-[#E6DCD3] shadow-xs flex flex-col justify-between">
-            <div className="flex items-start justify-between">
-              <div>
-                <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#C85A32] bg-[#FAF0E6] px-2.5 py-1 rounded-full">
-                  Verified Guest Ratings
-                </span>
-                <div className="flex items-baseline gap-2 mt-2">
-                  <span className="text-3xl sm:text-4xl font-extrabold text-[#2C1810]">
-                    {reviewStats.averageRating || '4.9'}
-                  </span>
-                  <div className="flex items-center text-amber-400">
-                    {[1, 2, 3, 4, 5].map((s) => (
-                      <Star key={s} size={17} fill="#F59E0B" className="text-amber-500" />
-                    ))}
-                  </div>
-                </div>
-                <p className="text-xs text-[#7A685D] mt-1 font-medium">
-                  Based on <strong className="text-[#2C1810]">{reviewStats.totalReviews?.toLocaleString() || '2,853'}+ reviews</strong> on Google & In-House
-                </p>
-              </div>
-
-              {/* Clickable Google Icon to trigger review modal */}
-              <button
-                type="button"
-                onClick={() => setIsReviewModalOpen(true)}
-                className="w-11 h-11 rounded-2xl bg-[#FAF7F2] hover:bg-[#FAF0E6] border border-[#E6DCD3] flex items-center justify-center shrink-0 shadow-2xs hover:scale-105 active:scale-95 transition cursor-pointer"
-                title="Write a Google Review"
-              >
-                <GoogleIcon size={22} />
-              </button>
-            </div>
-
-            {/* Interactive "Write a Review" button inside card */}
-            <div className="pt-2.5 pb-1">
-              <button
-                type="button"
-                onClick={() => setIsReviewModalOpen(true)}
-                className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-[#C85A32] hover:from-amber-400 hover:to-orange-500 text-white font-extrabold text-xs shadow-md shadow-orange-950/20 active:scale-95 transition flex items-center justify-center gap-2 cursor-pointer"
-              >
-                <Sparkles size={14} className="text-amber-200" />
-                <span>Write a Review</span>
-                <span className="text-sm">✍️</span>
-              </button>
-            </div>
-
-            <div className="mt-2.5 pt-3 border-t border-[#F5EFEB] flex items-center justify-between text-xs text-[#7A685D]">
-              <div className="flex items-center gap-1.5">
-                <CheckCircle size={15} className="text-emerald-600" />
-                <span className="font-bold text-[#2C1810]">{reviewStats.recommendedPercent || 98}% Recommended</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <Users size={15} className="text-[#C85A32]" />
-                <span className="font-bold text-[#2C1810]">{reviewStats.happyGuests || '15K+'} Happy Guests</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Right: Instagram & Social Media Follow Card */}
-          <div className="lg:col-span-7 bg-gradient-to-br from-[#24130A] via-[#1C0E07] to-[#120804] text-white rounded-3xl p-5 shadow-xs border border-[#4A2814] flex flex-col justify-between relative overflow-hidden">
-            {/* Ambient Instagram Glow */}
-            <div className="absolute -top-12 -right-12 w-48 h-48 rounded-full bg-gradient-to-tr from-purple-600 via-pink-600 to-amber-500 opacity-20 blur-2xl pointer-events-none" />
-
-            {/* Top Row: Profile & Follow CTA Button */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 z-10">
-              <div className="flex items-center gap-3">
-                {/* Instagram Story Gradient Ring */}
-                <div className="p-0.5 rounded-full bg-gradient-to-tr from-amber-400 via-pink-500 to-purple-600 shrink-0 shadow-md">
-                  <div className="w-11 h-11 rounded-full bg-[#1A0E08] p-0.5 flex items-center justify-center">
-                    <InstagramIcon size={20} className="text-pink-400" />
-                  </div>
-                </div>
-                <div>
-                  <div className="flex items-center gap-1.5">
-                    <h4 className="font-extrabold text-base sm:text-lg text-white tracking-tight">
-                      @theprimecafe.official
-                    </h4>
-                    <span className="w-4 h-4 rounded-full bg-blue-500 text-white flex items-center justify-center text-[9px] font-black shrink-0" title="Verified">✓</span>
-                  </div>
-                  <p className="text-xs text-neutral-300 font-medium">
-                    Official Cafe Community
-                  </p>
-                </div>
-              </div>
-
-              {/* Follow Button */}
-              <a
-                href="https://instagram.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-purple-600 via-pink-600 to-rose-500 hover:from-purple-500 hover:to-rose-400 text-white font-extrabold text-xs shadow-md shadow-pink-600/30 hover:scale-105 active:scale-95 transition-all self-start sm:self-auto shrink-0"
-              >
-                <InstagramIcon size={15} />
-                <span>Follow on Instagram</span>
-                <ExternalLink size={13} />
-              </a>
-            </div>
-
-            {/* Bottom Row: Stats & Tag Info (Matches left card footer) */}
-            <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs text-neutral-300 z-10">
-              <div className="flex items-center gap-1.5 font-bold text-white">
-                <span className="w-2 h-2 rounded-full bg-pink-500 animate-pulse" />
-                <span>18.4K+ Followers</span>
-              </div>
-              <div className="text-[11px] font-semibold text-amber-300/90">
-                #AajKalMoments
-              </div>
-            </div>
-          </div>
-
-
-        </div>
-
-        {/* Real Customer Review Cards with Dynamic List & Review CTA */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between px-1">
-            <h4 className="text-xs sm:text-sm font-extrabold text-[#2C1810] uppercase tracking-wider flex items-center gap-1.5">
-              <span>Customer Reviews & Google Feedback</span>
-            </h4>
-            <button
-              type="button"
-              onClick={() => setIsReviewModalOpen(true)}
-              className="inline-flex items-center gap-1 text-xs font-black text-[#C85A32] hover:text-[#B24E2A] underline transition cursor-pointer"
-            >
-              <span>+ Share Your Review</span>
-            </button>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {(reviewsList.length > 0 ? reviewsList : customerReviews).slice(0, 3).map((rev, index) => {
-              const initials = rev.name
-                ? rev.name
-                    .split(' ')
-                    .map((n) => n[0])
-                    .join('')
-                    .substring(0, 2)
-                    .toUpperCase()
-                : 'CU';
-              const dateDisplay = rev.createdAt
-                ? new Date(rev.createdAt).toLocaleDateString('en-US', { day: 'numeric', month: 'short' })
-                : rev.date || 'Recently';
-
-              return (
-                <div
-                  key={rev._id || index}
-                  className="bg-white rounded-3xl p-4 sm:p-5 border border-[#E6DCD3] shadow-xs hover:shadow-md transition flex flex-col justify-between space-y-3"
-                >
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1 text-amber-400">
-                        {[...Array(rev.rating || 5)].map((_, i) => (
-                          <Star key={i} size={14} fill="#F59E0B" className="text-amber-500" />
-                        ))}
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        {rev.source === 'Google' && (
-                          <span className="flex items-center gap-0.5 text-[9px] font-bold text-neutral-600 bg-neutral-100 px-1.5 py-0.5 rounded-full border border-neutral-200">
-                            <GoogleIcon size={10} /> Google
-                          </span>
-                        )}
-                        <span className="text-[10px] text-[#7A685D]">{dateDisplay}</span>
-                      </div>
-                    </div>
-                    <p className="text-xs text-[#4A2C18] leading-relaxed italic line-clamp-3">
-                      "{rev.review}"
-                    </p>
-                  </div>
-
-                  <div className="flex items-center gap-3 pt-2.5 border-t border-[#F5EFEB]">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#FAF0E6] to-[#F5EFEB] text-[#C85A32] font-black text-[11px] flex items-center justify-center shrink-0 border border-[#E6DCD3]">
-                      {initials}
-                    </div>
-                    <div className="min-w-0">
-                      <h4 className="text-xs font-bold text-[#2C1810] truncate">{rev.name}</h4>
-                      <span className="text-[10px] text-emerald-700 font-semibold flex items-center gap-1">
-                        <CheckCircle size={10} className="text-emerald-600 shrink-0" /> {rev.tag || 'Verified Diner'}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-      </section>
-
-      {/* 3. POPULAR FAVORITES & MENU PREVIEW (Action Driver) */}
+            {/* 3. POPULAR FAVORITES & MENU PREVIEW (Action Driver) */}
       <section className="space-y-5">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
           <div>
@@ -942,34 +751,195 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* 8. VISIT & TABLE SERVICE BANNER */}
-      <section className="bg-white rounded-3xl border border-[#E6DCD3] p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xs">
-        <div className="space-y-2 text-center md:text-left">
-          <div className="inline-flex items-center gap-1.5 text-xs font-bold text-[#C85A32] bg-[#FAF0E6] px-3 py-1 rounded-full">
-            <Smile size={14} /> Seamless Dine-In Experience
+      {/* 3. SOCIAL PROOF & LIVE REPUTATION (Directly under Hero & Search) */}
+      <section className="space-y-4">
+        {/* Rating Score & Instagram Follow Banner */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+          {/* Left: Rating Snapshot with Live Review Button */}
+          <div className="lg:col-span-5 bg-white rounded-3xl p-5 border border-[#E6DCD3] shadow-xs flex flex-col justify-between">
+            <div className="flex items-start justify-between">
+              <div>
+                <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#C85A32] bg-[#FAF0E6] px-2.5 py-1 rounded-full">
+                  Verified Guest Ratings
+                </span>
+                <div className="flex items-baseline gap-2 mt-2">
+                  <span className="text-3xl sm:text-4xl font-extrabold text-[#2C1810]">
+                    {reviewStats.averageRating || '4.9'}
+                  </span>
+                  <div className="flex items-center text-amber-400">
+                    {[1, 2, 3, 4, 5].map((s) => (
+                      <Star key={s} size={17} fill="#F59E0B" className="text-amber-500" />
+                    ))}
+                  </div>
+                </div>
+                <p className="text-xs text-[#7A685D] mt-1 font-medium">
+                  Based on <strong className="text-[#2C1810]">{reviewStats.totalReviews?.toLocaleString() || '2,853'}+ reviews</strong> on Google & In-House
+                </p>
+              </div>
+
+              {/* Clickable Google Icon to trigger review modal */}
+              <button
+                type="button"
+                onClick={() => setIsReviewModalOpen(true)}
+                className="w-11 h-11 rounded-2xl bg-[#FAF7F2] hover:bg-[#FAF0E6] border border-[#E6DCD3] flex items-center justify-center shrink-0 shadow-2xs hover:scale-105 active:scale-95 transition cursor-pointer"
+                title="Write a Google Review"
+              >
+                <GoogleIcon size={22} />
+              </button>
+            </div>
+
+            {/* Interactive "Write a Review" button inside card */}
+            <div className="pt-2.5 pb-1">
+              <button
+                type="button"
+                onClick={() => setIsReviewModalOpen(true)}
+                className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-[#C85A32] hover:from-amber-400 hover:to-orange-500 text-white font-extrabold text-xs shadow-md shadow-orange-950/20 active:scale-95 transition flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <Sparkles size={14} className="text-amber-200" />
+                <span>Write a Review</span>
+                <span className="text-sm">✍️</span>
+              </button>
+            </div>
+
+            <div className="mt-2.5 pt-3 border-t border-[#F5EFEB] flex items-center justify-between text-xs text-[#7A685D]">
+              <div className="flex items-center gap-1.5">
+                <CheckCircle size={15} className="text-emerald-600" />
+                <span className="font-bold text-[#2C1810]">{reviewStats.recommendedPercent || 98}% Recommended</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <Users size={15} className="text-[#C85A32]" />
+                <span className="font-bold text-[#2C1810]">{reviewStats.happyGuests || '15K+'} Happy Guests</span>
+              </div>
+            </div>
           </div>
-          <h2 className="text-lg sm:text-xl font-bold text-[#2C1810]">
-            Order straight from your table, hassle-free
-          </h2>
-          <p className="text-xs sm:text-sm text-[#7A685D] max-w-lg">
-            Scan your table QR code anytime to add extra beverages, notify staff, or request the bill directly from your phone.
-          </p>
+
+          {/* Right: Instagram & Social Media Follow Card */}
+          <div className="lg:col-span-7 bg-gradient-to-br from-[#24130A] via-[#1C0E07] to-[#120804] text-white rounded-3xl p-5 shadow-xs border border-[#4A2814] flex flex-col justify-between relative overflow-hidden">
+            {/* Ambient Instagram Glow */}
+            <div className="absolute -top-12 -right-12 w-48 h-48 rounded-full bg-gradient-to-tr from-purple-600 via-pink-600 to-amber-500 opacity-20 blur-2xl pointer-events-none" />
+
+            {/* Top Row: Profile & Follow CTA Button */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 z-10">
+              <div className="flex items-center gap-3">
+                {/* Instagram Story Gradient Ring */}
+                <div className="p-0.5 rounded-full bg-gradient-to-tr from-amber-400 via-pink-500 to-purple-600 shrink-0 shadow-md">
+                  <div className="w-11 h-11 rounded-full bg-[#1A0E08] p-0.5 flex items-center justify-center">
+                    <InstagramIcon size={20} className="text-pink-400" />
+                  </div>
+                </div>
+                <div>
+                  <div className="flex items-center gap-1.5">
+                    <h4 className="font-extrabold text-base sm:text-lg text-white tracking-tight">
+                      @theprimecafe.official
+                    </h4>
+                    <span className="w-4 h-4 rounded-full bg-blue-500 text-white flex items-center justify-center text-[9px] font-black shrink-0" title="Verified">✓</span>
+                  </div>
+                  <p className="text-xs text-neutral-300 font-medium">
+                    Official Cafe Community
+                  </p>
+                </div>
+              </div>
+
+              {/* Follow Button */}
+              <a
+                href="https://instagram.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-purple-600 via-pink-600 to-rose-500 hover:from-purple-500 hover:to-rose-400 text-white font-extrabold text-xs shadow-md shadow-pink-600/30 hover:scale-105 active:scale-95 transition-all self-start sm:self-auto shrink-0"
+              >
+                <InstagramIcon size={15} />
+                <span>Follow on Instagram</span>
+                <ExternalLink size={13} />
+              </a>
+            </div>
+
+            {/* Bottom Row: Stats & Tag Info (Matches left card footer) */}
+            <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs text-neutral-300 z-10">
+              <div className="flex items-center gap-1.5 font-bold text-white">
+                <span className="w-2 h-2 rounded-full bg-pink-500 animate-pulse" />
+                <span>18.4K+ Followers</span>
+              </div>
+              <div className="text-[11px] font-semibold text-amber-300/90">
+                #AajKalMoments
+              </div>
+            </div>
+          </div>
+
+
         </div>
 
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0 w-full md:w-auto">
-          <Link
-            to="/menu"
-            className="px-5 py-2.5 rounded-2xl bg-[#4A2C18] hover:bg-[#2C1810] text-white font-bold text-xs shadow-md transition text-center"
-          >
-            Go to Menu
-          </Link>
-          <Link
-            to="/order"
-            className="px-5 py-2.5 rounded-2xl bg-[#FAF7F2] hover:bg-[#EAE0D5] text-[#4A2C18] border border-[#E6DCD3] font-bold text-xs transition text-center"
-          >
-            View Cart
-          </Link>
+        {/* Real Customer Review Cards with Dynamic List & Review CTA */}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between px-1">
+            <h4 className="text-xs sm:text-sm font-extrabold text-[#2C1810] uppercase tracking-wider flex items-center gap-1.5">
+              <span>Customer Reviews & Google Feedback</span>
+            </h4>
+            <button
+              type="button"
+              onClick={() => setIsReviewModalOpen(true)}
+              className="inline-flex items-center gap-1 text-xs font-black text-[#C85A32] hover:text-[#B24E2A] underline transition cursor-pointer"
+            >
+              <span>+ Share Your Review</span>
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {(reviewsList.length > 0 ? reviewsList : customerReviews).slice(0, 3).map((rev, index) => {
+              const initials = rev.name
+                ? rev.name
+                    .split(' ')
+                    .map((n) => n[0])
+                    .join('')
+                    .substring(0, 2)
+                    .toUpperCase()
+                : 'CU';
+              const dateDisplay = rev.createdAt
+                ? new Date(rev.createdAt).toLocaleDateString('en-US', { day: 'numeric', month: 'short' })
+                : rev.date || 'Recently';
+
+              return (
+                <div
+                  key={rev._id || index}
+                  className="bg-white rounded-3xl p-4 sm:p-5 border border-[#E6DCD3] shadow-xs hover:shadow-md transition flex flex-col justify-between space-y-3"
+                >
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1 text-amber-400">
+                        {[...Array(rev.rating || 5)].map((_, i) => (
+                          <Star key={i} size={14} fill="#F59E0B" className="text-amber-500" />
+                        ))}
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        {rev.source === 'Google' && (
+                          <span className="flex items-center gap-0.5 text-[9px] font-bold text-neutral-600 bg-neutral-100 px-1.5 py-0.5 rounded-full border border-neutral-200">
+                            <GoogleIcon size={10} /> Google
+                          </span>
+                        )}
+                        <span className="text-[10px] text-[#7A685D]">{dateDisplay}</span>
+                      </div>
+                    </div>
+                    <p className="text-xs text-[#4A2C18] leading-relaxed italic line-clamp-3">
+                      "{rev.review}"
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-3 pt-2.5 border-t border-[#F5EFEB]">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#FAF0E6] to-[#F5EFEB] text-[#C85A32] font-black text-[11px] flex items-center justify-center shrink-0 border border-[#E6DCD3]">
+                      {initials}
+                    </div>
+                    <div className="min-w-0">
+                      <h4 className="text-xs font-bold text-[#2C1810] truncate">{rev.name}</h4>
+                      <span className="text-[10px] text-emerald-700 font-semibold flex items-center gap-1">
+                        <CheckCircle size={10} className="text-emerald-600 shrink-0" /> {rev.tag || 'Verified Diner'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
+
       </section>
 
 

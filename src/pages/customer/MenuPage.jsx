@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Search, Plus, Minus, Check, Clock, Sparkles, AlertCircle } from 'lucide-react';
+import { Search, Plus, Minus, Check, Clock, Sparkles, AlertCircle, Leaf, Drumstick } from 'lucide-react';
 import api from '../../services/api';
 import { useCart } from '../../context/CartContext';
 import { getSocket } from '../../services/socket';
@@ -125,7 +125,7 @@ const MenuPage = () => {
                 : 'text-emerald-800 hover:bg-white'
                 }`}
             >
-              <span className={`w-2 h-2 rounded-full ${dietaryFilter === 'veg' ? 'bg-white' : 'bg-emerald-600'}`}></span>
+              <Leaf size={14} className={dietaryFilter === 'veg' ? 'text-white' : 'text-emerald-600'} />
               Veg
             </button>
             <button
@@ -135,7 +135,7 @@ const MenuPage = () => {
                 : 'text-rose-800 hover:bg-white'
                 }`}
             >
-              <span className={`w-2 h-2 rounded-full ${dietaryFilter === 'non-veg' ? 'bg-white' : 'bg-rose-600'}`}></span>
+              <Drumstick size={14} className={dietaryFilter === 'non-veg' ? 'text-white' : 'text-rose-600'} />
               Non-Veg
             </button>
           </div>

@@ -7,7 +7,9 @@ import {
   QrCode,
   Sparkles,
   AlertCircle,
-  UserCheck
+  UserCheck,
+  Leaf,
+  Drumstick
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
@@ -482,28 +484,40 @@ const CustomerLoginPage = () => {
                   <button
                     type="button"
                     onClick={() => setFoodPreference('Veg')}
-                    className={`py-3 px-2 rounded-2xl border flex flex-col items-center justify-center gap-1.5 transition cursor-pointer ${
+                    className={`py-2.5 px-3 rounded-2xl border flex items-center justify-center gap-2 transition cursor-pointer ${
                       foodPreference === 'Veg'
                         ? 'border-emerald-600 bg-emerald-50 text-emerald-900 font-extrabold shadow-xs'
                         : 'border-[#E6DCD3] bg-[#FAF7F2] text-[#7A685D] hover:bg-[#F5EFEB]'
                     }`}
                   >
-                    <span className="w-3.5 h-3.5 rounded-full bg-emerald-600 border border-white shadow-2xs"></span>
-                    <span className="text-xs">Veg</span>
+                    <div className={`w-6 h-6 rounded-full flex items-center justify-center transition shrink-0 ${
+                      foodPreference === 'Veg'
+                        ? 'bg-emerald-600 text-white shadow-2xs'
+                        : 'bg-emerald-100 text-emerald-700'
+                    }`}>
+                      <Leaf size={13} className="stroke-[2.5]" />
+                    </div>
+                    <span className="text-xs font-bold">Veg</span>
                   </button>
 
                   {/* Non Veg */}
                   <button
                     type="button"
                     onClick={() => setFoodPreference('Non Veg')}
-                    className={`py-3 px-2 rounded-2xl border flex flex-col items-center justify-center gap-1.5 transition cursor-pointer ${
+                    className={`py-2.5 px-3 rounded-2xl border flex items-center justify-center gap-2 transition cursor-pointer ${
                       foodPreference === 'Non Veg'
                         ? 'border-rose-600 bg-rose-50 text-rose-900 font-extrabold shadow-xs'
                         : 'border-[#E6DCD3] bg-[#FAF7F2] text-[#7A685D] hover:bg-[#F5EFEB]'
                     }`}
                   >
-                    <span className="w-3.5 h-3.5 rounded-full bg-rose-600 border border-white shadow-2xs"></span>
-                    <span className="text-xs">Non Veg</span>
+                    <div className={`w-6 h-6 rounded-full flex items-center justify-center transition shrink-0 ${
+                      foodPreference === 'Non Veg'
+                        ? 'bg-rose-600 text-white shadow-2xs'
+                        : 'bg-rose-100 text-rose-700'
+                    }`}>
+                      <Drumstick size={13} className="stroke-[2.5]" />
+                    </div>
+                    <span className="text-xs font-bold">Non Veg</span>
                   </button>
                 </div>
               </div>

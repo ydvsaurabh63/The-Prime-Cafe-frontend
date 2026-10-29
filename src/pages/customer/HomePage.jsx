@@ -33,6 +33,7 @@ import {
 import api from '../../services/api';
 import { useCart } from '../../context/CartContext';
 import LoyaltyRewardHero from '../../components/LoyaltyRewardHero';
+import CafeVideoShowcase from '../../components/CafeVideoShowcase';
 import ReviewModal from '../../components/ReviewModal';
 import { getSocket } from '../../services/socket';
 import { getItemFallbackImage } from '../../utils/imageFallback';
@@ -443,6 +444,9 @@ const HomePage = () => {
 
       {/* 2. HERO SECTION: Video Background with Interactive Loyalty Rewards (Order More, Get More!) */}
       <LoyaltyRewardHero />
+
+      {/* 2.5 VIDEO SHOWCASE SECTION */}
+      <CafeVideoShowcase />
 
 
       {/* 3. SOCIAL PROOF & LIVE REPUTATION (Directly under Hero & Search) */}

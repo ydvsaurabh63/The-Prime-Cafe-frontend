@@ -119,16 +119,7 @@ const MenuPage = () => {
           {/* Dedicated Veg & Non-Veg Filter Buttons */}
           <div className="flex items-center gap-1.5 bg-[#FAF7F2] p-1 rounded-xl sm:rounded-2xl border border-[#E6DCD3] shrink-0 self-start sm:self-auto overflow-x-auto w-full sm:w-auto">
             <button
-              onClick={() => setDietaryFilter('all')}
-              className={`flex-1 sm:flex-initial px-3 py-1.5 rounded-lg sm:rounded-xl text-xs font-bold transition whitespace-nowrap text-center ${dietaryFilter === 'all'
-                ? 'bg-white text-[#2C1810] shadow-xs'
-                : 'text-[#7A685D] hover:text-[#2C1810]'
-                }`}
-            >
-              All Food
-            </button>
-            <button
-              onClick={() => setDietaryFilter('veg')}
+              onClick={() => setDietaryFilter((prev) => (prev === 'veg' ? 'all' : 'veg'))}
               className={`flex-1 sm:flex-initial px-3 py-1.5 rounded-lg sm:rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition whitespace-nowrap ${dietaryFilter === 'veg'
                 ? 'bg-emerald-600 text-white shadow-xs'
                 : 'text-emerald-800 hover:bg-white'
@@ -138,7 +129,7 @@ const MenuPage = () => {
               Veg
             </button>
             <button
-              onClick={() => setDietaryFilter('non-veg')}
+              onClick={() => setDietaryFilter((prev) => (prev === 'non-veg' ? 'all' : 'non-veg'))}
               className={`flex-1 sm:flex-initial px-3 py-1.5 rounded-lg sm:rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition whitespace-nowrap ${dietaryFilter === 'non-veg'
                 ? 'bg-rose-600 text-white shadow-xs'
                 : 'text-rose-800 hover:bg-white'

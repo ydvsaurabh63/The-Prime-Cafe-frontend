@@ -314,25 +314,25 @@ const LoyaltyRewardHero = () => {
   };
 
   return (
-    <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#54331D] via-[#402515] to-[#2E180D] border border-[#784627]/80 shadow-2xl text-white p-3.5 sm:p-6 md:p-7 space-y-4 sm:space-y-6">
-      {/* Background warm ambient radial glow */}
-      <div className="absolute -top-24 -left-24 w-80 h-80 bg-amber-500/25 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-24 -right-24 w-80 h-80 bg-orange-500/20 rounded-full blur-3xl pointer-events-none" />
+    <section className="relative overflow-hidden rounded-3xl bg-[#FEF6DB] border border-[#EEDCBA] shadow-sm text-[#2C1810] p-3 sm:p-5 md:p-6 space-y-3 sm:space-y-4">
+      {/* Background warm ambient radial glow using the requested butter cream tint */}
+      <div className="absolute -top-24 -left-24 w-80 h-80 bg-[#FDEFBD]/60 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-24 -right-24 w-80 h-80 bg-[#FDE293]/50 rounded-full blur-3xl pointer-events-none" />
 
       {/* Floating Claim Toast Notification */}
       {claimToast && (
         <div
-          className={`fixed top-4 left-4 right-4 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 z-50 flex items-center justify-between gap-3 px-4 py-2.5 sm:px-5 sm:py-3 rounded-2xl border-2 text-white shadow-2xl backdrop-blur-md animate-in fade-in slide-in-from-top-3 max-w-full sm:max-w-lg ${
+          className={`fixed top-4 left-4 right-4 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 z-50 flex items-center justify-between gap-3 px-4 py-2 sm:px-5 sm:py-2.5 rounded-2xl border-2 text-[#2C1810] shadow-2xl backdrop-blur-md animate-in fade-in slide-in-from-top-3 max-w-full sm:max-w-lg ${
             claimToast.isWarning
-              ? 'bg-[#1E120A]/95 border-amber-400 text-amber-200 shadow-[0_0_30px_rgba(245,158,11,0.5)]'
-              : 'bg-[#0E2015]/95 border-emerald-400 text-emerald-200 shadow-[0_0_30px_rgba(16,185,129,0.5)]'
+              ? 'bg-white/95 border-amber-400 text-amber-900 shadow-[0_4px_30px_rgba(245,158,11,0.2)]'
+              : 'bg-white/95 border-emerald-500 text-emerald-900 shadow-[0_4px_30px_rgba(16,185,129,0.2)]'
           }`}
         >
           <div className="flex items-center gap-2.5 min-w-0">
             {claimToast.isWarning ? (
-              <AlertTriangle size={18} className="text-amber-400 shrink-0 animate-bounce" />
+              <AlertTriangle size={18} className="text-amber-500 shrink-0 animate-bounce" />
             ) : (
-              <Sparkles size={18} className="text-emerald-400 shrink-0" />
+              <Sparkles size={18} className="text-emerald-500 shrink-0" />
             )}
             <p className="text-xs sm:text-sm font-bold truncate">
               {claimToast.message}
@@ -349,15 +349,15 @@ const LoyaltyRewardHero = () => {
         </div>
       )}
 
-      {/* 1. TOP HEADER & MOTIVATING CAPTION (Matching Image 2) */}
+      {/* 1. TOP HEADER & MOTIVATING CAPTION */}
       <div className="space-y-1">
         <div className="flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2.5 sm:gap-3">
-            <span className="p-2 sm:p-2.5 rounded-xl sm:rounded-2xl bg-amber-500/10 text-amber-400 border border-amber-500/20 shrink-0 shadow-inner">
-              <Award size={20} className="stroke-[2.2]" />
+          <div className="flex items-center gap-2 sm:gap-2.5">
+            <span className="p-1.5 sm:p-2 rounded-xl bg-[#FEF8E3] text-amber-800 border border-[#EEDCBA] shrink-0 shadow-2xs">
+              <Award size={18} className="stroke-[2.2]" />
             </span>
             <div>
-              <h3 className="text-base sm:text-xl md:text-2xl font-black text-amber-100 tracking-tight">
+              <h3 className="text-sm sm:text-lg md:text-xl font-black text-[#2C1810] tracking-tight">
                 Customer Visit Check-In
               </h3>
             </div>
@@ -367,9 +367,9 @@ const LoyaltyRewardHero = () => {
             <button
               type="button"
               onClick={() => setIsModalOpen(true)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 text-neutral-950 text-xs sm:text-sm font-black shadow-lg shadow-amber-900/30 transition-all active:scale-95 cursor-pointer whitespace-nowrap"
+              className="inline-flex items-center gap-1.5 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 text-neutral-950 text-xs sm:text-xs font-black shadow-sm transition-all active:scale-95 cursor-pointer whitespace-nowrap"
             >
-              <Gift size={15} className="text-neutral-950 stroke-[2.5]" />
+              <Gift size={14} className="text-neutral-950 stroke-[2.5]" />
               <span>Claim Rewards</span>
             </button>
             {isAuthenticated && (
@@ -377,27 +377,27 @@ const LoyaltyRewardHero = () => {
                 type="button"
                 onClick={fetchLoyaltyData}
                 disabled={loading}
-                className="p-1.5 text-neutral-400 hover:text-white rounded-lg hover:bg-white/5 transition cursor-pointer"
+                className="p-1.5 text-[#7A685D] hover:text-[#2C1810] rounded-lg hover:bg-[#EEDCBA]/50 transition cursor-pointer"
                 title="Refresh loyalty progress"
               >
-                <RefreshCw size={14} className={loading ? 'animate-spin text-amber-400' : ''} />
+                <RefreshCw size={14} className={loading ? 'animate-spin text-amber-500' : ''} />
               </button>
             )}
           </div>
         </div>
 
-        <div className="flex items-center justify-between gap-1 pt-1 border-t border-white/5">
-          <div className="text-[11px] sm:text-xs font-extrabold text-amber-400 flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+        <div className="flex items-center justify-between gap-1 pt-0.5 border-t border-[#EEDCBA]">
+          <div className="text-[11px] sm:text-xs font-black text-[#C85A32] flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-[#C85A32] animate-pulse" />
             <span>{Math.min(totalOrders, 5)} / 5 Completed</span>
           </div>
         </div>
       </div>
 
-      {/* 2. CONNECTED STEPPER TIMELINE (Orders 1 to 5 - Exact Image 2 Style) */}
-      <div className="relative pt-1 pb-2 sm:pt-2 sm:pb-3 px-1 sm:px-4">
+      {/* 2. CONNECTED STEPPER TIMELINE */}
+      <div className="relative pt-0.5 pb-1 sm:pt-1 sm:pb-2 px-1 sm:px-4">
         {/* Connecting lines between the 5 nodes */}
-        <div className="absolute top-[36px] sm:top-[44px] md:top-[48px] left-[10%] right-[10%] -translate-y-1/2 flex pointer-events-none z-0">
+        <div className="absolute top-[32px] sm:top-[38px] md:top-[42px] left-[10%] right-[10%] -translate-y-1/2 flex pointer-events-none z-0">
           {[1, 2, 3, 4].map((stepIdx) => {
             const isCompletedSegment = totalOrders >= stepIdx + 1;
             const isTransitionSegment = totalOrders === stepIdx;
@@ -406,13 +406,13 @@ const LoyaltyRewardHero = () => {
               <div key={stepIdx} className="flex-1 flex items-center">
                 {isCompletedSegment ? (
                   // Solid green line
-                  <div className="w-full h-[2.5px] sm:h-[3px] bg-[#00C888] shadow-[0_0_12px_rgba(0,200,136,0.9)] rounded-full" />
+                  <div className="w-full h-[2.5px] bg-[#00C888] shadow-sm rounded-full" />
                 ) : isTransitionSegment ? (
                   // Transition gradient from green to amber
-                  <div className="w-full h-[2.5px] sm:h-[3px] bg-gradient-to-r from-[#00C888] via-amber-400 to-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.7)] rounded-full" />
+                  <div className="w-full h-[2.5px] bg-gradient-to-r from-[#00C888] via-amber-400 to-amber-500 shadow-sm rounded-full" />
                 ) : (
                   // Dashed golden line
-                  <div className="w-full border-t-2 border-dashed border-amber-300/40" />
+                  <div className="w-full border-t-2 border-dashed border-[#E0CCA6]" />
                 )}
               </div>
             );
@@ -443,7 +443,7 @@ const LoyaltyRewardHero = () => {
                 title={`Click to view Stage ${orderNum}: ${stage.title}`}
               >
                 {/* Top Label: "Order 1", "Order 2", etc. */}
-                <span className="text-[11px] sm:text-xs md:text-sm font-extrabold text-amber-200/90 mb-1.5 sm:mb-2 tracking-tight group-hover:text-amber-100 transition truncate max-w-full">
+                <span className="text-[10px] sm:text-xs font-black text-[#4A2C18] mb-1 sm:mb-1.5 tracking-tight group-hover:text-[#C85A32] transition truncate max-w-full">
                   Order {orderNum}
                 </span>
 
@@ -451,24 +451,24 @@ const LoyaltyRewardHero = () => {
                 <div className="relative">
                   {isCompleted ? (
                     // Completed: Vibrant Emerald circle with white checkmark
-                    <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-11 md:h-11 rounded-full bg-[#00C888] text-white flex items-center justify-center shadow-[0_0_15px_rgba(0,200,136,0.8)] transition-transform duration-200 group-hover:scale-110">
-                      <Check size={16} className="sm:w-5 sm:h-5 stroke-[3] text-white" />
+                    <div className="w-7 h-7 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-[#00C888] text-white flex items-center justify-center shadow-md shadow-emerald-500/20 transition-transform duration-200 group-hover:scale-110">
+                      <Check size={14} className="sm:w-4 sm:h-4 stroke-[3] text-white" />
                     </div>
                   ) : isActiveNext ? (
                     // Active / Next Target: Glowing Golden Amber circle with white Gift box
-                    <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-11 md:h-11 rounded-full bg-gradient-to-tr from-amber-500 via-yellow-400 to-amber-300 text-neutral-950 flex items-center justify-center shadow-[0_0_22px_rgba(245,158,11,0.95)] ring-2 sm:ring-4 ring-amber-500/40 transition-transform duration-200 group-hover:scale-110 animate-pulse">
-                      <Gift size={16} className="sm:w-5 sm:h-5 stroke-[2.3] text-neutral-950" />
+                    <div className="w-7 h-7 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-gradient-to-tr from-amber-500 via-yellow-400 to-amber-300 text-neutral-950 flex items-center justify-center shadow-md shadow-amber-500/30 ring-2 sm:ring-3 ring-amber-400/40 transition-transform duration-200 group-hover:scale-110 animate-pulse">
+                      <Gift size={14} className="sm:w-4 sm:h-4 stroke-[2.3] text-neutral-950" />
                     </div>
                   ) : (
-                    // Future / Locked: Dark circle with light lock icon
-                    <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-11 md:h-11 rounded-full bg-[#3D2314] border-2 border-amber-500/30 text-amber-200/70 flex items-center justify-center transition-colors duration-200 group-hover:border-amber-400/60">
-                      <Lock size={13} className="sm:w-4 sm:h-4 text-amber-200/70" />
+                    // Future / Locked: Clean white circle with subtle border & lock icon
+                    <div className="w-7 h-7 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-white border-2 border-[#EEDCBA] text-[#7A685D] flex items-center justify-center shadow-2xs transition-colors duration-200 group-hover:border-[#C85A32]/60">
+                      <Lock size={12} className="sm:w-3.5 sm:h-3.5 text-[#7A685D]" />
                     </div>
                   )}
                 </div>
 
-                {/* Bottom Date Label (e.g. 12 Oct, 18 Oct, 24 Oct) */}
-                <span className="mt-1.5 sm:mt-2 text-[10px] sm:text-xs font-semibold text-neutral-400 group-hover:text-amber-200 transition">
+                {/* Bottom Date Label */}
+                <span className="mt-1 sm:mt-1.5 text-[9px] sm:text-[11px] font-bold text-[#8C7A6B] group-hover:text-[#2C1810] transition">
                   {dateDisplay}
                 </span>
               </div>
@@ -477,18 +477,18 @@ const LoyaltyRewardHero = () => {
         </div>
       </div>
 
-      {/* 3. THE 5 STAGE CARDS (EXACT DESIGN MATCHING IMAGE 2) */}
+      {/* 3. THE 5 STAGE CARDS */}
       <div className="relative">
         {/* Mobile Left & Right navigation buttons */}
-        <div className="flex sm:hidden items-center justify-between px-1 mb-2">
-          <span className="text-[11px] font-bold text-neutral-400">
+        <div className="flex sm:hidden items-center justify-between px-1 mb-1.5">
+          <span className="text-[11px] font-bold text-[#7A685D]">
             Swipe to explore all 5 stages →
           </span>
           <div className="flex items-center gap-1.5">
             <button
               type="button"
               onClick={() => scrollTrack('left')}
-              className="p-1 rounded-full bg-white/10 text-white/80 hover:bg-white/20 active:scale-95"
+              className="p-1 rounded-full bg-white border border-[#EEDCBA] text-[#4A2C18] hover:bg-[#FEF8E3] active:scale-95"
               title="Previous"
             >
               <ChevronLeft size={14} />
@@ -496,7 +496,7 @@ const LoyaltyRewardHero = () => {
             <button
               type="button"
               onClick={() => scrollTrack('right')}
-              className="p-1 rounded-full bg-white/10 text-white/80 hover:bg-white/20 active:scale-95"
+              className="p-1 rounded-full bg-white border border-[#EEDCBA] text-[#4A2C18] hover:bg-[#FEF8E3] active:scale-95"
               title="Next"
             >
               <ChevronRight size={14} />
@@ -507,7 +507,7 @@ const LoyaltyRewardHero = () => {
         {/* Scrollable track for mobile, clean 5-column grid on desktop */}
         <div
           ref={scrollContainerRef}
-          className="flex overflow-x-auto snap-x snap-mandatory gap-2.5 sm:gap-3.5 pb-2 scrollbar-none sm:grid sm:grid-cols-3 lg:grid-cols-5 sm:overflow-visible"
+          className="flex overflow-x-auto snap-x snap-mandatory gap-2 sm:gap-3 pb-1.5 scrollbar-none sm:grid sm:grid-cols-3 lg:grid-cols-5 sm:overflow-visible"
         >
           {STAGE_CONFIGS.map((stage, idx) => {
             const status = getStageStatus(stage);
@@ -516,7 +516,6 @@ const LoyaltyRewardHero = () => {
             const isLocked = status === 'locked';
             const dateText = getStageDateText(stage, status);
 
-            // Active Stage (like Stage 3 in Image 2) gets golden highlight glow
             const isHighlight = isAvailable;
 
             return (
@@ -524,23 +523,23 @@ const LoyaltyRewardHero = () => {
                 key={stage.stageNumber}
                 ref={(el) => (cardRefs.current[stage.stageNumber] = el)}
                 onClick={() => setSelectedProduct(stage)}
-                className={`relative flex flex-col justify-between rounded-2xl p-2.5 sm:p-3 transition-all duration-300 snap-center shrink-0 w-[160px] min-w-[160px] sm:w-auto sm:min-w-0 cursor-pointer group ${
+                className={`relative flex flex-col justify-between rounded-2xl p-2 sm:p-2.5 transition-all duration-300 snap-center shrink-0 w-[155px] min-w-[155px] sm:w-auto sm:min-w-0 cursor-pointer group ${
                   isHighlight
-                    ? 'bg-gradient-to-b from-[#6D3F22] to-[#502B16] border-2 border-[#F59E0B] shadow-[0_0_25px_rgba(245,158,11,0.45)] ring-1 ring-amber-400/50 scale-[1.02]'
+                    ? 'bg-white border-2 border-amber-400 shadow-[0_4px_16px_rgba(245,158,11,0.2)] ring-1 ring-amber-300/40 scale-[1.01]'
                     : isClaimed
-                    ? 'bg-[#482816]/95 border border-emerald-500/50 shadow-md hover:border-emerald-400'
-                    : 'bg-[#402212]/95 border border-[#6B3B20]/80 hover:border-amber-400/50 shadow-sm'
+                    ? 'bg-white border border-emerald-400/80 shadow-xs hover:border-emerald-500'
+                    : 'bg-white border border-[#EEDCBA] hover:border-[#C85A32]/50 shadow-xs hover:shadow-md'
                 }`}
               >
                 {/* Card Top: Stage Badge (Pill) */}
-                <div className="flex justify-center mb-2">
+                <div className="flex justify-center mb-1.5">
                   <span
-                    className={`text-[11px] font-black px-3.5 py-0.5 rounded-full uppercase tracking-wider transition ${
+                    className={`text-[10px] font-black px-3 py-0.5 rounded-full uppercase tracking-wider transition ${
                       isHighlight
-                        ? 'bg-[#FBBF24] text-neutral-950 shadow-md font-extrabold'
+                        ? 'bg-amber-400 text-neutral-950 shadow-xs font-black'
                         : isClaimed
-                        ? 'bg-emerald-950 text-emerald-300 border border-emerald-500/30'
-                        : 'bg-white/10 text-neutral-300 border border-white/10'
+                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-300 font-extrabold'
+                        : 'bg-[#FEF8E3] text-[#7A685D] border border-[#EEDCBA] font-bold'
                     }`}
                   >
                     {stage.stage}
@@ -548,85 +547,79 @@ const LoyaltyRewardHero = () => {
                 </div>
 
                 {/* Appetizing Food Image */}
-                <div className="relative w-full h-24 sm:h-28 rounded-xl overflow-hidden bg-black/60 shrink-0 border border-white/5">
+                <div className="relative w-full h-20 sm:h-24 rounded-xl overflow-hidden bg-[#FEF8E3] shrink-0 border border-[#EEDCBA]/70">
                   <img
                     src={stage.image}
                     alt={stage.title}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     loading="lazy"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/15 via-transparent to-transparent pointer-events-none" />
                 </div>
 
-                {/* Status Badge (Matching Image 2) */}
-                <div className="my-2 flex justify-center">
+                {/* Status Badge */}
+                <div className="my-1.5 flex justify-center">
                   {isClaimed ? (
-                    // ✓ Claimed (Green Pill with Green Border & Checkmark)
-                    <div className="w-full py-1 px-2 rounded-full border border-emerald-500/80 bg-emerald-950/40 text-emerald-400 text-[11px] sm:text-xs font-extrabold flex items-center justify-center gap-1 shadow-xs">
-                      <Check size={13} className="stroke-[3] text-emerald-400" />
+                    <div className="w-full py-1 px-2 rounded-full border border-emerald-300 bg-emerald-50 text-emerald-700 text-[10px] sm:text-[11px] font-black flex items-center justify-center gap-1 shadow-2xs">
+                      <Check size={12} className="stroke-[3] text-emerald-600" />
                       <span>Claimed</span>
                     </div>
                   ) : isAvailable ? (
-                    // 🎁 Available (Solid Golden Amber Pill with dark text)
-                    <div className="w-full py-1 px-2 rounded-full bg-[#FBBF24] text-neutral-950 text-[11px] sm:text-xs font-black flex items-center justify-center gap-1 shadow-md">
-                      <Gift size={13} className="stroke-[2.5] text-neutral-950" />
+                    <div className="w-full py-1 px-2 rounded-full bg-amber-400 text-neutral-950 text-[10px] sm:text-[11px] font-black flex items-center justify-center gap-1 shadow-xs">
+                      <Gift size={12} className="stroke-[2.5] text-neutral-950" />
                       <span>Available</span>
                     </div>
                   ) : (
-                    // 🔒 Locked (Dark Pill with lock icon)
-                    <div className="w-full py-1 px-2 rounded-full bg-black/20 border border-amber-600/30 text-amber-200/80 text-[11px] sm:text-xs font-bold flex items-center justify-center gap-1">
-                      <Lock size={12} className="text-amber-300/80" />
+                    <div className="w-full py-0.5 px-2 rounded-full bg-[#FEF8E3] border border-[#EEDCBA] text-[#7A685D] text-[10px] sm:text-[11px] font-bold flex items-center justify-center gap-1">
+                      <Lock size={11} className="text-[#7A685D]" />
                       <span>Locked</span>
                     </div>
                   )}
                 </div>
 
                 {/* Dish / Offer Title */}
-                <div className="text-center mb-1 flex-1 flex flex-col justify-center min-h-[36px]">
-                  <h4 className="text-xs sm:text-sm font-black text-white leading-tight group-hover:text-amber-200 transition line-clamp-2">
+                <div className="text-center mb-1 flex-1 flex flex-col justify-center min-h-[30px]">
+                  <h4 className="text-xs sm:text-xs font-black text-[#2C1810] leading-tight group-hover:text-[#C85A32] transition line-clamp-2">
                     {stage.title}
                   </h4>
                 </div>
 
-                {/* Price Display (Strikethrough Original + Green Discount/FREE) */}
-                <div className="text-center mb-2.5 flex items-center justify-center gap-1.5">
-                  <span className="line-through text-neutral-400 text-xs font-medium">
+                {/* Price Display */}
+                <div className="text-center mb-1.5 flex items-center justify-center gap-1.5">
+                  <span className="line-through text-[#9E8E84] text-[11px] font-medium">
                     {stage.originalPrice}
                   </span>
                   <span
-                    className={`font-black text-xs sm:text-sm ${
+                    className={`font-black text-xs ${
                       stage.discountedPrice === 'FREE'
-                        ? 'text-[#00C888]'
+                        ? 'text-emerald-600'
                         : isLocked
-                        ? 'text-neutral-200'
-                        : 'text-[#00C888]'
+                        ? 'text-[#2C1810]'
+                        : 'text-emerald-600'
                     }`}
                   >
                     {stage.discountedPrice}
                   </span>
                 </div>
 
-                {/* Card Action / Footer (Claim Now button vs Completed Date vs Locked Requirement) */}
-                <div className="mt-auto pt-1">
+                {/* Card Action / Footer */}
+                <div className="mt-auto pt-0.5">
                   {isClaimed ? (
-                    // Claimed: Display Completed Date with calendar icon
-                    <div className="py-1 flex items-center justify-center gap-1 text-[10px] sm:text-[11px] font-semibold text-neutral-300">
-                      <Calendar size={12} className="text-neutral-400 shrink-0" />
+                    <div className="py-1 flex items-center justify-center gap-1 text-[10px] font-bold text-[#7A685D]">
+                      <Calendar size={11} className="text-[#7A685D] shrink-0" />
                       <span>{dateText || 'Claimed'}</span>
                     </div>
                   ) : isAvailable ? (
-                    // Available: Solid Orange "Claim Now" Button
                     <button
                       type="button"
                       onClick={(e) => handleClaimStage(e, stage)}
-                      className="w-full py-2 px-3 rounded-xl bg-[#D45427] hover:bg-[#B9441D] text-white font-black text-xs sm:text-sm shadow-lg shadow-orange-950/50 transition-all active:scale-95 cursor-pointer flex items-center justify-center gap-1"
+                      className="w-full py-1.5 px-2.5 rounded-xl bg-[#D45427] hover:bg-[#B9441D] text-white font-black text-xs shadow-sm transition-all active:scale-95 cursor-pointer flex items-center justify-center gap-1"
                     >
                       <span>Claim Now</span>
                     </button>
                   ) : (
-                    // Locked: Dark Pill with dynamic lock icon & concise text
-                    <div className="w-full py-1.5 px-1.5 rounded-xl bg-black/20 border border-amber-600/30 text-amber-200/80 text-[10px] sm:text-[11px] font-semibold flex items-center justify-center gap-1">
-                      <Lock size={10} className="text-amber-400/80 shrink-0" />
+                    <div className="w-full py-1 px-1.5 rounded-xl bg-[#FEF8E3] border border-[#EEDCBA] text-[#7A685D] text-[10px] font-semibold flex items-center justify-center gap-1">
+                      <Lock size={10} className="text-[#7A685D] shrink-0" />
                       <span className="truncate">{stage.requiredOrders - totalOrders} more order{stage.requiredOrders - totalOrders > 1 ? 's' : ''}</span>
                     </div>
                   )}
@@ -637,14 +630,14 @@ const LoyaltyRewardHero = () => {
         </div>
 
         {/* Mobile Page Indicator Dots */}
-        <div className="flex sm:hidden items-center justify-center gap-1.5 pt-2">
+        <div className="flex sm:hidden items-center justify-center gap-1.5 pt-1.5">
           {STAGE_CONFIGS.map((stage, idx) => (
             <button
               key={stage.stageNumber}
               type="button"
               onClick={() => scrollToStage(stage.stageNumber)}
               className={`h-1.5 rounded-full transition-all ${
-                activeStageIndex === idx ? 'w-5 bg-amber-400' : 'w-1.5 bg-white/20'
+                activeStageIndex === idx ? 'w-4 bg-[#C85A32]' : 'w-1.5 bg-[#E0CCA6]'
               }`}
               title={`Jump to Stage ${stage.stageNumber}`}
             />
@@ -653,17 +646,17 @@ const LoyaltyRewardHero = () => {
       </div>
 
       {/* 4. BOTTOM INFO BAR */}
-      <div className="pt-2 border-t border-white/10 grid grid-cols-3 gap-1 sm:flex sm:items-center sm:justify-between text-[10px] sm:text-xs text-amber-100/90 font-medium text-center sm:text-left">
+      <div className="pt-1.5 border-t border-[#EEDCBA] grid grid-cols-3 gap-1 sm:flex sm:items-center sm:justify-between text-[10px] sm:text-[11px] text-[#7A685D] font-bold text-center sm:text-left">
         <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-1 sm:gap-2">
-          <Clock size={14} className="text-amber-400 shrink-0" />
+          <Clock size={13} className="text-[#C85A32] shrink-0" />
           <span className="truncate">10 AM – 11:30 PM</span>
         </div>
         <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-1 sm:gap-2">
-          <MapPin size={14} className="text-amber-400 shrink-0" />
+          <MapPin size={13} className="text-[#C85A32] shrink-0" />
           <span className="truncate">Dine-In & Takeaway</span>
         </div>
         <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-1 sm:gap-2">
-          <ShieldCheck size={14} className="text-amber-400 shrink-0" />
+          <ShieldCheck size={13} className="text-[#C85A32] shrink-0" />
           <span className="truncate">Fresh & Hygienic</span>
         </div>
       </div>
@@ -671,39 +664,39 @@ const LoyaltyRewardHero = () => {
       {/* 5. DEDICATED PRODUCT PREVIEW & CLAIM MODAL */}
       {selectedProduct && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200"
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200"
           onClick={() => setSelectedProduct(null)}
         >
           <div
-            className="relative w-full max-w-sm sm:max-w-md max-h-[92dvh] flex flex-col bg-gradient-to-b from-[#3D2517] via-[#2E1A10] to-[#20110A] border border-amber-500/40 text-[#FAF7F2] rounded-3xl shadow-[0_0_50px_rgba(245,158,11,0.3)] overflow-hidden animate-in zoom-in-95 duration-200"
+            className="relative w-full max-w-sm sm:max-w-md max-h-[92dvh] flex flex-col bg-[#FFFDF7] border border-[#EEDCBA] text-[#2C1810] rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Top Close Button */}
             <button
               type="button"
               onClick={() => setSelectedProduct(null)}
-              className="absolute top-3 right-3 z-30 w-8 h-8 rounded-full bg-black/75 hover:bg-black text-white/80 hover:text-white border border-white/20 flex items-center justify-center backdrop-blur-sm transition-all cursor-pointer shadow-lg active:scale-90"
+              className="absolute top-3 right-3 z-30 w-8 h-8 rounded-full bg-white/90 hover:bg-white text-[#2C1810] border border-[#EEDCBA] flex items-center justify-center backdrop-blur-sm transition-all cursor-pointer shadow-md active:scale-90"
               title="Close"
             >
               <X size={15} />
             </button>
 
             {/* Product Image Banner */}
-            <div className="relative w-full h-40 sm:h-48 overflow-hidden bg-black/60 shrink-0">
+            <div className="relative w-full h-40 sm:h-48 overflow-hidden bg-[#FEF8E3] shrink-0 border-b border-[#EEDCBA]">
               <img
                 src={selectedProduct.image}
                 alt={selectedProduct.title}
                 className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#25150C] via-transparent to-black/30 pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent pointer-events-none" />
 
               {/* Top Floating Badges with Icons */}
               <div className="absolute top-3 left-3 z-20 flex items-center gap-1.5">
-                <span className="px-2.5 py-1 rounded-full bg-amber-500 text-neutral-950 text-[11px] font-black uppercase tracking-wider shadow-md flex items-center gap-1">
+                <span className="px-2.5 py-1 rounded-full bg-amber-400 text-neutral-950 text-[11px] font-black uppercase tracking-wider shadow-md flex items-center gap-1">
                   <Sparkles size={11} className="stroke-[2.5]" />
                   <span>{selectedProduct.stage}</span>
                 </span>
-                <span className="px-2.5 py-1 rounded-full bg-emerald-500 text-white text-[11px] font-black shadow-md flex items-center gap-1">
+                <span className="px-2.5 py-1 rounded-full bg-emerald-600 text-white text-[11px] font-black shadow-md flex items-center gap-1">
                   <Gift size={11} className="stroke-[2.5]" />
                   <span>{selectedProduct.discountedPrice === 'FREE' ? 'FREE DISH' : selectedProduct.discountedPrice}</span>
                 </span>
@@ -713,38 +706,38 @@ const LoyaltyRewardHero = () => {
             {/* Product Information Body */}
             <div className="p-4 sm:p-5 space-y-3.5 overflow-y-auto flex-1">
               <div>
-                <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+                <h3 className="text-xl sm:text-2xl font-black text-[#2C1810] tracking-tight">
                   {selectedProduct.title}
                 </h3>
               </div>
 
               {/* 3-Column Compact Metric Grid with Icons */}
-              <div className="grid grid-cols-3 gap-2 p-2.5 rounded-2xl bg-black/40 border border-white/10 text-center">
+              <div className="grid grid-cols-3 gap-2 p-2.5 rounded-2xl bg-[#FEF8E3] border border-[#EEDCBA] text-center">
                 {/* Col 1: Value */}
-                <div className="flex flex-col items-center justify-center p-1.5 rounded-xl bg-white/5">
-                  <div className="flex items-center gap-1 text-[10px] text-neutral-400 font-bold uppercase tracking-wider">
-                    <Tag size={10} className="text-emerald-400" />
+                <div className="flex flex-col items-center justify-center p-1.5 rounded-xl bg-white border border-[#EEDCBA]/60 shadow-2xs">
+                  <div className="flex items-center gap-1 text-[10px] text-[#7A685D] font-bold uppercase tracking-wider">
+                    <Tag size={10} className="text-emerald-600" />
                     <span>Value</span>
                   </div>
                   <div className="mt-1 flex items-baseline gap-1">
-                    <span className="line-through text-neutral-400 text-[11px]">{selectedProduct.originalPrice}</span>
-                    <span className="text-emerald-400 font-black text-xs sm:text-sm">{selectedProduct.discountedPrice}</span>
+                    <span className="line-through text-[#9E8E84] text-[11px]">{selectedProduct.originalPrice}</span>
+                    <span className="text-emerald-600 font-black text-xs sm:text-sm">{selectedProduct.discountedPrice}</span>
                   </div>
                 </div>
 
                 {/* Col 2: Goal / Need */}
-                <div className="flex flex-col items-center justify-center p-1.5 rounded-xl bg-white/5">
-                  <div className="flex items-center gap-1 text-[10px] text-neutral-400 font-bold uppercase tracking-wider">
-                    <Target size={10} className="text-amber-400" />
+                <div className="flex flex-col items-center justify-center p-1.5 rounded-xl bg-white border border-[#EEDCBA]/60 shadow-2xs">
+                  <div className="flex items-center gap-1 text-[10px] text-[#7A685D] font-bold uppercase tracking-wider">
+                    <Target size={10} className="text-amber-500" />
                     <span>Target</span>
                   </div>
                   <div className="mt-1 font-black text-xs sm:text-sm">
                     {totalOrders >= selectedProduct.requiredOrders ? (
-                      <span className="text-emerald-400 flex items-center gap-0.5 text-[11px]">
+                      <span className="text-emerald-600 flex items-center gap-0.5 text-[11px]">
                         <CheckCircle2 size={12} /> Ready
                       </span>
                     ) : (
-                      <span className="text-amber-300">
+                      <span className="text-[#C85A32]">
                         {selectedProduct.requiredOrders - totalOrders} more
                       </span>
                     )}
@@ -752,24 +745,24 @@ const LoyaltyRewardHero = () => {
                 </div>
 
                 {/* Col 3: Coupon Code */}
-                <div className="flex flex-col items-center justify-center p-1.5 rounded-xl bg-white/5">
-                  <div className="flex items-center gap-1 text-[10px] text-neutral-400 font-bold uppercase tracking-wider">
-                    <Ticket size={10} className="text-orange-400" />
+                <div className="flex flex-col items-center justify-center p-1.5 rounded-xl bg-white border border-[#EEDCBA]/60 shadow-2xs">
+                  <div className="flex items-center gap-1 text-[10px] text-[#7A685D] font-bold uppercase tracking-wider">
+                    <Ticket size={10} className="text-[#C85A32]" />
                     <span>Code</span>
                   </div>
-                  <div className="mt-1 font-mono text-[11px] font-black text-amber-300 truncate max-w-full px-1">
+                  <div className="mt-1 font-mono text-[11px] font-black text-[#2C1810] truncate max-w-full px-1">
                     {totalOrders >= selectedProduct.requiredOrders ? (
                       <button
                         type="button"
                         onClick={() => handleCopyCode(selectedProduct.couponCode)}
-                        className="hover:underline flex items-center gap-1 text-emerald-400 cursor-pointer"
+                        className="hover:underline flex items-center gap-1 text-emerald-600 cursor-pointer"
                         title="Click to copy code"
                       >
                         <span>{selectedProduct.couponCode}</span>
                         {copiedCode === selectedProduct.couponCode ? <Check size={11} /> : <Copy size={11} />}
                       </button>
                     ) : (
-                      <span className="text-neutral-400 flex items-center gap-1">
+                      <span className="text-[#9E8E84] flex items-center gap-1">
                         <Lock size={10} /> Locked
                       </span>
                     )}
@@ -786,7 +779,7 @@ const LoyaltyRewardHero = () => {
                       handleClaimStage(e, selectedProduct);
                       setSelectedProduct(null);
                     }}
-                    className="flex-1 py-2.5 px-3 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 text-neutral-950 font-black text-xs sm:text-sm text-center shadow-lg active:scale-95 transition flex items-center justify-center gap-1.5 cursor-pointer"
+                    className="flex-1 py-2.5 px-3 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 text-neutral-950 font-black text-xs sm:text-sm text-center shadow-md active:scale-95 transition flex items-center justify-center gap-1.5 cursor-pointer"
                   >
                     <Gift size={14} className="stroke-[2.5]" />
                     <span>Claim Now</span>
@@ -795,7 +788,7 @@ const LoyaltyRewardHero = () => {
                   <Link
                     to="/order"
                     onClick={() => setSelectedProduct(null)}
-                    className="flex-1 py-2.5 px-3 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 text-neutral-950 font-black text-xs sm:text-sm text-center shadow-lg active:scale-95 transition flex items-center justify-center gap-1.5 cursor-pointer"
+                    className="flex-1 py-2.5 px-3 rounded-xl bg-[#C85A32] hover:bg-[#B34D28] text-white font-black text-xs sm:text-sm text-center shadow-md active:scale-95 transition flex items-center justify-center gap-1.5 cursor-pointer"
                   >
                     <Sparkles size={14} className="stroke-[2.5]" />
                     <span>Order Now to Unlock</span>
@@ -805,7 +798,7 @@ const LoyaltyRewardHero = () => {
                 <button
                   type="button"
                   onClick={() => setSelectedProduct(null)}
-                  className="py-2.5 px-4 rounded-xl bg-white/10 hover:bg-white/20 text-neutral-300 font-bold text-xs transition cursor-pointer"
+                  className="py-2.5 px-4 rounded-xl bg-[#FEF8E3] hover:bg-[#EEDCBA] text-[#4A2C18] border border-[#EEDCBA] font-bold text-xs transition cursor-pointer"
                 >
                   Close
                 </button>
@@ -818,23 +811,23 @@ const LoyaltyRewardHero = () => {
       {/* 6. OVERALL REWARDS SUMMARY MODAL (When clicking "Claim Rewards" button) */}
       {isModalOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/80 backdrop-blur-xs animate-in fade-in duration-200"
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200"
           onClick={() => setIsModalOpen(false)}
         >
           <div
-            className="relative w-full max-w-2xl max-h-[90vh] flex flex-col bg-[#2D1B10] border border-[#5A351E] text-[#FAF7F2] rounded-3xl shadow-2xl overflow-hidden"
+            className="relative w-full max-w-2xl max-h-[90vh] flex flex-col bg-[#FFFDF7] border border-[#EEDCBA] text-[#2C1810] rounded-3xl shadow-2xl overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
-            <div className="flex items-center justify-between border-b border-white/10 px-5 sm:px-6 py-4 bg-[#382012] shrink-0">
-              <div className="flex items-center gap-2.5 text-amber-400 font-extrabold text-base sm:text-lg">
-                <Gift size={22} className="text-amber-400 shrink-0" />
+            <div className="flex items-center justify-between border-b border-[#EEDCBA] px-5 sm:px-6 py-4 bg-[#FEF8E3] shrink-0">
+              <div className="flex items-center gap-2.5 text-[#2C1810] font-black text-base sm:text-lg">
+                <Gift size={22} className="text-[#C85A32] shrink-0" />
                 <span>Visit Rewards Roadmap • 5 Exciting Milestones</span>
               </div>
               <button
                 type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white/70 hover:text-white flex items-center justify-center transition cursor-pointer"
+                className="w-8 h-8 rounded-full bg-white border border-[#EEDCBA] hover:bg-[#FEF8E3] text-[#7A685D] hover:text-[#2C1810] flex items-center justify-center transition cursor-pointer shadow-xs"
               >
                 <X size={16} />
               </button>
@@ -842,14 +835,14 @@ const LoyaltyRewardHero = () => {
 
             {/* Modal Content */}
             <div className="p-4 sm:p-6 overflow-y-auto space-y-4">
-              <div className="p-3.5 rounded-2xl bg-[#402414] border border-amber-400/30 flex items-center justify-between">
+              <div className="p-3.5 rounded-2xl bg-[#FEF8E3] border border-[#EEDCBA] flex items-center justify-between">
                 <div>
-                  <span className="text-xs text-amber-200 block font-bold">Your Live Progress</span>
-                  <p className="text-sm font-extrabold text-white mt-0.5">
+                  <span className="text-xs text-[#7A685D] block font-bold">Your Live Progress</span>
+                  <p className="text-sm font-black text-[#2C1810] mt-0.5">
                     {Math.min(totalOrders, 5)} of 5 Visits Completed
                   </p>
                 </div>
-                <span className="text-xs font-bold px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                <span className="text-xs font-bold px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">
                   {totalOrders >= 5 ? 'All 5 Stages Completed 🎉' : `${5 - Math.min(totalOrders, 5)} More to Unlock`}
                 </span>
               </div>
@@ -866,37 +859,37 @@ const LoyaltyRewardHero = () => {
                       key={stage.stageNumber}
                       className={`p-3.5 sm:p-4 rounded-2xl border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
                         isAvailable
-                          ? 'bg-[#482816] border-amber-400/80 shadow-md ring-1 ring-amber-400/40'
+                          ? 'bg-[#FFFDF7] border-2 border-amber-400 shadow-md ring-1 ring-amber-300/40'
                           : isClaimed
-                          ? 'bg-[#351E10] border-emerald-500/50'
-                          : 'bg-[#28160B] border-white/10 opacity-75'
+                          ? 'bg-[#FEF8E3] border border-emerald-400/60'
+                          : 'bg-white border border-[#EEDCBA] opacity-85'
                       }`}
                     >
                       <div className="flex items-center gap-3">
                         <img
                           src={stage.image}
                           alt={stage.title}
-                          className="w-14 h-14 rounded-xl object-cover shrink-0 border border-white/10"
+                          className="w-14 h-14 rounded-xl object-cover shrink-0 border border-[#EEDCBA]"
                         />
                         <div>
                           <div className="flex items-center gap-2">
-                            <span className="text-xs font-bold text-amber-400 uppercase">
+                            <span className="text-xs font-black text-[#C85A32] uppercase">
                               {stage.stage}
                             </span>
-                            <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-white/10 text-neutral-300">
+                            <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#FEF8E3] border border-[#EEDCBA] text-[#7A685D]">
                               {stage.originalPrice} → {stage.discountedPrice}
                             </span>
                           </div>
-                          <h5 className="font-extrabold text-sm text-white mt-0.5">
+                          <h5 className="font-extrabold text-sm text-[#2C1810] mt-0.5">
                             {stage.title}
                           </h5>
-                          <p className="text-xs text-neutral-400 line-clamp-1">{stage.description}</p>
+                          <p className="text-xs text-[#7A685D] line-clamp-1">{stage.description}</p>
                         </div>
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
                         {isClaimed ? (
-                          <span className="text-xs font-bold text-emerald-400 bg-emerald-950/60 border border-emerald-500/40 px-3 py-1.5 rounded-xl flex items-center gap-1">
+                          <span className="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-300 px-3 py-1.5 rounded-xl flex items-center gap-1 shadow-2xs">
                             <Check size={13} className="stroke-[3]" /> Claimed
                           </span>
                         ) : isAvailable ? (
@@ -906,12 +899,12 @@ const LoyaltyRewardHero = () => {
                               handleClaimStage(e, stage);
                               setIsModalOpen(false);
                             }}
-                            className="px-4 py-1.5 rounded-xl bg-[#D45427] hover:bg-[#B9441D] text-white text-xs font-bold shadow-md transition active:scale-95 cursor-pointer"
+                            className="px-4 py-1.5 rounded-xl bg-[#D45427] hover:bg-[#B9441D] text-white text-xs font-black shadow-md transition active:scale-95 cursor-pointer"
                           >
                             Claim Now
                           </button>
                         ) : (
-                          <span className="text-xs text-neutral-400 font-semibold px-3 py-1.5 bg-white/5 rounded-xl border border-white/5">
+                          <span className="text-xs text-[#7A685D] font-semibold px-3 py-1.5 bg-[#FEF8E3] rounded-xl border border-[#EEDCBA]">
                             Complete {stage.requiredOrders - totalOrders} more order{stage.requiredOrders - totalOrders > 1 ? 's' : ''}
                           </span>
                         )}
@@ -922,11 +915,11 @@ const LoyaltyRewardHero = () => {
               </div>
             </div>
 
-            <div className="border-t border-white/10 p-4 bg-[#23150D] flex justify-end">
+            <div className="border-t border-[#EEDCBA] p-4 bg-[#FEF8E3] flex justify-end">
               <button
                 type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="px-5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition cursor-pointer"
+                className="px-5 py-2 rounded-xl bg-white hover:bg-[#FEF8E3] border border-[#EEDCBA] text-[#2C1810] text-xs font-bold transition cursor-pointer shadow-xs"
               >
                 Close
               </button>

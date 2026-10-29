@@ -345,7 +345,7 @@ const CustomerLoginPage = () => {
                   type="button"
                   onClick={handleGoogleClick}
                   disabled={googleLoading}
-                  className="w-full flex items-center justify-center gap-3 py-3.5 px-4 bg-white hover:bg-neutral-50 active:bg-neutral-100 text-[#2C1810] font-bold text-xs sm:text-sm border-2 border-[#E6DCD3] hover:border-[#4A2C18]/40 rounded-2xl shadow-xs transition cursor-pointer"
+                  className="inline-flex items-center justify-center gap-2.5 py-2.5 px-6 bg-white hover:bg-neutral-50 active:bg-neutral-100 text-[#2C1810] font-bold text-xs sm:text-sm border-2 border-[#E6DCD3] hover:border-[#4A2C18]/40 rounded-full shadow-xs transition cursor-pointer mx-auto"
                 >
                   <GoogleIcon />
                   <span>{googleLoading ? 'Signing in with Google...' : 'Continue with Google'}</span>
@@ -367,48 +367,29 @@ const CustomerLoginPage = () => {
               <img src="/logo.png" alt="The Prime Cafe Logo" className="w-full h-full object-cover" />
             </div>
             <h2 className="text-xl sm:text-2xl font-extrabold text-[#2C1810] tracking-tight">
-              Complete Your Details
+              Complete Your Registration
             </h2>
-            <p className="text-xs text-[#7A685D]">
-              Please fill your details below to enter the cafe and start ordering.
-            </p>
           </div>
 
-          {/* Google Account Profile Chip */}
+          {/* Google Account Profile Chip (Small, Centered, No Switch) */}
           {googleAccount && (
-            <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-3 flex items-center justify-between shadow-2xs">
-              <div className="flex items-center gap-2.5 min-w-0">
+            <div className="flex justify-center">
+              <div className="inline-flex items-center gap-2 bg-[#FAF7F2] border border-[#E6DCD3] rounded-full px-3.5 py-1.5 shadow-2xs">
                 {googleAccount.profileImage ? (
                   <img
                     src={googleAccount.profileImage}
                     alt={googleAccount.name || 'User'}
-                    className="w-9 h-9 rounded-full object-cover ring-2 ring-emerald-400 shrink-0"
+                    className="w-5 h-5 rounded-full object-cover shrink-0"
                   />
                 ) : (
-                  <div className="w-9 h-9 rounded-full bg-emerald-600 text-white font-bold flex items-center justify-center text-xs shrink-0">
-                    <UserCheck size={16} />
+                  <div className="w-5 h-5 rounded-full bg-emerald-600 text-white font-bold flex items-center justify-center text-[10px] shrink-0">
+                    <UserCheck size={12} />
                   </div>
                 )}
-                <div className="min-w-0">
-                  <p className="text-xs font-bold text-emerald-950 truncate">
-                    {googleAccount.name || 'Google User'}
-                  </p>
-                  <p className="text-[11px] text-emerald-700 truncate">
-                    {googleAccount.email}
-                  </p>
-                </div>
+                <span className="text-xs font-bold text-[#2C1810] truncate max-w-[220px]">
+                  {googleAccount.email || googleAccount.name}
+                </span>
               </div>
-              <button
-                type="button"
-                onClick={async () => {
-                  await logout();
-                  setGoogleAccount(null);
-                  setStep('login');
-                }}
-                className="text-[10px] font-bold text-emerald-800 hover:text-emerald-950 bg-white border border-emerald-300 px-2.5 py-1 rounded-lg shrink-0 cursor-pointer"
-              >
-                Switch
-              </button>
             </div>
           )}
 
@@ -453,19 +434,20 @@ const CustomerLoginPage = () => {
                 </div>
               </div>
 
-              {/* 3. Area, 4. City, 5. Pincode */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-                <div>
-                  <label className="block font-bold text-[#4A2C18] mb-1">3. Area / Locality</label>
-                  <input
-                    type="text"
-                    value={area}
-                    onChange={(e) => setArea(e.target.value)}
-                    placeholder="e.g. Swaroop Nagar"
-                    className="w-full p-3 bg-[#FAF7F2] border border-[#E6DCD3] rounded-2xl focus:outline-none focus:border-[#C85A32]"
-                  />
-                </div>
+              {/* 3. Area / Locality */}
+              <div>
+                <label className="block font-bold text-[#4A2C18] mb-1">3. Area / Locality</label>
+                <input
+                  type="text"
+                  value={area}
+                  onChange={(e) => setArea(e.target.value)}
+                  placeholder="e.g. Swaroop Nagar"
+                  className="w-full p-3 bg-[#FAF7F2] border border-[#E6DCD3] rounded-2xl focus:outline-none focus:border-[#C85A32]"
+                />
+              </div>
 
+              {/* 4. City & 5. Pincode (Adjusted into a single line) */}
+              <div className="grid grid-cols-2 gap-3.5">
                 <div>
                   <label className="block font-bold text-[#4A2C18] mb-1">4. City</label>
                   <input

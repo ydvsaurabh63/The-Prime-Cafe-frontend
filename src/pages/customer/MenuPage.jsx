@@ -120,32 +120,29 @@ const MenuPage = () => {
           <div className="flex items-center gap-1.5 bg-[#FAF7F2] p-1 rounded-xl sm:rounded-2xl border border-[#E6DCD3] shrink-0 self-start sm:self-auto overflow-x-auto w-full sm:w-auto">
             <button
               onClick={() => setDietaryFilter('all')}
-              className={`flex-1 sm:flex-initial px-3 py-1.5 rounded-lg sm:rounded-xl text-xs font-bold transition whitespace-nowrap text-center ${
-                dietaryFilter === 'all'
-                  ? 'bg-white text-[#2C1810] shadow-xs'
-                  : 'text-[#7A685D] hover:text-[#2C1810]'
-              }`}
+              className={`flex-1 sm:flex-initial px-3 py-1.5 rounded-lg sm:rounded-xl text-xs font-bold transition whitespace-nowrap text-center ${dietaryFilter === 'all'
+                ? 'bg-white text-[#2C1810] shadow-xs'
+                : 'text-[#7A685D] hover:text-[#2C1810]'
+                }`}
             >
               All Food
             </button>
             <button
               onClick={() => setDietaryFilter('veg')}
-              className={`flex-1 sm:flex-initial px-3 py-1.5 rounded-lg sm:rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition whitespace-nowrap ${
-                dietaryFilter === 'veg'
-                  ? 'bg-emerald-600 text-white shadow-xs'
-                  : 'text-emerald-800 hover:bg-white'
-              }`}
+              className={`flex-1 sm:flex-initial px-3 py-1.5 rounded-lg sm:rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition whitespace-nowrap ${dietaryFilter === 'veg'
+                ? 'bg-emerald-600 text-white shadow-xs'
+                : 'text-emerald-800 hover:bg-white'
+                }`}
             >
               <span className={`w-2 h-2 rounded-full ${dietaryFilter === 'veg' ? 'bg-white' : 'bg-emerald-600'}`}></span>
               Veg
             </button>
             <button
               onClick={() => setDietaryFilter('non-veg')}
-              className={`flex-1 sm:flex-initial px-3 py-1.5 rounded-lg sm:rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition whitespace-nowrap ${
-                dietaryFilter === 'non-veg'
-                  ? 'bg-rose-600 text-white shadow-xs'
-                  : 'text-rose-800 hover:bg-white'
-              }`}
+              className={`flex-1 sm:flex-initial px-3 py-1.5 rounded-lg sm:rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition whitespace-nowrap ${dietaryFilter === 'non-veg'
+                ? 'bg-rose-600 text-white shadow-xs'
+                : 'text-rose-800 hover:bg-white'
+                }`}
             >
               <span className={`w-2 h-2 rounded-full ${dietaryFilter === 'non-veg' ? 'bg-white' : 'bg-rose-600'}`}></span>
               Non-Veg
@@ -157,23 +154,21 @@ const MenuPage = () => {
         <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none no-scrollbar pt-1 -mx-1 px-1 touch-pan-x">
           <button
             onClick={() => setSelectedCategory('all')}
-            className={`px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all shrink-0 ${
-              selectedCategory === 'all'
-                ? 'bg-[#4A2C18] text-white shadow-xs'
-                : 'bg-[#FAF7F2] text-[#7A685D] hover:bg-[#F5EFEB] hover:text-[#4A2C18]'
-            }`}
+            className={`px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all shrink-0 ${selectedCategory === 'all'
+              ? 'bg-[#4A2C18] text-white shadow-xs'
+              : 'bg-[#FAF7F2] text-[#7A685D] hover:bg-[#F5EFEB] hover:text-[#4A2C18]'
+              }`}
           >
-            All Items ({menuItems.length})
+            All
           </button>
           {categories.map((cat) => (
             <button
               key={cat._id}
               onClick={() => setSelectedCategory(cat.slug)}
-              className={`px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all shrink-0 ${
-                selectedCategory === cat.slug
-                  ? 'bg-[#4A2C18] text-white shadow-xs'
-                  : 'bg-[#FAF7F2] text-[#7A685D] hover:bg-[#F5EFEB] hover:text-[#4A2C18]'
-              }`}
+              className={`px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all shrink-0 ${selectedCategory === cat.slug
+                ? 'bg-[#4A2C18] text-white shadow-xs'
+                : 'bg-[#FAF7F2] text-[#7A685D] hover:bg-[#F5EFEB] hover:text-[#4A2C18]'
+                }`}
             >
               {cat.name}
             </button>
@@ -201,23 +196,20 @@ const MenuPage = () => {
             return (
               <div
                 key={item._id}
-                className={`bg-white rounded-2xl sm:rounded-3xl border border-[#E6DCD3] p-3.5 sm:p-4 flex gap-3 sm:gap-3.5 shadow-2xs hover:shadow-md transition-all group justify-between ${
-                  !isAvailable ? 'opacity-85' : ''
-                }`}
+                className={`bg-white rounded-2xl sm:rounded-3xl border border-[#E6DCD3] p-3.5 sm:p-4 flex gap-3 sm:gap-3.5 shadow-2xs hover:shadow-md transition-all group justify-between ${!isAvailable ? 'opacity-85' : ''
+                  }`}
               >
                 {/* Details Column */}
                 <div className="flex-1 flex flex-col justify-between min-w-0 pr-1">
                   <div>
                     <div className="flex items-center gap-1.5 mb-1 sm:mb-1.5 flex-wrap">
                       <span
-                        className={`w-3 h-3 rounded-xs border flex items-center justify-center shrink-0 ${
-                          item.isVeg ? 'border-emerald-600' : 'border-rose-600'
-                        }`}
+                        className={`w-3 h-3 rounded-xs border flex items-center justify-center shrink-0 ${item.isVeg ? 'border-emerald-600' : 'border-rose-600'
+                          }`}
                       >
                         <span
-                          className={`w-1.5 h-1.5 rounded-full ${
-                            item.isVeg ? 'bg-emerald-600' : 'bg-rose-600'
-                          }`}
+                          className={`w-1.5 h-1.5 rounded-full ${item.isVeg ? 'bg-emerald-600' : 'bg-rose-600'
+                            }`}
                         ></span>
                       </span>
 

@@ -442,7 +442,24 @@ const HomePage = () => {
         )}
       </section>
 
-      {/* 2. HERO SECTION: Video Background with Interactive Loyalty Rewards (Order More, Get More!) */}
+      {/* 2. THE PRIME CAFÉ OFFICIAL GRAND HERO BANNER */}
+      <section className="relative overflow-hidden rounded-2xl sm:rounded-3xl shadow-md border border-[#E6DCD3] group bg-[#2C1810]">
+        <div 
+          onClick={() => navigate('/menu')}
+          className="cursor-pointer block relative overflow-hidden"
+          title="Click to explore The Prime Cafe live menu"
+        >
+          <img
+            src="/prime-cafe-banner.png"
+            alt="The Prime Café - Every Bite, A Little Happiness - Pani Tanki Chowk, Muzaffarpur"
+            className="w-full h-auto object-cover group-hover:scale-[1.012] transition-transform duration-500 block"
+            loading="eager"
+            fetchPriority="high"
+          />
+        </div>
+      </section>
+
+      {/* 2.5 CUSTOMER VISIT CHECK-IN / LOYALTY REWARDS */}
       <LoyaltyRewardHero />
 
       {/* 2.5 VIDEO SHOWCASE SECTION */}

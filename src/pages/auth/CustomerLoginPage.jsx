@@ -72,7 +72,7 @@ const CustomerLoginPage = () => {
   const [area, setArea] = useState('');
   const [city, setCity] = useState('');
   const [pincode, setPincode] = useState('');
-  const [foodPreference, setFoodPreference] = useState('Both'); // 'Veg', 'Non Veg', 'Both'
+  const [foodPreference, setFoodPreference] = useState('Veg'); // 'Veg', 'Non Veg'
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -266,9 +266,6 @@ const CustomerLoginPage = () => {
             <h2 className="text-2xl font-extrabold text-[#2C1810] tracking-tight">
               Welcome to The Prime Cafe
             </h2>
-            <p className="text-xs sm:text-sm text-[#7A685D] max-w-sm mx-auto">
-              Sign in with Google to explore our menu, customize dishes & start ordering.
-            </p>
           </div>
 
           {/* Table Scanned Notification Banner */}
@@ -354,20 +351,6 @@ const CustomerLoginPage = () => {
                   <span>{googleLoading ? 'Signing in with Google...' : 'Continue with Google'}</span>
                 </button>
               )}
-            </div>
-
-            {/* Subtle fallback option */}
-            <div className="text-center pt-2 border-t border-[#F5EFEB]">
-              <button
-                type="button"
-                onClick={() => {
-                  setError('');
-                  setStep('details');
-                }}
-                className="text-[11px] text-[#7A685D] hover:text-[#C85A32] font-semibold underline cursor-pointer"
-              >
-                Or enter details manually
-              </button>
             </div>
           </div>
         </>
@@ -506,13 +489,13 @@ const CustomerLoginPage = () => {
                 </div>
               </div>
 
-              {/* FOOD CHOOSE: Veg, Non Veg, Both */}
+              {/* FOOD CHOOSE: Veg, Non Veg */}
               <div className="pt-2">
                 <label className="block font-extrabold text-[#4A2C18] mb-2 flex items-center gap-1.5">
                   <Utensils size={16} className="text-[#C85A32]" />
                   Food Choose (Dietary Preference)
                 </label>
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-2 gap-3">
                   {/* Veg */}
                   <button
                     type="button"
@@ -539,23 +522,6 @@ const CustomerLoginPage = () => {
                   >
                     <span className="w-3.5 h-3.5 rounded-full bg-rose-600 border border-white shadow-2xs"></span>
                     <span className="text-xs">Non Veg</span>
-                  </button>
-
-                  {/* Both */}
-                  <button
-                    type="button"
-                    onClick={() => setFoodPreference('Both')}
-                    className={`py-3 px-2 rounded-2xl border flex flex-col items-center justify-center gap-1.5 transition cursor-pointer ${
-                      foodPreference === 'Both'
-                        ? 'border-[#4A2C18] bg-[#F5EFEB] text-[#2C1810] font-extrabold shadow-xs'
-                        : 'border-[#E6DCD3] bg-[#FAF7F2] text-[#7A685D] hover:bg-[#F5EFEB]'
-                    }`}
-                  >
-                    <span className="flex gap-1">
-                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-600"></span>
-                      <span className="w-2.5 h-2.5 rounded-full bg-rose-600"></span>
-                    </span>
-                    <span className="text-xs">Both (All Food)</span>
                   </button>
                 </div>
               </div>

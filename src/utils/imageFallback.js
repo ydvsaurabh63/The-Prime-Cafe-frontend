@@ -54,3 +54,4 @@ export const getItemFallbackImage = (item) => {
   // Universal cozy cafe fallback
   return 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=600&q=80';
 };
+

@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Plus, Edit2, Trash2, Search, Check, AlertCircle, X, Image as ImageIcon, Upload, Camera, Link as LinkIcon, RefreshCw, ChevronDown, Sparkles } from 'lucide-react';
 import api from '../../services/api';
 import { getCategoryPresetItems } from '../../data/categoryPresetItems';
+import { getItemFallbackImage } from '../../utils/imageFallback';
 
 // Helper to compress and convert image files to optimized Base64
 const compressImageFile = (file) => {
@@ -464,9 +465,14 @@ const AdminMenuTab = () => {
               <div className="flex gap-3">
                 <div className="w-16 h-16 rounded-xl overflow-hidden bg-[#FAF7F2] flex-shrink-0 border border-[#E6DCD3]/60">
                   <img
-                    src={item.image || 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=300&q=80'}
+                    src={item.image || getItemFallbackImage(item)}
                     alt={item.name}
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = getItemFallbackImage(item);
+                    }}
                     className="w-full h-full object-cover"
+                    loading="lazy"
                   />
                 </div>
 

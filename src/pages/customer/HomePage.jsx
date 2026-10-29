@@ -35,6 +35,7 @@ import { useCart } from '../../context/CartContext';
 import LoyaltyRewardHero from '../../components/LoyaltyRewardHero';
 import ReviewModal from '../../components/ReviewModal';
 import { getSocket } from '../../services/socket';
+import { getItemFallbackImage } from '../../utils/imageFallback';
 
 // Crisp inline SVGs for Google and Instagram
 const GoogleIcon = ({ size = 20 }) => (
@@ -363,17 +364,16 @@ const HomePage = () => {
                       className="p-2.5 bg-[#FAF7F2] border border-[#E6DCD3] rounded-2xl flex items-center justify-between gap-3 hover:border-[#C85A32] transition"
                     >
                       <div className="flex items-center gap-2.5 min-w-0">
-                        {item.image ? (
-                          <img
-                            src={item.image}
-                            alt={item.name}
-                            className="w-13 h-13 sm:w-14 sm:h-14 rounded-xl object-cover shrink-0 border border-[#E6DCD3]"
-                          />
-                        ) : (
-                          <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-xl bg-[#E6DCD3] flex items-center justify-center shrink-0 text-[#7A685D]">
-                            <Coffee size={18} />
-                          </div>
-                        )}
+                        <img
+                          src={item.image || getItemFallbackImage(item)}
+                          alt={item.name}
+                          onError={(e) => {
+                            e.currentTarget.onerror = null;
+                            e.currentTarget.src = getItemFallbackImage(item);
+                          }}
+                          className="w-13 h-13 sm:w-14 sm:h-14 rounded-xl object-cover shrink-0 border border-[#E6DCD3]"
+                          loading="lazy"
+                        />
                         <div className="min-w-0">
                           <div className="flex items-center gap-1.5">
                             <span
@@ -441,25 +441,7 @@ const HomePage = () => {
         )}
       </section>
 
-      {/* 2. THE PRIME CAFÉ OFFICIAL GRAND HERO BANNER */}
-      <section className="relative overflow-hidden rounded-2xl sm:rounded-3xl shadow-md border border-[#E6DCD3] group bg-[#2C1810]">
-        <div 
-          onClick={() => navigate('/menu')}
-          className="cursor-pointer block relative overflow-hidden"
-          title="Click to explore The Prime Cafe live menu"
-        >
-          {/* Panoramic Hero Banner Graphic */}
-          <img
-            src="/prime-cafe-banner.png"
-            alt="The Prime Café - Every Bite, A Little Happiness"
-            className="w-full h-auto object-cover group-hover:scale-[1.012] transition-transform duration-500 block"
-            loading="eager"
-            fetchPriority="high"
-          />
-        </div>
-      </section>
-
-      {/* 3. HERO SECTION: Video Background with Interactive Loyalty Rewards (Order More, Get More!) */}
+      {/* 2. HERO SECTION: Video Background with Interactive Loyalty Rewards (Order More, Get More!) */}
       <LoyaltyRewardHero />
 
 
@@ -699,17 +681,16 @@ const HomePage = () => {
                     onClick={() => navigate('/menu')}
                     className="relative aspect-4/3 w-full bg-[#F5EFEB] overflow-hidden cursor-pointer"
                   >
-                    {item.image ? (
-                      <img
-                        src={item.image}
-                        alt={item.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-[#7A685D]">
-                        <Coffee size={32} />
-                      </div>
-                    )}
+                    <img
+                      src={item.image || getItemFallbackImage(item)}
+                      alt={item.name}
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = getItemFallbackImage(item);
+                      }}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      loading="lazy"
+                    />
                     {item.isVeg !== undefined && (
                       <div className="absolute top-2.5 left-2.5 shadow-2xs">
                         <span

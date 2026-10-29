@@ -6,6 +6,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import api from '../../services/api';
 import confetti from 'canvas-confetti';
 import { getSocket } from '../../services/socket';
+import { getItemFallbackImage } from '../../utils/imageFallback';
 
 const DEFAULT_DISH_FALLBACK = 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=400&q=80';
 
@@ -240,8 +241,7 @@ const OrderPage = () => {
                     Selected Dishes & Beverages
                   </h4>
                   {cartItems.map((item) => {
-                    const fallbackImg = DEFAULT_DISH_FALLBACK;
-                    const itemImg = item.image || fallbackImg;
+                    const itemImg = item.image || getItemFallbackImage(item);
 
                     return (
                       <div
@@ -255,7 +255,7 @@ const OrderPage = () => {
                             alt={item.name}
                             onError={(e) => {
                               e.currentTarget.onerror = null;
-                              e.currentTarget.src = fallbackImg;
+                              e.currentTarget.src = getItemFallbackImage(item);
                             }}
                             className="w-full h-full object-cover"
                             loading="lazy"
@@ -528,18 +528,16 @@ const OrderPage = () => {
                     {order.items.map((item, idx) => (
                       <div key={idx} className="flex items-center justify-between text-[#2C1810] gap-3">
                         <div className="flex items-center gap-2.5 min-w-0">
-                          {item.image ? (
-                            <img
-                              src={item.image}
-                              alt={item.name}
-                              onError={(e) => { e.currentTarget.style.display = 'none'; }}
-                              className="w-8 h-8 rounded-lg object-cover border border-[#E6DCD3] shrink-0"
-                            />
-                          ) : (
-                            <div className="w-8 h-8 rounded-lg bg-[#FAF7F2] border border-[#E6DCD3] flex items-center justify-center text-xs shrink-0">
-                              ☕
-                            </div>
-                          )}
+                          <img
+                            src={item.image || getItemFallbackImage(item)}
+                            alt={item.name}
+                            onError={(e) => {
+                              e.currentTarget.onerror = null;
+                              e.currentTarget.src = getItemFallbackImage(item);
+                            }}
+                            className="w-8 h-8 rounded-lg object-cover border border-[#E6DCD3] shrink-0"
+                            loading="lazy"
+                          />
                           <span className="truncate">
                             <strong className="text-[#C85A32]">{item.quantity}×</strong> {item.name}
                           </span>

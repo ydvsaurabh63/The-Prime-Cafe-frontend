@@ -89,12 +89,6 @@ const MenuPage = () => {
     if (sortBy === 'price-high') {
       return (Number(b.price) || 0) - (Number(a.price) || 0);
     }
-    if (sortBy === 'name-az') {
-      return a.name.localeCompare(b.name);
-    }
-    if (sortBy === 'name-za') {
-      return b.name.localeCompare(a.name);
-    }
     return 0;
   });
 
@@ -176,8 +170,6 @@ const MenuPage = () => {
                 <option value="default">Recommended</option>
                 <option value="price-low">Price: Low to High</option>
                 <option value="price-high">Price: High to Low</option>
-                <option value="name-az">Name: A to Z</option>
-                <option value="name-za">Name: Z to A</option>
               </select>
               <ChevronDown size={13} className="text-[#7A685D] pointer-events-none -ml-3.5 shrink-0" />
             </div>

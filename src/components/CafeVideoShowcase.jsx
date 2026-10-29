@@ -166,14 +166,7 @@ const ReelCard = ({ reel, index, onOpenModal }) => {
           {reel.title}
         </h4>
 
-        <div className="mt-2 pt-2 border-t border-white/15 flex items-center justify-between">
-          <span className="text-xs sm:text-sm font-black text-white">
-            {reel.price}
-          </span>
-          <span className="inline-flex items-center gap-1 text-[10px] sm:text-[11px] font-extrabold text-[#FAF7F2] bg-[#C85A32] hover:bg-[#B24E2A] px-2.5 py-1 rounded-xl shadow-xs transition">
-            Order <ArrowRight size={11} />
-          </span>
-        </div>
+
       </div>
     </div>
   );

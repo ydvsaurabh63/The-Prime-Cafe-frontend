@@ -2,8 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import {
   Play,
   Film,
-  Volume2,
-  VolumeX
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 
 const REELS_DATA = [
@@ -12,8 +12,7 @@ const REELS_DATA = [
     title: 'The Prime Café Experience',
     category: 'Signature Special',
     videoSrc: '/assets/reels/the_prime_cafe_1.mp4',
-    poster: '/assets/reels/poster_prime_cafe.jpg',
-    hasVoice: true
+    poster: '/assets/reels/poster_prime_cafe.jpg'
   },
   {
     id: 'coffee',
@@ -48,62 +47,72 @@ const REELS_DATA = [
 const ReelCard = ({ reel }) => {
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(true);
-  // If video has voice, attempt to start unmuted
-  const [isMuted, setIsMuted] = useState(!reel.hasVoice);
+  const manualPauseRef = useRef(false);
+
+  // Track touch drag so swiping doesn't trigger video pause
+  const touchStartXRef = useRef(0);
+  const touchStartYRef = useRef(0);
+  const isDraggingRef = useRef(false);
 
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
-    video.muted = isMuted;
+    // All reels muted by default
+    video.muted = true;
 
-    // Attempt autoplay (with sound if reel.hasVoice)
-    const playPromise = video.play();
-    if (playPromise !== undefined) {
-      playPromise.catch(() => {
-        // If browser blocks unmuted autoplay, fallback to muted autoplay
-        video.muted = true;
-        setIsMuted(true);
-        video.play().catch(() => {
-          setIsPlaying(false);
+    // Observe intersection so off-screen reels pause automatically
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && !manualPauseRef.current) {
+            video.play().then(() => setIsPlaying(true)).catch(() => {});
+          } else if (!entry.isIntersecting) {
+            video.pause();
+            setIsPlaying(false);
+          }
         });
-      });
-    }
+      },
+      { threshold: 0.5 }
+    );
+
+    observer.observe(video);
+
+    return () => {
+      observer.disconnect();
+    };
   }, []);
+
+  const handleTouchStart = (e) => {
+    touchStartXRef.current = e.touches[0].clientX;
+    touchStartYRef.current = e.touches[0].clientY;
+    isDraggingRef.current = false;
+  };
+
+  const handleTouchMove = (e) => {
+    const diffX = Math.abs(e.touches[0].clientX - touchStartXRef.current);
+    const diffY = Math.abs(e.touches[0].clientY - touchStartYRef.current);
+    if (diffX > 8 || diffY > 8) {
+      isDraggingRef.current = true;
+    }
+  };
 
   const togglePlay = (e) => {
     e.stopPropagation();
-    const video = videoRef.current;
-    if (!video) return;
-
-    // If reel has voice and is currently muted, unmute on card tap
-    if (reel.hasVoice && isMuted) {
-      video.muted = false;
-      setIsMuted(false);
-      if (video.paused) {
-        video.play().then(() => setIsPlaying(true)).catch(() => {});
-      }
+    if (isDraggingRef.current) {
+      isDraggingRef.current = false;
       return;
     }
+
+    const video = videoRef.current;
+    if (!video) return;
 
     if (isPlaying) {
       video.pause();
       setIsPlaying(false);
+      manualPauseRef.current = true;
     } else {
-      video.play().then(() => setIsPlaying(true)).catch(() => {});
-    }
-  };
-
-  const toggleMute = (e) => {
-    e.stopPropagation();
-    const video = videoRef.current;
-    if (!video) return;
-
-    const nextMuted = !isMuted;
-    video.muted = nextMuted;
-    setIsMuted(nextMuted);
-
-    if (!nextMuted && video.paused) {
+      manualPauseRef.current = false;
       video.play().then(() => setIsPlaying(true)).catch(() => {});
     }
   };
@@ -111,48 +120,22 @@ const ReelCard = ({ reel }) => {
   return (
     <div
       onClick={togglePlay}
-      className="group relative aspect-[9/16] rounded-2xl sm:rounded-3xl overflow-hidden bg-black border border-[#E6DCD3] shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col justify-end shrink-0 w-[145px] sm:w-[170px] md:w-full md:min-w-0 snap-start select-none"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      className="group relative aspect-[9/16] w-[82vw] max-w-[285px] xs:max-w-[305px] sm:max-w-[325px] md:w-[270px] lg:w-[295px] xl:w-[320px] rounded-2xl sm:rounded-3xl overflow-hidden bg-black border border-[#E6DCD3] shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col justify-end select-none"
     >
       {/* Background Video */}
       <video
         ref={videoRef}
         autoPlay
         loop
-        muted={isMuted}
+        muted
         playsInline
         poster={reel.poster}
         className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
       >
         <source src={reel.videoSrc} type="video/mp4" />
       </video>
-
-      {/* Voice / Audio Indicator for Voice Reel */}
-      {reel.hasVoice && (
-        <div className="absolute top-2.5 right-2.5 z-20">
-          <button
-            type="button"
-            onClick={toggleMute}
-            className={`px-2 sm:px-2.5 py-1 rounded-full flex items-center gap-1 sm:gap-1.5 font-bold transition-all shadow-md active:scale-95 cursor-pointer backdrop-blur-md border ${
-              !isMuted
-                ? 'bg-[#C85A32] text-white border-orange-400/50 shadow-orange-950/40'
-                : 'bg-black/65 text-white/95 border-white/20 hover:bg-black/80'
-            }`}
-            title={isMuted ? 'Click to play with voice' : 'Mute voice'}
-          >
-            {isMuted ? (
-              <>
-                <VolumeX size={12} className="text-white/80" />
-                <span className="text-[9px] sm:text-[10px] uppercase tracking-wider font-extrabold whitespace-nowrap">Tap for Voice</span>
-              </>
-            ) : (
-              <>
-                <Volume2 size={12} className="text-white animate-pulse" />
-                <span className="text-[9px] sm:text-[10px] uppercase tracking-wider font-extrabold whitespace-nowrap">Voice ON</span>
-              </>
-            )}
-          </button>
-        </div>
-      )}
 
       {/* Center Play Indicator when paused */}
       {!isPlaying && (
@@ -164,11 +147,11 @@ const ReelCard = ({ reel }) => {
       )}
 
       {/* Bottom Content Overlay */}
-      <div className="relative z-10 p-2.5 sm:p-4 bg-gradient-to-t from-black/95 via-black/70 to-transparent pt-10 sm:pt-12">
-        <p className="text-[9px] sm:text-[10px] font-bold text-amber-300 uppercase tracking-wider mb-0.5 line-clamp-1">
+      <div className="relative z-10 p-3 sm:p-4 bg-gradient-to-t from-black/95 via-black/70 to-transparent pt-12">
+        <p className="text-[10px] sm:text-xs font-bold text-amber-300 uppercase tracking-wider mb-0.5 line-clamp-1">
           {reel.category}
         </p>
-        <h4 className="text-xs sm:text-sm font-extrabold text-white leading-tight line-clamp-2 drop-shadow-sm">
+        <h4 className="text-sm sm:text-base font-extrabold text-white leading-tight line-clamp-2 drop-shadow-sm">
           {reel.title}
         </h4>
       </div>
@@ -177,6 +160,54 @@ const ReelCard = ({ reel }) => {
 };
 
 const CafeVideoShowcase = () => {
+  const scrollContainerRef = useRef(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const handleScroll = () => {
+    const container = scrollContainerRef.current;
+    if (!container || !container.children.length) return;
+
+    const containerLeft = container.getBoundingClientRect().left;
+    let closestIndex = 0;
+    let minDiff = Infinity;
+
+    Array.from(container.children).forEach((child, i) => {
+      const childLeft = child.getBoundingClientRect().left;
+      const diff = Math.abs(childLeft - containerLeft);
+      if (diff < minDiff) {
+        minDiff = diff;
+        closestIndex = i;
+      }
+    });
+
+    if (closestIndex !== currentIndex) {
+      setCurrentIndex(closestIndex);
+    }
+  };
+
+  const scrollToIndex = (index) => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+    const targetChild = container.children[index];
+    if (targetChild) {
+      container.scrollTo({
+        left: targetChild.offsetLeft,
+        behavior: 'smooth'
+      });
+      setCurrentIndex(index);
+    }
+  };
+
+  const handlePrev = () => {
+    const nextIdx = Math.max(0, currentIndex - 1);
+    scrollToIndex(nextIdx);
+  };
+
+  const handleNext = () => {
+    const nextIdx = Math.min(REELS_DATA.length - 1, currentIndex + 1);
+    scrollToIndex(nextIdx);
+  };
+
   return (
     <section className="space-y-3 sm:space-y-4">
       {/* Section Header */}
@@ -189,20 +220,76 @@ const CafeVideoShowcase = () => {
             <h3 className="text-base sm:text-lg font-black text-[#2C1810] tracking-tight leading-none">
               Menu in Motion • Live Cafe Reels
             </h3>
-            <p className="text-[11px] text-[#7A685D] mt-0.5 hidden xs:block">
-              Swipe across to explore our signature roasts & live kitchen bites
+            <p className="text-[11px] text-[#7A685D] mt-0.5">
+              Swipe across to explore our signature kitchen creations
             </p>
           </div>
         </div>
-        <span className="text-[10px] sm:text-xs font-bold text-[#C85A32] bg-[#C85A32]/10 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full md:hidden shrink-0">
-          5 Reels • Swipe →
-        </span>
+
+        {/* Navigation Controls: Reel Counter & Prev/Next Arrows */}
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <span className="text-[11px] sm:text-xs font-bold text-[#7A685D] bg-[#F5EFEB] border border-[#E6DCD3] px-2.5 py-1 rounded-full whitespace-nowrap">
+            {currentIndex + 1} / {REELS_DATA.length}
+          </span>
+          <button
+            type="button"
+            onClick={handlePrev}
+            disabled={currentIndex === 0}
+            className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-[#E6DCD3] flex items-center justify-center transition-all ${
+              currentIndex === 0
+                ? 'opacity-35 cursor-not-allowed bg-white/40 text-[#7A685D]'
+                : 'bg-white text-[#2C1810] hover:bg-[#C85A32] hover:text-white hover:border-[#C85A32] shadow-sm cursor-pointer active:scale-95'
+            }`}
+            aria-label="Previous reel"
+          >
+            <ChevronLeft size={16} />
+          </button>
+          <button
+            type="button"
+            onClick={handleNext}
+            disabled={currentIndex === REELS_DATA.length - 1}
+            className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-[#E6DCD3] flex items-center justify-center transition-all ${
+              currentIndex === REELS_DATA.length - 1
+                ? 'opacity-35 cursor-not-allowed bg-white/40 text-[#7A685D]'
+                : 'bg-white text-[#2C1810] hover:bg-[#C85A32] hover:text-white hover:border-[#C85A32] shadow-sm cursor-pointer active:scale-95'
+            }`}
+            aria-label="Next reel"
+          >
+            <ChevronRight size={16} />
+          </button>
+        </div>
       </div>
 
-      {/* 5 Reels: Single horizontal row on mobile with smooth swipe, 5-col grid on desktop */}
-      <div className="flex overflow-x-auto snap-x snap-mandatory gap-3 pb-2 pt-1 no-scrollbar touch-pan-x -mx-3 px-3 sm:-mx-4 sm:px-4 md:mx-0 md:px-0 md:grid md:grid-cols-5 md:gap-3 lg:gap-4 md:overflow-visible md:pb-0">
+      {/* Reels Track: Single full slide on mobile, wide cards slider on desktop */}
+      <div
+        ref={scrollContainerRef}
+        onScroll={handleScroll}
+        className="relative flex overflow-x-auto snap-x snap-mandatory gap-4 pb-2 pt-1 no-scrollbar touch-pan-x scroll-smooth -mx-3 px-3 sm:-mx-4 sm:px-4 md:mx-0 md:px-0 md:gap-5"
+      >
         {REELS_DATA.map((reel) => (
-          <ReelCard key={reel.id} reel={reel} />
+          <div
+            key={reel.id}
+            className="w-full min-w-full shrink-0 snap-center flex justify-center md:w-auto md:min-w-0 md:shrink-0 md:snap-start"
+          >
+            <ReelCard reel={reel} />
+          </div>
+        ))}
+      </div>
+
+      {/* Mobile Swipe Pagination Dots */}
+      <div className="flex justify-center items-center gap-1.5 pt-1 md:hidden">
+        {REELS_DATA.map((_, idx) => (
+          <button
+            key={idx}
+            type="button"
+            onClick={() => scrollToIndex(idx)}
+            className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
+              currentIndex === idx
+                ? 'w-6 bg-[#C85A32]'
+                : 'w-1.5 bg-[#E6DCD3] hover:bg-[#7A685D]'
+            }`}
+            aria-label={`Go to reel ${idx + 1}`}
+          />
         ))}
       </div>
     </section>

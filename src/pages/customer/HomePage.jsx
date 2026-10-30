@@ -903,18 +903,7 @@ const HomePage = () => {
                 </div>
               </div>
 
-              {/* Follow Button */}
-              <a
-                href="https://instagram.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-purple-600 via-pink-600 to-rose-500 hover:from-purple-500 hover:to-rose-400 text-white font-extrabold text-xs shadow-md shadow-pink-600/30 hover:scale-105 active:scale-95 transition-all self-start sm:self-auto shrink-0"
-              >
-                <InstagramIcon size={15} />
-                <span>Follow on Instagram</span>
-                <ExternalLink size={13} />
-              </a>
-            </div>
+                          </div>
 
             {/* Bottom Row: Stats & Tag Info (Matches left card footer) */}
             <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs text-neutral-300 z-10">

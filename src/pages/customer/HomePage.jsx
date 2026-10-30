@@ -1128,16 +1128,6 @@ const HomePage = () => {
                 <span>NAVIGATE GOOGLE MAPS</span>
               </a>
             </div>
-
-            {/* Delivery Range Limit Note Box */}
-            <div className="bg-black/40 border border-white/5 rounded-xl sm:rounded-2xl p-3.5 sm:p-4 text-center space-y-1">
-              <h5 className="text-[10px] sm:text-[11px] font-black uppercase tracking-widest text-[#E5A84B]">
-                DELIVERY RANGE LIMIT
-              </h5>
-              <p className="text-[11px] text-[#A8988D] leading-relaxed">
-                Serving freshly prepared hot meals within Muzaffarpur city. Delivery beyond 1 KM may carry special terms.
-              </p>
-            </div>
           </div>
         </div>
       </section>

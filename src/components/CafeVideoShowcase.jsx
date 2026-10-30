@@ -1,10 +1,20 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
   Play,
-  Film
+  Film,
+  Volume2,
+  VolumeX
 } from 'lucide-react';
 
 const REELS_DATA = [
+  {
+    id: 'prime-cafe',
+    title: 'The Prime Café Experience',
+    category: 'Signature Special',
+    videoSrc: '/assets/reels/the_prime_cafe_1.mp4',
+    poster: '/assets/reels/poster_prime_cafe.jpg',
+    hasVoice: true
+  },
   {
     id: 'coffee',
     title: 'Double Shot Espresso & Crema',
@@ -25,29 +35,31 @@ const REELS_DATA = [
     category: 'Gourmet Pizzas',
     videoSrc: '/assets/reels/reel_pizza.mp4',
     poster: '/assets/reels/poster_pizza.jpg'
-  },
-  {
-    id: 'pasta',
-    title: 'Creamy Italian Alfredo Toss',
-    category: 'Pastas & Bowls',
-    videoSrc: '/assets/reels/reel_pasta.mp4',
-    poster: '/assets/reels/poster_pasta.jpg'
   }
 ];
 
 const ReelCard = ({ reel }) => {
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(true);
+  // If video has voice, attempt to start unmuted
+  const [isMuted, setIsMuted] = useState(!reel.hasVoice);
 
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
-    // Start playing muted automatically
+    video.muted = isMuted;
+
+    // Attempt autoplay (with sound if reel.hasVoice)
     const playPromise = video.play();
     if (playPromise !== undefined) {
       playPromise.catch(() => {
-        setIsPlaying(false);
+        // If browser blocks unmuted autoplay, fallback to muted autoplay
+        video.muted = true;
+        setIsMuted(true);
+        video.play().catch(() => {
+          setIsPlaying(false);
+        });
       });
     }
   }, []);
@@ -57,10 +69,34 @@ const ReelCard = ({ reel }) => {
     const video = videoRef.current;
     if (!video) return;
 
+    // If reel has voice and is currently muted, unmute on card tap
+    if (reel.hasVoice && isMuted) {
+      video.muted = false;
+      setIsMuted(false);
+      if (video.paused) {
+        video.play().then(() => setIsPlaying(true)).catch(() => {});
+      }
+      return;
+    }
+
     if (isPlaying) {
       video.pause();
       setIsPlaying(false);
     } else {
+      video.play().then(() => setIsPlaying(true)).catch(() => {});
+    }
+  };
+
+  const toggleMute = (e) => {
+    e.stopPropagation();
+    const video = videoRef.current;
+    if (!video) return;
+
+    const nextMuted = !isMuted;
+    video.muted = nextMuted;
+    setIsMuted(nextMuted);
+
+    if (!nextMuted && video.paused) {
       video.play().then(() => setIsPlaying(true)).catch(() => {});
     }
   };
@@ -75,13 +111,41 @@ const ReelCard = ({ reel }) => {
         ref={videoRef}
         autoPlay
         loop
-        muted
+        muted={isMuted}
         playsInline
         poster={reel.poster}
         className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
       >
         <source src={reel.videoSrc} type="video/mp4" />
       </video>
+
+      {/* Voice / Audio Indicator for Voice Reel */}
+      {reel.hasVoice && (
+        <div className="absolute top-2.5 right-2.5 z-20">
+          <button
+            type="button"
+            onClick={toggleMute}
+            className={`px-2.5 py-1 rounded-full flex items-center gap-1.5 text-xs font-bold transition-all shadow-md active:scale-95 cursor-pointer backdrop-blur-md border ${
+              !isMuted
+                ? 'bg-[#C85A32] text-white border-orange-400/50 shadow-orange-950/40'
+                : 'bg-black/65 text-white/95 border-white/20 hover:bg-black/80'
+            }`}
+            title={isMuted ? 'Click to play with voice' : 'Mute voice'}
+          >
+            {isMuted ? (
+              <>
+                <VolumeX size={13} className="text-white/80" />
+                <span className="text-[10px] uppercase tracking-wider font-extrabold">Tap for Voice</span>
+              </>
+            ) : (
+              <>
+                <Volume2 size={13} className="text-white animate-pulse" />
+                <span className="text-[10px] uppercase tracking-wider font-extrabold">Voice ON</span>
+              </>
+            )}
+          </button>
+        </div>
+      )}
 
       {/* Center Play Indicator when paused */}
       {!isPlaying && (

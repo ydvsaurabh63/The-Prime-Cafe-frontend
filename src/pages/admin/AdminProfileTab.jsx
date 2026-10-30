@@ -35,8 +35,8 @@ const AdminProfileTab = () => {
   const [printCopies, setPrintCopies] = useState(5);
 
   const menuUrl = typeof window !== 'undefined' && !window.location.hostname.includes('localhost')
-    ? `${window.location.origin}/cafe`
-    : 'https://the-prime-cafe-frontend.vercel.app/cafe';
+    ? `${window.location.origin}/cafe?v=prime`
+    : 'https://the-prime-cafe-frontend.vercel.app/cafe?v=prime';
 
   useEffect(() => {
     let isMounted = true;

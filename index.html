@@ -9,25 +9,43 @@
     <!-- Open Graph & Social Sharing -->
     <meta property="og:title" content="The Prime Cafe" />
     <meta property="og:description" content="Artisanal Brews, Gourmet Eats & Seamless Online Ordering" />
-    <meta property="og:image" content="/logo.png" />
+    <meta property="og:image" content="https://the-prime-cafe-frontend.vercel.app/logo.png" />
+    <meta property="og:url" content="https://the-prime-cafe-frontend.vercel.app" />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:image" content="/logo.png" />
+    <meta name="twitter:title" content="The Prime Cafe" />
+    <meta name="twitter:description" content="Artisanal Brews, Gourmet Eats & Seamless Online Ordering" />
+    <meta name="twitter:image" content="https://the-prime-cafe-frontend.vercel.app/logo.png" />
 
     <!-- PWA & Mobile Meta Tags -->
     <meta name="theme-color" content="#4A2C18" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-title" content="Prime Cafe" />
+    <meta name="apple-mobile-web-app-title" content="The Prime Cafe" />
 
-    <!-- Icons & Manifest -->
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-    <link rel="icon" type="image/png" sizes="64x64" href="/favicon.png" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <!-- Icons & Manifest with Cache Busting for Scanners & Google Lens -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico?v=prime2" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=prime2" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=prime2" />
+    <link rel="icon" type="image/png" sizes="64x64" href="/favicon.png?v=prime2" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=prime2" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=prime2" />
+    <link rel="apple-touch-icon-precomposed" href="/apple-touch-icon-precomposed.png?v=prime2" />
     <link rel="apple-touch-startup-image" href="/pwa-512x512.png" />
-    <link rel="manifest" href="/manifest.json" />
+    <link rel="manifest" href="/manifest.json?v=prime2" />
+
+    <!-- Structured Data for Google Lens & Search Rich Results -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "CafeOrCoffeeShop",
+      "name": "The Prime Cafe",
+      "image": "https://the-prime-cafe-frontend.vercel.app/logo.png",
+      "logo": "https://the-prime-cafe-frontend.vercel.app/logo.png",
+      "url": "https://the-prime-cafe-frontend.vercel.app"
+    }
+    </script>
     <!-- Google Identity Services SDK for Google Sign-In -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
   </head>

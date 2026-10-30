@@ -1,5 +1,5 @@
 // Production-safe Service Worker for The Prime Cafe
-const CACHE_NAME = 'prime-cafe-v1';
+const CACHE_NAME = 'prime-cafe-v2';
 
 // Static resources to pre-cache on install
 const PRECACHE_ASSETS = [
@@ -7,12 +7,16 @@ const PRECACHE_ASSETS = [
   '/index.html',
   '/manifest.json',
   '/logo.png',
+  '/favicon.ico',
+  '/favicon.png',
+  '/favicon-32x32.png',
+  '/favicon-16x16.png',
   '/pwa-192x192.png',
   '/pwa-512x512.png',
   '/pwa-maskable-192x192.png',
   '/pwa-maskable-512x512.png',
   '/apple-touch-icon.png',
-  '/favicon.png'
+  '/apple-touch-icon-precomposed.png'
 ];
 
 // Install Event

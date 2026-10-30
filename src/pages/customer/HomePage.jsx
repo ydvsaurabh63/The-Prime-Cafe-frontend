@@ -16,6 +16,7 @@ import {
   ChevronRight,
   Star,
   CheckCircle,
+  CheckCircle2,
   Users,
   ExternalLink,
   ChevronDown,

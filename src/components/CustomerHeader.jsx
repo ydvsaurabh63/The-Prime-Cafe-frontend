@@ -98,13 +98,6 @@ const CustomerHeader = () => {
                 </span>
               )}
             </button>
-
-            <Link
-              to="/client/login"
-              className="hidden lg:inline-block text-[11px] text-[#7A685D] hover:text-[#4A2C18] font-semibold underline ml-1"
-            >
-              Management Portal
-            </Link>
           </div>
         </div>
 

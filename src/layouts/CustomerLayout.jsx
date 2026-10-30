@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Outlet, useSearchParams } from 'react-router-dom';
+import { Link, Outlet, useSearchParams } from 'react-router-dom';
 import CustomerHeader from '../components/CustomerHeader';
 import BottomNav from '../components/BottomNav';
 import PWAInstallBanner from '../components/PWAInstallBanner';
@@ -45,20 +45,31 @@ const CustomerLayout = () => {
           <Outlet />
         </div>
 
-        {/* Website Footer Credit */}
-        <footer className="mt-14 pt-6 border-t border-[#E6DCD3] text-center space-y-2 text-xs text-[#7A685D]">
-          <div className="flex items-center justify-center gap-2">
-            <div className="w-7 h-7 rounded-full overflow-hidden shadow-xs ring-1 ring-[#C85A32]/30 bg-black flex items-center justify-center">
-              <img src="/logo.png" alt="The Prime Cafe" className="w-full h-full object-cover" />
+        {/* Website Footer Credit & Management Portal Access */}
+        <footer className="mt-14 pt-6 border-t border-[#E6DCD3] text-xs text-[#7A685D]">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+            {/* Developer Credit */}
+            <div className="space-y-0.5">
+              <p className="font-semibold text-[#4A2C18]">
+                Designed & Developed by <span className="font-bold text-[#2C1810]">Diin Technologies Pvt. Ltd.</span>
+              </p>
+              <p className="text-[11px] text-[#8C7B70]">
+                © 2026 Diin Technologies Pvt. Ltd. All rights reserved.
+              </p>
             </div>
-            <span className="font-extrabold text-sm text-[#2C1810]">The Prime Cafe</span>
+
+            {/* Management Portal Link (Shifted to bottom side for mobile & laptop) */}
+            <div className="flex items-center gap-1.5">
+              <Link
+                to="/client/login"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-[#FAF0E6] text-[#7A685D] hover:text-[#C85A32] border border-[#E6DCD3] text-[11px] font-bold shadow-2xs transition active:scale-95"
+                title="Management Portal Login"
+              >
+                <span>Management Portal</span>
+                <span className="text-[10px]">🔒</span>
+              </Link>
+            </div>
           </div>
-          <p className="font-semibold text-[#4A2C18]">
-            Designed & Developed by <span className="font-bold text-[#2C1810]">Diin Technologies Pvt. Ltd.</span>
-          </p>
-          <p className="text-[11px] text-[#8C7B70]">
-            © 2026 Diin Technologies Pvt. Ltd. All rights reserved.
-          </p>
         </footer>
       </main>
       <PWAInstallBanner />

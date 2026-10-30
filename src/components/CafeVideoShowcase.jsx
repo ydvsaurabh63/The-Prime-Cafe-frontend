@@ -35,6 +35,13 @@ const REELS_DATA = [
     category: 'Gourmet Pizzas',
     videoSrc: '/assets/reels/reel_pizza.mp4',
     poster: '/assets/reels/poster_pizza.jpg'
+  },
+  {
+    id: 'pasta',
+    title: 'Creamy Italian Alfredo Toss',
+    category: 'Pastas & Bowls',
+    videoSrc: '/assets/reels/reel_pasta.mp4',
+    poster: '/assets/reels/poster_pasta.jpg'
   }
 ];
 
@@ -104,7 +111,7 @@ const ReelCard = ({ reel }) => {
   return (
     <div
       onClick={togglePlay}
-      className="group relative aspect-[9/16] rounded-2xl sm:rounded-3xl overflow-hidden bg-black border border-[#E6DCD3] shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col justify-end"
+      className="group relative aspect-[9/16] rounded-2xl sm:rounded-3xl overflow-hidden bg-black border border-[#E6DCD3] shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col justify-end shrink-0 w-[145px] sm:w-[170px] md:w-full md:min-w-0 snap-start select-none"
     >
       {/* Background Video */}
       <video
@@ -125,7 +132,7 @@ const ReelCard = ({ reel }) => {
           <button
             type="button"
             onClick={toggleMute}
-            className={`px-2.5 py-1 rounded-full flex items-center gap-1.5 text-xs font-bold transition-all shadow-md active:scale-95 cursor-pointer backdrop-blur-md border ${
+            className={`px-2 sm:px-2.5 py-1 rounded-full flex items-center gap-1 sm:gap-1.5 font-bold transition-all shadow-md active:scale-95 cursor-pointer backdrop-blur-md border ${
               !isMuted
                 ? 'bg-[#C85A32] text-white border-orange-400/50 shadow-orange-950/40'
                 : 'bg-black/65 text-white/95 border-white/20 hover:bg-black/80'
@@ -134,13 +141,13 @@ const ReelCard = ({ reel }) => {
           >
             {isMuted ? (
               <>
-                <VolumeX size={13} className="text-white/80" />
-                <span className="text-[10px] uppercase tracking-wider font-extrabold">Tap for Voice</span>
+                <VolumeX size={12} className="text-white/80" />
+                <span className="text-[9px] sm:text-[10px] uppercase tracking-wider font-extrabold whitespace-nowrap">Tap for Voice</span>
               </>
             ) : (
               <>
-                <Volume2 size={13} className="text-white animate-pulse" />
-                <span className="text-[10px] uppercase tracking-wider font-extrabold">Voice ON</span>
+                <Volume2 size={12} className="text-white animate-pulse" />
+                <span className="text-[9px] sm:text-[10px] uppercase tracking-wider font-extrabold whitespace-nowrap">Voice ON</span>
               </>
             )}
           </button>
@@ -157,8 +164,8 @@ const ReelCard = ({ reel }) => {
       )}
 
       {/* Bottom Content Overlay */}
-      <div className="relative z-10 p-3 sm:p-4 bg-gradient-to-t from-black/95 via-black/70 to-transparent pt-12">
-        <p className="text-[10px] font-bold text-amber-300 uppercase tracking-wider mb-0.5">
+      <div className="relative z-10 p-2.5 sm:p-4 bg-gradient-to-t from-black/95 via-black/70 to-transparent pt-10 sm:pt-12">
+        <p className="text-[9px] sm:text-[10px] font-bold text-amber-300 uppercase tracking-wider mb-0.5 line-clamp-1">
           {reel.category}
         </p>
         <h4 className="text-xs sm:text-sm font-extrabold text-white leading-tight line-clamp-2 drop-shadow-sm">
@@ -173,17 +180,27 @@ const CafeVideoShowcase = () => {
   return (
     <section className="space-y-3 sm:space-y-4">
       {/* Section Header */}
-      <div className="flex items-center gap-2.5 px-1">
-        <span className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-[#C85A32] to-amber-500 text-white flex items-center justify-center shadow-sm">
-          <Film size={18} />
+      <div className="flex items-center justify-between px-1">
+        <div className="flex items-center gap-2.5">
+          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-2xl bg-gradient-to-tr from-[#C85A32] to-amber-500 text-white flex items-center justify-center shadow-sm shrink-0">
+            <Film size={18} />
+          </span>
+          <div>
+            <h3 className="text-base sm:text-lg font-black text-[#2C1810] tracking-tight leading-none">
+              Menu in Motion • Live Cafe Reels
+            </h3>
+            <p className="text-[11px] text-[#7A685D] mt-0.5 hidden xs:block">
+              Swipe across to explore our signature roasts & live kitchen bites
+            </p>
+          </div>
+        </div>
+        <span className="text-[10px] sm:text-xs font-bold text-[#C85A32] bg-[#C85A32]/10 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full md:hidden shrink-0">
+          5 Reels • Swipe →
         </span>
-        <h3 className="text-base sm:text-lg font-black text-[#2C1810] tracking-tight">
-          Menu in Motion • Live Cafe Reels
-        </h3>
       </div>
 
-      {/* 4 Reels Grid: 2 cols on mobile, 4 cols on desktop */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-5">
+      {/* 5 Reels: Single horizontal row on mobile with smooth swipe, 5-col grid on desktop */}
+      <div className="flex overflow-x-auto snap-x snap-mandatory gap-3 pb-2 pt-1 no-scrollbar touch-pan-x -mx-3 px-3 sm:-mx-4 sm:px-4 md:mx-0 md:px-0 md:grid md:grid-cols-5 md:gap-3 lg:gap-4 md:overflow-visible md:pb-0">
         {REELS_DATA.map((reel) => (
           <ReelCard key={reel.id} reel={reel} />
         ))}

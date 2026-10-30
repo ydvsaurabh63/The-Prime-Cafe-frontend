@@ -470,10 +470,7 @@ const HomePage = () => {
       <section className="space-y-5">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
           <div>
-            <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#C85A32]">
-              <Sparkles size={14} /> Curated Cafe Selection
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#2C1810] tracking-tight mt-1">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#2C1810] tracking-tight">
               Popular Favorites
             </h2>
             <p className="text-xs sm:text-sm text-[#7A685D] mt-0.5">

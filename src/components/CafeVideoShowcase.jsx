@@ -1,10 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import {
-  Play,
-  Film,
-  ChevronLeft,
-  ChevronRight
-} from 'lucide-react';
+import { Play } from 'lucide-react';
 
 const REELS_DATA = [
   {
@@ -233,66 +228,13 @@ const CafeVideoShowcase = () => {
     }
   };
 
-  const handlePrev = () => {
-    const nextIdx = Math.max(0, currentIndex - 1);
-    scrollToIndex(nextIdx);
-  };
-
-  const handleNext = () => {
-    const nextIdx = Math.min(REELS_DATA.length - 1, currentIndex + 1);
-    scrollToIndex(nextIdx);
-  };
-
   return (
     <section className="space-y-3 sm:space-y-4">
       {/* Section Header */}
-      <div className="flex items-center justify-between px-1">
-        <div className="flex items-center gap-2.5">
-          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-2xl bg-gradient-to-tr from-[#C85A32] to-amber-500 text-white flex items-center justify-center shadow-sm shrink-0">
-            <Film size={18} />
-          </span>
-          <div>
-            <h3 className="text-base sm:text-lg font-black text-[#2C1810] tracking-tight leading-none">
-              Menu in Motion • Live Cafe Reels
-            </h3>
-            <p className="text-[11px] text-[#7A685D] mt-0.5">
-              Swipe across to explore our signature kitchen creations
-            </p>
-          </div>
-        </div>
-
-        {/* Navigation Controls: Reel Counter & Prev/Next Arrows */}
-        <div className="flex items-center gap-1.5 sm:gap-2">
-          <span className="text-[11px] sm:text-xs font-bold text-[#7A685D] bg-[#F5EFEB] border border-[#E6DCD3] px-2.5 py-1 rounded-full whitespace-nowrap">
-            {currentIndex + 1} / {REELS_DATA.length}
-          </span>
-          <button
-            type="button"
-            onClick={handlePrev}
-            disabled={currentIndex === 0}
-            className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-[#E6DCD3] flex items-center justify-center transition-all ${
-              currentIndex === 0
-                ? 'opacity-35 cursor-not-allowed bg-white/40 text-[#7A685D]'
-                : 'bg-white text-[#2C1810] hover:bg-[#C85A32] hover:text-white hover:border-[#C85A32] shadow-sm cursor-pointer active:scale-95'
-            }`}
-            aria-label="Previous reel"
-          >
-            <ChevronLeft size={16} />
-          </button>
-          <button
-            type="button"
-            onClick={handleNext}
-            disabled={currentIndex === REELS_DATA.length - 1}
-            className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-[#E6DCD3] flex items-center justify-center transition-all ${
-              currentIndex === REELS_DATA.length - 1
-                ? 'opacity-35 cursor-not-allowed bg-white/40 text-[#7A685D]'
-                : 'bg-white text-[#2C1810] hover:bg-[#C85A32] hover:text-white hover:border-[#C85A32] shadow-sm cursor-pointer active:scale-95'
-            }`}
-            aria-label="Next reel"
-          >
-            <ChevronRight size={16} />
-          </button>
-        </div>
+      <div className="px-1">
+        <h3 className="text-base sm:text-lg font-black text-[#2C1810] tracking-tight">
+          Menu in Motion
+        </h3>
       </div>
 
       {/* Reels Track: Center card with peek side cards on mobile, wide cards slider on desktop */}

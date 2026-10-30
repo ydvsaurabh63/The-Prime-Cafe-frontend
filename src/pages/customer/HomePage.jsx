@@ -1006,7 +1006,7 @@ const HomePage = () => {
       </section>
 
 
-      {/* 6. CONTACT & LOCATION SECTION (Matches reference screenshot) */}
+            {/* 6. CONTACT & LOCATION SECTION (Matches reference screenshot) */}
       <section className="relative overflow-hidden bg-[#160E0A] text-[#FAF7F2] rounded-3xl sm:rounded-[36px] p-6 sm:p-8 md:p-12 border border-[#2C1810] shadow-2xl">
         {/* Subtle Warm Amber Glow in Top-Right Corner */}
         <div className="absolute -top-16 -right-16 w-64 h-64 bg-gradient-to-br from-amber-500/15 via-orange-600/10 to-transparent rounded-full blur-3xl pointer-events-none" />
@@ -1141,8 +1141,6 @@ const HomePage = () => {
           </div>
         </div>
       </section>
-
-
 
       {/* Customer & Google Review Modal */}
       <ReviewModal

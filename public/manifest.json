@@ -41,22 +41,41 @@
       "short_name": "Menu",
       "description": "Explore artisanal coffee and fresh delicacies",
       "url": "/menu",
-      "icons": [{ "src": "/pwa-192x192.png", "sizes": "192x192" }]
+      "icons": [
+        {
+          "src": "/pwa-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
     },
     {
       "name": "My Orders",
       "short_name": "Orders",
       "description": "Check live order status and history",
       "url": "/order",
-      "icons": [{ "src": "/pwa-192x192.png", "sizes": "192x192" }]
+      "icons": [
+        {
+          "src": "/pwa-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
     },
     {
       "name": "Offers",
       "short_name": "Offers",
       "description": "View discount coupons and combo deals",
       "url": "/offers",
-      "icons": [{ "src": "/pwa-192x192.png", "sizes": "192x192" }]
+      "icons": [
+        {
+          "src": "/pwa-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
     }
   ],
-  "categories": ["food", "shopping", "lifestyle"]
+  "categories": [
+    "food",
+    "shopping",
+    "lifestyle"
+  ]
 }

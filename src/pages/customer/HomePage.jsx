@@ -28,7 +28,9 @@ import {
   Copy,
   Search,
   X,
-  ShoppingBag
+  ShoppingBag,
+  Phone,
+  Compass
 } from 'lucide-react';
 import api from '../../services/api';
 import { useCart } from '../../context/CartContext';
@@ -55,6 +57,13 @@ const InstagramIcon = ({ size = 18, className = "" }) => (
     <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
   </svg>
 );
+
+const WhatsAppIcon = ({ size = 18, className = "" }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className}>
+    <path d="M12.031 2C6.516 2 2.024 6.49 2.024 12c0 1.897.534 3.666 1.458 5.176L2 22l4.98-1.442A9.948 9.948 0 0 0 12.031 22c5.516 0 10.008-4.49 10.008-10s-4.492-10-10.008-10zm5.836 14.195c-.244.686-1.42 1.32-1.96 1.365-.494.04-1.139.06-3.666-.99-3.23-1.34-5.297-4.63-5.457-4.846-.16-.215-1.306-1.74-1.306-3.32 0-1.58.825-2.358 1.118-2.678.293-.32.64-.4.854-.4.214 0 .427.002.614.011.198.01.462-.075.723.551.267.64.908 2.217.988 2.378.08.16.133.347.027.561-.107.214-.16.347-.32.534-.16.187-.336.417-.48.56-.16.16-.328.334-.141.654.187.32.83 1.366 1.782 2.215 1.224 1.092 2.256 1.43 2.576 1.59.32.16.507.134.694-.08.187-.214.8-1.014 1.014-1.36.214-.347.427-.294.72-.187.294.106 1.868.88 2.188 1.04.32.16.534.24.614.373.08.134.08.775-.164 1.46z" />
+  </svg>
+);
+
 
 const DEFAULT_FEATURED_ITEMS = [
   {
@@ -995,6 +1004,144 @@ const HomePage = () => {
         </div>
 
       </section>
+
+
+      {/* 6. CONTACT & LOCATION SECTION (Matches reference screenshot) */}
+      <section className="relative overflow-hidden bg-[#160E0A] text-[#FAF7F2] rounded-3xl sm:rounded-[36px] p-6 sm:p-8 md:p-12 border border-[#2C1810] shadow-2xl">
+        {/* Subtle Warm Amber Glow in Top-Right Corner */}
+        <div className="absolute -top-16 -right-16 w-64 h-64 bg-gradient-to-br from-amber-500/15 via-orange-600/10 to-transparent rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-16 -left-16 w-64 h-64 bg-gradient-to-tr from-[#C85A32]/15 via-transparent to-transparent rounded-full blur-3xl pointer-events-none" />
+
+        {/* Vintage Hanging Lantern Aesthetic Decor in Top-Right (as shown in reference screenshot) */}
+        <div className="absolute top-0 right-4 sm:right-8 w-12 sm:w-16 pointer-events-none opacity-90 hidden sm:block">
+          <div className="w-[1.5px] h-12 bg-gradient-to-b from-amber-700 to-amber-950 mx-auto" />
+          <div className="w-8 h-11 bg-gradient-to-b from-amber-950 via-amber-700/60 to-amber-400/80 rounded-b-2xl border border-amber-500/40 mx-auto shadow-[0_0_25px_rgba(245,158,11,0.5)] flex items-center justify-center">
+            <div className="w-3 h-5 bg-amber-200/90 rounded-full blur-[1px] animate-pulse" />
+          </div>
+        </div>
+
+        {/* Section Header */}
+        <div className="text-center relative z-10 space-y-1 mb-8 sm:mb-10">
+          <span className="text-[11px] font-extrabold uppercase tracking-[0.25em] text-[#C85A32] block">
+            VISIT & ORDER
+          </span>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-[#FAF7F2] tracking-tight uppercase">
+            CONTACT & LOCATION
+          </h2>
+          <div className="w-16 h-1 bg-[#D93829] mx-auto mt-2.5 rounded-full" />
+        </div>
+
+        {/* 2-Column Responsive Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 relative z-10">
+          {/* Card 1: Our Address & Operating Hours */}
+          <div className="bg-[#201511] border border-white/5 rounded-2xl sm:rounded-3xl p-5 sm:p-7 flex flex-col justify-between space-y-6 shadow-md hover:border-white/10 transition">
+            <div className="space-y-6">
+              {/* Address Block */}
+              <div className="flex items-start gap-3.5">
+                <div className="w-10 h-10 rounded-full bg-[#C85A32]/15 text-[#C85A32] flex items-center justify-center shrink-0 border border-[#C85A32]/30 mt-0.5">
+                  <MapPin size={18} />
+                </div>
+                <div className="space-y-1 min-w-0">
+                  <h4 className="text-[11px] font-extrabold uppercase tracking-wider text-[#A8988D]">
+                    OUR ADDRESS
+                  </h4>
+                  <p className="text-sm sm:text-base font-bold text-white leading-snug">
+                    पानी टंकी चौक, मुज़फ़्फ़रपुर
+                  </p>
+                  <p className="text-xs text-[#A8988D] leading-relaxed">
+                    Pani Tanki Chowk, Muzaffarpur, Bihar - 842001
+                  </p>
+                </div>
+              </div>
+
+              {/* Hours Block */}
+              <div className="flex items-start gap-3.5 pt-2">
+                <div className="w-10 h-10 rounded-full bg-[#C85A32]/15 text-[#C85A32] flex items-center justify-center shrink-0 border border-[#C85A32]/30 mt-0.5">
+                  <Clock size={18} />
+                </div>
+                <div className="space-y-1 min-w-0">
+                  <h4 className="text-[11px] font-extrabold uppercase tracking-wider text-[#A8988D]">
+                    OPERATING HOURS
+                  </h4>
+                  <p className="text-sm sm:text-base font-bold text-white leading-snug">
+                    Every Day: 10:00 AM - 11:30 PM
+                  </p>
+                  <p className="text-xs text-[#A8988D] leading-relaxed">
+                    Order anytime for dine-in, takeaway or quick delivery.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Bottom Action Buttons: Call & WhatsApp */}
+            <div className="flex items-center gap-2.5 pt-2">
+              <a
+                href="tel:+916277781888"
+                className="flex-1 bg-[#D93829] hover:bg-[#c32f21] text-white font-extrabold text-xs sm:text-sm py-3 px-3 sm:px-4 rounded-xl sm:rounded-2xl flex items-center justify-center gap-1.5 sm:gap-2 shadow-sm transition active:scale-95 text-center truncate"
+              >
+                <Phone size={14} className="shrink-0" />
+                <span className="truncate">CALL US: 6277781888</span>
+              </a>
+              <a
+                href="https://wa.me/916277781888?text=Hi%20The%20Prime%20Cafe%2C%20I%20would%20like%20to%20know%20more%20about%20your%20menu%20and%20table%20bookings."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 bg-[#25D366] hover:bg-[#20ba59] text-white font-extrabold text-xs sm:text-sm py-3 px-3 sm:px-4 rounded-xl sm:rounded-2xl flex items-center justify-center gap-1.5 sm:gap-2 shadow-sm transition active:scale-95 text-center truncate"
+              >
+                <WhatsAppIcon size={16} className="shrink-0" />
+                <span className="truncate">WHATSAPP CHAT</span>
+              </a>
+            </div>
+          </div>
+
+          {/* Card 2: Quick Direct Links */}
+          <div className="bg-[#201511] border border-white/5 rounded-2xl sm:rounded-3xl p-5 sm:p-7 flex flex-col justify-between space-y-4 shadow-md hover:border-white/10 transition">
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-base sm:text-lg font-black text-white uppercase tracking-wide">
+                  QUICK DIRECT LINKS
+                </h3>
+                <p className="text-xs text-[#A8988D] mt-1 leading-relaxed">
+                  Instantly connect with us or navigate to our store using these action shortcuts.
+                </p>
+              </div>
+
+              {/* Chat on WhatsApp Large Button */}
+              <a
+                href="https://wa.me/916277781888?text=Hi%20The%20Prime%20Cafe%2C%20I%20would%20like%20to%20order"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full bg-[#25D366] hover:bg-[#20ba59] text-white font-black text-xs sm:text-sm uppercase tracking-wider py-3.5 px-4 rounded-xl sm:rounded-2xl flex items-center justify-center gap-2 shadow-md transition active:scale-95"
+              >
+                <WhatsAppIcon size={18} />
+                <span>CHAT ON WHATSAPP</span>
+              </a>
+
+              {/* Navigate Google Maps Button */}
+              <a
+                href="https://maps.google.com/?q=The+Prime+Cafe+Pani+Tanki+Chowk+Muzaffarpur"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full bg-white/5 hover:bg-white/10 border border-white/15 text-white font-black text-xs sm:text-sm uppercase tracking-wider py-3.5 px-4 rounded-xl sm:rounded-2xl flex items-center justify-center gap-2 shadow-sm transition active:scale-95"
+              >
+                <Compass size={17} className="text-[#E5A84B]" />
+                <span>NAVIGATE GOOGLE MAPS</span>
+              </a>
+            </div>
+
+            {/* Delivery Range Limit Note Box */}
+            <div className="bg-black/40 border border-white/5 rounded-xl sm:rounded-2xl p-3.5 sm:p-4 text-center space-y-1">
+              <h5 className="text-[10px] sm:text-[11px] font-black uppercase tracking-widest text-[#E5A84B]">
+                DELIVERY RANGE LIMIT
+              </h5>
+              <p className="text-[11px] text-[#A8988D] leading-relaxed">
+                Serving freshly prepared hot meals within Muzaffarpur city. Delivery beyond 1 KM may carry special terms.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
 
 
       {/* Customer & Google Review Modal */}

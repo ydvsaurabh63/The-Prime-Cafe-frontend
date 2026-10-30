@@ -5,13 +5,14 @@ import {
   Sparkles,
   AlertTriangle,
   Gift,
-  Coffee,
+  UserCheck,
   CheckCircle2,
   Clock,
   Send,
   Droplets,
   Receipt,
   Utensils,
+  UtensilsCrossed,
   MessageSquare
 } from 'lucide-react';
 import api from '../services/api';
@@ -24,7 +25,7 @@ const QUICK_SERVICE_OPTIONS = [
   { label: 'Drinking Water', icon: Droplets, message: 'Please provide fresh drinking water.' },
   { label: 'Request Bill', icon: Receipt, message: 'Please bring our table bill.' },
   { label: 'Clean Table', icon: Utensils, message: 'Please clean our table.' },
-  { label: 'Cutlery & Napkins', icon: Coffee, message: 'Please provide extra cutlery and napkins.' },
+  { label: 'Cutlery & Napkins', icon: UtensilsCrossed, message: 'Please provide extra cutlery and napkins.' },
   { label: 'Order Inquiry', icon: MessageSquare, message: 'Could you please check on our order status?' }
 ];
 
@@ -200,8 +201,8 @@ const CustomerNoticeModal = ({ isOpen, onClose, onUnreadCountChange }) => {
         {/* Modal Header */}
         <div className="shrink-0 p-4 sm:p-5 border-b border-[#E6DCD3] bg-white flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-[#C85A32] text-white flex items-center justify-center shadow-xs shrink-0">
-              <Bell size={20} className={unreadNoticesCount > 0 ? 'animate-bounce' : ''} />
+            <div className="w-10 h-10 rounded-full overflow-hidden shadow-xs shrink-0 ring-1 ring-[#C85A32]/30 bg-black flex items-center justify-center">
+              <img src="/logo.png" alt="The Prime Cafe" className="w-full h-full object-cover" />
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -255,7 +256,7 @@ const CustomerNoticeModal = ({ isOpen, onClose, onUnreadCountChange }) => {
                   : 'text-[#7A685D] hover:text-[#2C1810]'
               }`}
             >
-              <Coffee size={13} />
+              <UserCheck size={13} />
               <span>Call Waiter</span>
             </button>
           </div>

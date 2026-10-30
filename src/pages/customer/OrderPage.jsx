@@ -208,10 +208,12 @@ const OrderPage = () => {
         <div>
           {cartItems.length === 0 ? (
             <div className="p-12 text-center bg-white rounded-3xl border border-[#E6DCD3] space-y-4 max-w-lg mx-auto">
-              <ShoppingBag size={48} className="mx-auto text-[#7A685D]/60" />
+              <div className="w-16 h-16 rounded-full overflow-hidden mx-auto shadow-md ring-2 ring-[#C85A32]/30 bg-black flex items-center justify-center">
+                <img src="/logo.png" alt="The Prime Cafe" className="w-full h-full object-cover" />
+              </div>
               <h3 className="text-lg font-bold text-[#2C1810]">Your Cart is Empty</h3>
               <p className="text-xs text-[#7A685D] max-w-xs mx-auto leading-relaxed">
-                Explore our artisanal coffee and handcrafted bites to add items to your order.
+                Explore our artisanal cuisine and handcrafted bites to add items to your order.
               </p>
               <Link
                 to="/menu"

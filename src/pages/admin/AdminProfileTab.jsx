@@ -129,7 +129,7 @@ const AdminProfileTab = () => {
         </head>
         <body>
           <div class="card">
-            <div class="logo-badge">Official Cafe QR</div>
+            <img src="${window.location.origin}/logo.png" style="width:68px;height:68px;border-radius:50%;margin:0 auto 12px auto;display:block;" /><div class="logo-badge">Official Cafe QR</div>
             <h1>The Prime Cafe</h1>
             <h2>Artisanal Brews & Comfort Eats</h2>
             <div class="qr-wrapper">
@@ -151,7 +151,7 @@ const AdminProfileTab = () => {
       .map(
         () => `
         <div class="card">
-          <div class="logo-badge">The Prime Cafe</div>
+          <img src="${window.location.origin}/logo.png" style="width:40px;height:40px;border-radius:50%;margin:0 auto 6px auto;display:block;" /><div class="logo-badge">The Prime Cafe</div>
           <h3>Scan to View Menu & Order</h3>
           <div class="qr-box">
             <img src="${universalQrUrl}" alt="Cafe QR Code" />
@@ -438,7 +438,7 @@ const AdminProfileTab = () => {
               <span className="inline-block bg-[#4A2C18] text-[#FAF7F2] text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider mb-1.5">
                 Universal Cafe QR
               </span>
-              <h4 className="font-extrabold text-lg sm:text-xl text-[#2C1810]">The Prime Cafe</h4>
+              <div className="flex items-center gap-3"><div className="w-10 h-10 rounded-full overflow-hidden shrink-0 ring-1 ring-[#C85A32]/30 bg-black flex items-center justify-center shadow-xs"><img src="/logo.png" alt="The Prime Cafe" className="w-full h-full object-cover" /></div><h4 className="font-extrabold text-lg sm:text-xl text-[#2C1810]">The Prime Cafe</h4></div>
               <p className="text-xs text-[#7A685D] mt-0.5">
                 All tables and guests use this exact same QR code. No table selection or table configuration needed!
               </p>

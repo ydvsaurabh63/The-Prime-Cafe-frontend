@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
-  Coffee,
   Sparkles,
   ArrowRight,
   Clock,
@@ -184,7 +183,7 @@ const HomePage = () => {
 
   const ambianceHighlights = [
     {
-      icon: Coffee,
+      icon: Sparkles,
       title: 'Artisanal Roastery',
       desc: '100% Arabica single-origin beans, precision ground & freshly extracted for every cup.'
     },
@@ -226,7 +225,7 @@ const HomePage = () => {
     },
     {
       step: '03',
-      icon: Coffee,
+      icon: CheckCircle2,
       title: 'Served Hot at Table',
       desc: 'Our barista and kitchen prepare your meal fresh. Pay seamlessly via UPI, card, or cash.',
       badge: 'Step 03',
@@ -624,11 +623,14 @@ const HomePage = () => {
           </div>
         ) : (
           <div className="bg-white rounded-3xl p-8 text-center border border-[#E6DCD3]">
-            <Coffee size={32} className="mx-auto text-[#7A685D] mb-2" />
-            <p className="text-sm text-[#7A685D]">Check out our delicious selection in the menu!</p>
+            <div className="w-14 h-14 rounded-full overflow-hidden mx-auto mb-3 ring-2 ring-[#C85A32]/30 shadow-md bg-black flex items-center justify-center">
+              <img src="/logo.png" alt="The Prime Cafe" className="w-full h-full object-cover" />
+            </div>
+            <p className="text-sm font-bold text-[#2C1810]">The Prime Cafe Delicacies</p>
+            <p className="text-xs text-[#7A685D] mt-0.5">Check out our delicious selection in the menu!</p>
             <Link
               to="/menu"
-              className="mt-3 inline-block px-4 py-2 bg-[#C85A32] text-white text-xs font-bold rounded-xl"
+              className="mt-3.5 inline-block px-5 py-2.5 bg-[#C85A32] hover:bg-[#B24E2A] text-white text-xs font-bold rounded-xl transition shadow-xs"
             >
               Browse Menu
             </Link>

@@ -150,15 +150,15 @@ const ReviewModal = ({ isOpen, onClose, onReviewSubmitted, googleReviewUrl }) =>
       >
         {/* Compact Header */}
         <div className="flex items-center justify-between px-4 sm:px-5 py-3 bg-white border-b border-[#E6DCD3] shrink-0">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-[#FAF0E6] flex items-center justify-center border border-[#E6DCD3] shrink-0">
-              <GoogleIcon size={18} />
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-full overflow-hidden shadow-xs shrink-0 ring-1 ring-[#C85A32]/30 bg-black flex items-center justify-center">
+              <img src="/logo.png" alt="The Prime Cafe" className="w-full h-full object-cover" />
             </div>
             <div>
               <h3 className="font-black text-sm sm:text-base text-[#2C1810] leading-tight">
                 Rate & Review
               </h3>
-              <p className="text-[10px] text-[#7A685D] font-medium">Aaj Kal Cafe</p>
+              <p className="text-[10px] text-[#7A685D] font-bold">The Prime Cafe</p>
             </div>
           </div>
 

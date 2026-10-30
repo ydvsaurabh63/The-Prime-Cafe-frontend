@@ -6,7 +6,6 @@ import {
   Tag,
   Bell,
   User,
-  Coffee,
   LogOut,
   QrCode,
   Sparkles,

@@ -9,7 +9,6 @@ import {
   Gift,
   RefreshCw,
   Award,
-  Coffee,
   Pizza,
   Utensils,
   Crown,
@@ -65,7 +64,7 @@ const DEFAULT_FALLBACK_MILESTONES = [
 
 const getMilestoneIcon = (visitNum) => {
   if (visitNum <= 1) return Gift;
-  if (visitNum <= 3) return Coffee;
+  if (visitNum <= 3) return Sparkles;
   if (visitNum <= 5) return Utensils;
   if (visitNum <= 7) return Pizza;
   return Crown;

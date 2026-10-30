@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Bell, X, CheckCircle2, Send, Loader2, Sparkles, MessageSquare, Coffee, Utensils, Droplets, Receipt } from 'lucide-react';
+import { Bell, X, CheckCircle2, Send, Loader2, Sparkles, MessageSquare, Utensils, UtensilsCrossed, Droplets, Receipt } from 'lucide-react';
 import api from '../services/api';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
@@ -9,7 +9,7 @@ const QUICK_OPTIONS = [
   { label: 'Drinking Water', icon: Droplets, message: 'Please provide fresh drinking water.' },
   { label: 'Request Bill', icon: Receipt, message: 'Please bring our table bill.' },
   { label: 'Clean Table', icon: Utensils, message: 'Please clean our table.' },
-  { label: 'Cutlery & Napkins', icon: Coffee, message: 'Please provide extra cutlery and napkins.' },
+  { label: 'Cutlery & Napkins', icon: UtensilsCrossed, message: 'Please provide extra cutlery and napkins.' },
   { label: 'Order Inquiry', icon: MessageSquare, message: 'Could you please check on our order status?' }
 ];
 

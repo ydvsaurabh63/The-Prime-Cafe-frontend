@@ -42,11 +42,11 @@ const AdminPortalLayout = () => {
           <div className="space-y-6">
             {/* Admin Brand */}
             <div className="flex items-center gap-3 pb-2 border-b border-[#E6DCD3]/60">
-              <div className="w-10 h-10 rounded-2xl bg-[#4A2C18] text-white flex items-center justify-center shadow-xs shrink-0">
-                <UserCheck size={22} className="text-amber-300" />
+              <div className="w-10 h-10 rounded-full overflow-hidden shadow-xs shrink-0 ring-1 ring-[#C85A32]/30 bg-black flex items-center justify-center">
+                <img src="/logo.png" alt="The Prime Cafe" className="w-full h-full object-cover" />
               </div>
               <div>
-                <h1 className="font-extrabold text-sm text-[#2C1810] tracking-tight">Aaj Kal Cafe</h1>
+                <h1 className="font-extrabold text-sm text-[#2C1810] tracking-tight">The Prime Cafe</h1>
                 <span className="text-[10px] font-extrabold text-[#C85A32] bg-[#FAF7F2] px-2 py-0.5 rounded-full border border-[#E6DCD3] flex items-center gap-1 w-max mt-0.5">
                   <Sparkles size={10} /> Admin Portal
                 </span>
@@ -95,9 +95,14 @@ const AdminPortalLayout = () => {
 
         {/* Mobile Header */}
         <header className="md:hidden bg-white border-b border-[#E6DCD3] px-4 py-3 flex items-center justify-between sticky top-0 z-30">
-          <div className="flex items-center gap-2">
-            <UserCheck size={20} className="text-[#4A2C18]" />
-            <h2 className="font-extrabold text-sm text-[#2C1810]">Admin Portal</h2>
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 ring-1 ring-[#C85A32]/30 bg-black flex items-center justify-center">
+              <img src="/logo.png" alt="The Prime Cafe" className="w-full h-full object-cover" />
+            </div>
+            <div>
+              <h2 className="font-extrabold text-sm text-[#2C1810]">The Prime Cafe</h2>
+              <span className="text-[10px] text-[#C85A32] font-bold block leading-none">Admin Portal</span>
+            </div>
           </div>
           <div className="flex items-center gap-2">
             <button
@@ -115,7 +120,7 @@ const AdminPortalLayout = () => {
             <Outlet />
           </div>
           <footer className="mt-12 pt-4 border-t border-[#E6DCD3] text-center text-xs text-[#7A685D]">
-            © 2026 Aaj Kal Cafe Platform. Admin Management Portal.
+            © 2026 The Prime Cafe. Admin Management Portal.
           </footer>
         </main>
 

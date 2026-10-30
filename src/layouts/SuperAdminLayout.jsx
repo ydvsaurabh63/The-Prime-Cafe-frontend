@@ -43,11 +43,11 @@ const SuperAdminLayout = () => {
           <div className="space-y-6">
             {/* Superadmin Brand */}
             <div className="flex items-center gap-3 pb-2 border-b border-[#E6DCD3]/60">
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#2C1810] to-[#C85A32] text-amber-300 flex items-center justify-center shadow-md shrink-0">
-                <ShieldCheck size={24} />
+              <div className="w-10 h-10 rounded-full overflow-hidden shadow-xs shrink-0 ring-1 ring-[#C85A32]/30 bg-black flex items-center justify-center">
+                <img src="/logo.png" alt="The Prime Cafe" className="w-full h-full object-cover" />
               </div>
               <div>
-                <h1 className="font-extrabold text-sm text-[#2C1810] tracking-tight">Aaj Kal Cafe</h1>
+                <h1 className="font-extrabold text-sm text-[#2C1810] tracking-tight">The Prime Cafe</h1>
                 <span className="text-[10px] font-extrabold text-amber-900 bg-amber-100 px-2 py-0.5 rounded-full border border-amber-300 flex items-center gap-1 w-max mt-0.5">
                   <Sparkles size={10} /> Superadmin HQ
                 </span>
@@ -96,9 +96,14 @@ const SuperAdminLayout = () => {
 
         {/* Mobile Header */}
         <header className="md:hidden bg-white border-b border-[#E6DCD3] px-4 py-3 flex items-center justify-between sticky top-0 z-30">
-          <div className="flex items-center gap-2">
-            <ShieldCheck size={20} className="text-[#C85A32]" />
-            <span className="font-black text-sm text-[#2C1810]">Superadmin HQ</span>
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 ring-1 ring-[#C85A32]/30 bg-black flex items-center justify-center">
+              <img src="/logo.png" alt="The Prime Cafe" className="w-full h-full object-cover" />
+            </div>
+            <div>
+              <span className="font-black text-sm text-[#2C1810]">The Prime Cafe</span>
+              <span className="text-[10px] text-amber-900 font-bold block leading-none">Superadmin HQ</span>
+            </div>
           </div>
           <div className="flex items-center gap-2">
             <button
@@ -116,7 +121,7 @@ const SuperAdminLayout = () => {
             <Outlet />
           </div>
           <footer className="mt-12 pt-4 border-t border-[#E6DCD3] text-center text-xs text-[#7A685D]">
-            © 2026 Aaj Kal Cafe SaaS Platform. Superadmin Master Panel.
+            © 2026 The Prime Cafe Platform. Superadmin Master Panel.
           </footer>
         </main>
 

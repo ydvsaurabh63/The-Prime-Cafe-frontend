@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Coffee, Lock, Mail, ShieldAlert, ShieldCheck, UserCheck } from 'lucide-react';
+import { Lock, Mail, ShieldAlert } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 const AdminLoginPage = ({ portal: propPortal }) => {
@@ -39,19 +39,15 @@ const AdminLoginPage = ({ portal: propPortal }) => {
 
   const portalConfig = {
     superadmin: {
-      title: 'Aaj Kal Food Superadmin',
-      subtitle: 'Superadmin Portal Login',
-      Icon: ShieldCheck,
-      iconBg: 'bg-[#2C1810] text-amber-300',
+      title: 'The Prime Cafe Superadmin',
+      subtitle: 'Central Superadmin HQ Login',
       btnText: 'Sign In as Superadmin',
       target: '/superadmin/overview',
       roleLabel: 'Superadmin'
     },
     admin: {
-      title: 'Aaj Kal Food Admin',
+      title: 'The Prime Cafe Admin',
       subtitle: 'Regional Admin Portal Login',
-      Icon: UserCheck,
-      iconBg: 'bg-[#4A2C18] text-emerald-300',
       btnText: 'Sign In as Admin',
       target: '/admin/overview',
       roleLabel: 'Admin'
@@ -59,8 +55,6 @@ const AdminLoginPage = ({ portal: propPortal }) => {
     client: {
       title: 'The Prime Cafe',
       subtitle: 'Client Cafe Portal Login',
-      Icon: Coffee,
-      iconBg: 'bg-[#2C1810] text-orange-300',
       btnText: 'Sign In as Client',
       target: '/client/orders',
       roleLabel: 'Client'
@@ -68,7 +62,6 @@ const AdminLoginPage = ({ portal: propPortal }) => {
   };
 
   const current = portalConfig[portal] || portalConfig.admin;
-  const PortalIcon = current.Icon;
 
   const handleAdminLogin = async (e) => {
     e.preventDefault();
@@ -118,17 +111,12 @@ const AdminLoginPage = ({ portal: propPortal }) => {
   return (
     <div className="min-h-screen bg-[#FAF7F2] flex flex-col items-center justify-center p-4">
       <div className="max-w-md w-full bg-white rounded-3xl border border-[#E6DCD3] p-6 sm:p-7 shadow-sm space-y-5">
-        <div className="text-center space-y-1.5">
-          {portal === 'client' ? (
-            <div className="w-16 h-16 rounded-full overflow-hidden mx-auto shadow-md ring-2 ring-[#C85A32]/30 bg-black flex items-center justify-center">
-              <img src="/logo.png" alt="The Prime Cafe" className="w-full h-full object-cover" />
-            </div>
-          ) : (
-            <div className={`w-14 h-14 rounded-2xl ${current.iconBg} flex items-center justify-center mx-auto shadow-md`}>
-              <PortalIcon size={28} />
-            </div>
-          )}
+        <div className="text-center space-y-2">
+          <div className="w-16 h-16 rounded-full overflow-hidden mx-auto shadow-md ring-2 ring-[#C85A32]/30 bg-black flex items-center justify-center">
+            <img src="/logo.png" alt="The Prime Cafe" className="w-full h-full object-cover" />
+          </div>
           <h2 className="text-xl font-extrabold text-[#2C1810]">{current.title}</h2>
+          <p className="text-xs text-[#7A685D]">{current.subtitle}</p>
         </div>
 
         {error && (

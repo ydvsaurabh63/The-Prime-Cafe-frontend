@@ -46,7 +46,13 @@ const CustomerLayout = () => {
         </div>
 
         {/* Website Footer Credit */}
-        <footer className="mt-14 pt-6 border-t border-[#E6DCD3] text-center space-y-1 text-xs text-[#7A685D]">
+        <footer className="mt-14 pt-6 border-t border-[#E6DCD3] text-center space-y-2 text-xs text-[#7A685D]">
+          <div className="flex items-center justify-center gap-2">
+            <div className="w-7 h-7 rounded-full overflow-hidden shadow-xs ring-1 ring-[#C85A32]/30 bg-black flex items-center justify-center">
+              <img src="/logo.png" alt="The Prime Cafe" className="w-full h-full object-cover" />
+            </div>
+            <span className="font-extrabold text-sm text-[#2C1810]">The Prime Cafe</span>
+          </div>
           <p className="font-semibold text-[#4A2C18]">
             Designed & Developed by <span className="font-bold text-[#2C1810]">Diin Technologies Pvt. Ltd.</span>
           </p>

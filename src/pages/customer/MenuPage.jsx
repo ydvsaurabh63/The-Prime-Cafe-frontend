@@ -101,7 +101,11 @@ const MenuPage = () => {
     <div className="space-y-4 sm:space-y-6">
       {/* Hero Welcome Banner on Full Screen / Desktop */}
       <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-r from-[#3D2314] via-[#4A2C18] to-[#2C1810] text-[#FAF7F2] p-5 sm:p-7 md:p-8 shadow-xs">
-        <div className="relative z-10 max-w-2xl">
+        <div className="relative z-10 max-w-2xl flex items-start gap-3.5">
+          <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full overflow-hidden shrink-0 ring-2 ring-[#C85A32]/40 shadow-md bg-black flex items-center justify-center">
+            <img src="/logo.png" alt="The Prime Cafe" className="w-full h-full object-cover" />
+          </div>
+          <div>
           <span className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-bold px-3 py-1 rounded-full bg-[#C85A32] text-white shadow-2xs mb-2">
             <Sparkles size={12} /> The Prime Artisanal Roastery
           </span>
@@ -111,6 +115,7 @@ const MenuPage = () => {
           <p className="text-xs sm:text-sm text-[#E6DCD3] mt-2 leading-relaxed">
             Freshly brewed single-origin beans, authentic Chinese dishes, and instant hunger combos handcrafted with love.
           </p>
+          </div>
         </div>
       </div>
 

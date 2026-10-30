@@ -10,7 +10,6 @@ import {
   Send,
   Sparkles,
   Gift,
-  Coffee,
   CheckCircle2,
   Users,
   MapPin,

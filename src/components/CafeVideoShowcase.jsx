@@ -11,6 +11,7 @@ const REELS_DATA = [
     id: 'prime-cafe',
     title: 'The Prime Café Experience',
     category: 'Signature Special',
+    subtitle: 'Artisan Roasts & Cozy Ambience',
     videoSrc: '/assets/reels/the_prime_cafe_1.mp4',
     poster: '/assets/reels/poster_prime_cafe.jpg'
   },
@@ -18,6 +19,7 @@ const REELS_DATA = [
     id: 'coffee',
     title: 'Double Shot Espresso & Crema',
     category: 'Coffee & Brews',
+    subtitle: '100% Arabica Golden Crema',
     videoSrc: '/assets/reels/reel_coffee.mp4',
     poster: '/assets/reels/poster_coffee.jpg'
   },
@@ -25,6 +27,7 @@ const REELS_DATA = [
     id: 'burger',
     title: 'Sizzling Smash Patty Burger',
     category: 'Burgers & Grills',
+    subtitle: 'Crispy Brioche & Smoked Melt',
     videoSrc: '/assets/reels/reel_burger.mp4',
     poster: '/assets/reels/poster_burger.jpg'
   },
@@ -32,6 +35,7 @@ const REELS_DATA = [
     id: 'pizza',
     title: 'Wood-Fired Margherita Basil',
     category: 'Gourmet Pizzas',
+    subtitle: 'San Marzano & Fresh Bocconcini',
     videoSrc: '/assets/reels/reel_pizza.mp4',
     poster: '/assets/reels/poster_pizza.jpg'
   },
@@ -39,12 +43,13 @@ const REELS_DATA = [
     id: 'pasta',
     title: 'Creamy Italian Alfredo Toss',
     category: 'Pastas & Bowls',
+    subtitle: 'Parmesan Garlic Al Dente',
     videoSrc: '/assets/reels/reel_pasta.mp4',
     poster: '/assets/reels/poster_pasta.jpg'
   }
 ];
 
-const ReelCard = ({ reel }) => {
+const ReelCard = ({ reel, isActive }) => {
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(true);
   const manualPauseRef = useRef(false);
@@ -73,7 +78,7 @@ const ReelCard = ({ reel }) => {
           }
         });
       },
-      { threshold: 0.5 }
+      { threshold: 0.4 }
     );
 
     observer.observe(video);
@@ -82,6 +87,21 @@ const ReelCard = ({ reel }) => {
       observer.disconnect();
     };
   }, []);
+
+  // On mobile, only play the active centered reel
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      if (isActive && !manualPauseRef.current) {
+        video.play().then(() => setIsPlaying(true)).catch(() => {});
+      } else if (!isActive) {
+        video.pause();
+        setIsPlaying(false);
+      }
+    }
+  }, [isActive]);
 
   const handleTouchStart = (e) => {
     touchStartXRef.current = e.touches[0].clientX;
@@ -122,7 +142,11 @@ const ReelCard = ({ reel }) => {
       onClick={togglePlay}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
-      className="group relative aspect-[9/16] w-[82vw] max-w-[285px] xs:max-w-[305px] sm:max-w-[325px] md:w-[270px] lg:w-[295px] xl:w-[320px] rounded-2xl sm:rounded-3xl overflow-hidden bg-black border border-[#E6DCD3] shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col justify-end select-none"
+      className={`group relative aspect-[9/13] max-h-[60vh] w-full rounded-2xl sm:rounded-3xl overflow-hidden bg-black border border-[#E6DCD3] shadow-md transition-all duration-300 cursor-pointer flex flex-col justify-end select-none ${
+        isActive
+          ? 'scale-100 opacity-100 ring-2 ring-[#C85A32]/40 shadow-xl'
+          : 'scale-[0.95] opacity-75 md:scale-100 md:opacity-100'
+      }`}
     >
       {/* Background Video */}
       <video
@@ -146,14 +170,17 @@ const ReelCard = ({ reel }) => {
         </div>
       )}
 
-      {/* Bottom Content Overlay */}
+      {/* Bottom Content Overlay matching screenshot style */}
       <div className="relative z-10 p-3 sm:p-4 bg-gradient-to-t from-black/95 via-black/70 to-transparent pt-12">
-        <p className="text-[10px] sm:text-xs font-bold text-amber-300 uppercase tracking-wider mb-0.5 line-clamp-1">
+        <span className="bg-[#C85A32] text-white text-[9px] sm:text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full inline-block mb-1.5 shadow-sm">
           {reel.category}
-        </p>
-        <h4 className="text-sm sm:text-base font-extrabold text-white leading-tight line-clamp-2 drop-shadow-sm">
+        </span>
+        <h4 className="text-sm sm:text-base font-extrabold text-white leading-snug drop-shadow-sm mb-0.5 line-clamp-1">
           {reel.title}
         </h4>
+        <p className="text-[10px] sm:text-[11px] text-white/80 font-medium tracking-wide line-clamp-1">
+          {reel.subtitle}
+        </p>
       </div>
     </div>
   );
@@ -167,13 +194,16 @@ const CafeVideoShowcase = () => {
     const container = scrollContainerRef.current;
     if (!container || !container.children.length) return;
 
-    const containerLeft = container.getBoundingClientRect().left;
+    const containerRect = container.getBoundingClientRect();
+    const containerCenter = containerRect.left + containerRect.width / 2;
+
     let closestIndex = 0;
     let minDiff = Infinity;
 
     Array.from(container.children).forEach((child, i) => {
-      const childLeft = child.getBoundingClientRect().left;
-      const diff = Math.abs(childLeft - containerLeft);
+      const childRect = child.getBoundingClientRect();
+      const childCenter = childRect.left + childRect.width / 2;
+      const diff = Math.abs(childCenter - containerCenter);
       if (diff < minDiff) {
         minDiff = diff;
         closestIndex = i;
@@ -190,8 +220,13 @@ const CafeVideoShowcase = () => {
     if (!container) return;
     const targetChild = container.children[index];
     if (targetChild) {
+      const isDesktop = typeof window !== 'undefined' && window.innerWidth >= 768;
+      const targetScroll = isDesktop
+        ? targetChild.offsetLeft
+        : targetChild.offsetLeft - (container.clientWidth - targetChild.offsetWidth) / 2;
+
       container.scrollTo({
-        left: targetChild.offsetLeft,
+        left: Math.max(0, targetScroll),
         behavior: 'smooth'
       });
       setCurrentIndex(index);
@@ -260,18 +295,18 @@ const CafeVideoShowcase = () => {
         </div>
       </div>
 
-      {/* Reels Track: Single full slide on mobile, wide cards slider on desktop */}
+      {/* Reels Track: Center card with peek side cards on mobile, wide cards slider on desktop */}
       <div
         ref={scrollContainerRef}
         onScroll={handleScroll}
-        className="relative flex overflow-x-auto snap-x snap-mandatory gap-4 pb-2 pt-1 no-scrollbar touch-pan-x scroll-smooth -mx-3 px-3 sm:-mx-4 sm:px-4 md:mx-0 md:px-0 md:gap-5"
+        className="relative flex overflow-x-auto snap-x snap-mandatory gap-3 sm:gap-4 md:gap-5 pb-3 pt-1 no-scrollbar touch-pan-x scroll-smooth px-[12vw] sm:px-[14vw] scroll-px-[12vw] sm:scroll-px-[14vw] md:px-0 md:scroll-px-0"
       >
-        {REELS_DATA.map((reel) => (
+        {REELS_DATA.map((reel, index) => (
           <div
             key={reel.id}
-            className="w-full min-w-full shrink-0 snap-center flex justify-center md:w-auto md:min-w-0 md:shrink-0 md:snap-start"
+            className="w-[76vw] max-w-[270px] sm:max-w-[290px] shrink-0 snap-center md:w-[270px] md:max-w-none lg:w-[295px] xl:w-[320px] md:snap-start flex justify-center"
           >
-            <ReelCard reel={reel} />
+            <ReelCard reel={reel} isActive={currentIndex === index} />
           </div>
         ))}
       </div>

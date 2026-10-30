@@ -1,17 +1,11 @@
 import axios from 'axios';
 
 // Smart baseURL determination:
-// When running locally on localhost / 127.0.0.1, prioritize local backend on port 5000
-// so newly created routes (like /api/reviews and /api/loyalty) work instantly without waiting for Render deployment.
+// Uses configured VITE_API_BASE_URL or defaults to live production Render backend
 const getBaseURL = () => {
-  if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
-    const envUrl = import.meta.env.VITE_API_BASE_URL;
-    if (envUrl && envUrl.includes('localhost')) {
-      return envUrl;
-    }
-    return 'http://localhost:5000/api';
-  }
-  return import.meta.env.VITE_API_BASE_URL || 'https://the-prime-cafe-backend.onrender.com/api';
+  const envUrl = import.meta.env.VITE_API_BASE_URL;
+  if (envUrl) return envUrl;
+  return 'https://the-prime-cafe-backend.onrender.com/api';
 };
 
 const api = axios.create({
@@ -34,11 +28,17 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Response interceptor for centralized error handling
+// Response interceptor with automatic fallback to live backend if localhost fails
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
-    // If 401 Unauthorized occurs on protected routes (not login/check), optionally handle
+  async (error) => {
+    const config = error.config;
+    if (config && !config._retry && config.baseURL && config.baseURL.includes('localhost')) {
+      config._retry = true;
+      config.baseURL = 'https://the-prime-cafe-backend.onrender.com/api';
+      api.defaults.baseURL = 'https://the-prime-cafe-backend.onrender.com/api';
+      return api(config);
+    }
     return Promise.reject(error);
   }
 );

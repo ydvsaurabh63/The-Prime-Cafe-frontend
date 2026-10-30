@@ -56,10 +56,45 @@ const InstagramIcon = ({ size = 18, className = "" }) => (
   </svg>
 );
 
+const DEFAULT_FEATURED_ITEMS = [
+  {
+    _id: 'default-burger',
+    name: 'Artisan Smash Burger',
+    description: 'Crisp brioche bun, house-special smoky sauce, and flame-seared patty.',
+    price: 60,
+    isVeg: true,
+    image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=600&q=80'
+  },
+  {
+    _id: 'default-coffee',
+    name: 'Double Shot Espresso & Crema',
+    description: '100% Arabica single-origin beans, precision extracted with rich crema.',
+    price: 120,
+    isVeg: true,
+    image: 'https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?auto=format&fit=crop&w=600&q=80'
+  },
+  {
+    _id: 'default-pizza',
+    name: 'Wood-Fired Margherita Pizza',
+    description: 'Crushed San Marzano tomatoes, fresh basil, and bubbly mozzarella.',
+    price: 210,
+    isVeg: true,
+    image: 'https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?auto=format&fit=crop&w=600&q=80'
+  },
+  {
+    _id: 'default-pasta',
+    name: 'Creamy Italian Alfredo Pasta',
+    description: 'Al dente pasta tossed in parmesan garlic cream and aromatic herbs.',
+    price: 210,
+    isVeg: true,
+    image: 'https://images.unsplash.com/photo-1621996346565-e3d5d62810f4?auto=format&fit=crop&w=600&q=80'
+  }
+];
+
 const HomePage = () => {
   const navigate = useNavigate();
-  const [featuredItems, setFeaturedItems] = useState([]);
-  const [allItems, setAllItems] = useState([]);
+  const [featuredItems, setFeaturedItems] = useState(DEFAULT_FEATURED_ITEMS);
+  const [allItems, setAllItems] = useState(DEFAULT_FEATURED_ITEMS);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeOffers, setActiveOffers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -209,10 +244,13 @@ const HomePage = () => {
           api.get('/reviews')
         ]);
 
-        if (menuRes.status === 'fulfilled' && menuRes.value.data.success) {
+        if (menuRes.status === 'fulfilled' && menuRes.value.data?.success && Array.isArray(menuRes.value.data?.data) && menuRes.value.data.data.length > 0) {
           const items = menuRes.value.data.data;
           setAllItems(items);
           setFeaturedItems(items.slice(0, 4));
+        } else {
+          setFeaturedItems(DEFAULT_FEATURED_ITEMS);
+          setAllItems(DEFAULT_FEATURED_ITEMS);
         }
 
         if (offersRes.status === 'fulfilled' && offersRes.value.data.success) {
@@ -229,6 +267,8 @@ const HomePage = () => {
         }
       } catch (err) {
         console.error('Failed to load home page content:', err);
+        setFeaturedItems(DEFAULT_FEATURED_ITEMS);
+        setAllItems(DEFAULT_FEATURED_ITEMS);
       } finally {
         setLoading(false);
       }

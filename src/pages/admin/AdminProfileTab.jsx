@@ -34,21 +34,95 @@ const AdminProfileTab = () => {
   const [copied, setCopied] = useState(false);
   const [printCopies, setPrintCopies] = useState(5);
 
-  const menuUrl = typeof window !== 'undefined'
+  const menuUrl = typeof window !== 'undefined' && !window.location.hostname.includes('localhost')
     ? `${window.location.origin}/cafe`
     : 'https://the-prime-cafe-frontend.vercel.app/cafe';
 
   useEffect(() => {
-    QRCode.toDataURL(menuUrl, {
-      width: 512,
-      margin: 2,
-      color: {
-        dark: '#4A2C18',
-        light: '#FFFFFF'
+    let isMounted = true;
+
+    const generateBrandedQR = async () => {
+      try {
+        const rawQr = await QRCode.toDataURL(menuUrl, {
+          width: 600,
+          margin: 2,
+          errorCorrectionLevel: 'H',
+          color: {
+            dark: '#2C1810',
+            light: '#FFFFFF'
+          }
+        });
+
+        // Overlay The Prime Cafe logo in center of QR
+        const canvas = document.createElement('canvas');
+        canvas.width = 600;
+        canvas.height = 600;
+        const ctx = canvas.getContext('2d');
+
+        const qrImg = new Image();
+        qrImg.crossOrigin = 'anonymous';
+        qrImg.src = rawQr;
+
+        qrImg.onload = () => {
+          ctx.drawImage(qrImg, 0, 0, 600, 600);
+
+          const logoImg = new Image();
+          logoImg.crossOrigin = 'anonymous';
+          logoImg.src = '/logo.png';
+
+          logoImg.onload = () => {
+            if (!isMounted) return;
+            const center = 300;
+            const logoRadius = 66;
+
+            // White circular background for logo with soft shadow
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(center, center, logoRadius + 6, 0, Math.PI * 2);
+            ctx.fillStyle = '#FFFFFF';
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.25)';
+            ctx.shadowBlur = 10;
+            ctx.fill();
+            ctx.restore();
+
+            // Circular border ring
+            ctx.beginPath();
+            ctx.arc(center, center, logoRadius + 4, 0, Math.PI * 2);
+            ctx.lineWidth = 4;
+            ctx.strokeStyle = '#C85A32';
+            ctx.stroke();
+
+            // Clip circle and draw logo
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(center, center, logoRadius, 0, Math.PI * 2);
+            ctx.clip();
+            ctx.drawImage(
+              logoImg,
+              center - logoRadius,
+              center - logoRadius,
+              logoRadius * 2,
+              logoRadius * 2
+            );
+            ctx.restore();
+
+            setUniversalQrUrl(canvas.toDataURL('image/png'));
+          };
+
+          logoImg.onerror = () => {
+            if (isMounted) setUniversalQrUrl(rawQr);
+          };
+        };
+      } catch (err) {
+        console.error('Failed to generate universal QR:', err);
       }
-    })
-      .then((url) => setUniversalQrUrl(url))
-      .catch((err) => console.error('Failed to generate universal QR:', err));
+    };
+
+    generateBrandedQR();
+
+    return () => {
+      isMounted = false;
+    };
   }, [menuUrl]);
 
   const handleCopyLink = () => {
@@ -59,10 +133,83 @@ const AdminProfileTab = () => {
 
   const handleDownloadQR = () => {
     if (!universalQrUrl) return;
-    const a = document.createElement('a');
-    a.href = universalQrUrl;
-    a.download = 'The-Prime-Cafe-Official-QR.png';
-    a.click();
+
+    // Create a high-res branded Standee Card PNG with The Prime Cafe logo
+    const canvas = document.createElement('canvas');
+    canvas.width = 800;
+    canvas.height = 1000;
+    const ctx = canvas.getContext('2d');
+
+    // Clean white background
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(0, 0, 800, 1000);
+
+    // Elegant cafe border
+    ctx.lineWidth = 10;
+    ctx.strokeStyle = '#C85A32';
+    ctx.strokeRect(20, 20, 760, 960);
+
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = '#E6DCD3';
+    ctx.strokeRect(32, 32, 736, 936);
+
+    const logoImg = new Image();
+    logoImg.crossOrigin = 'anonymous';
+    logoImg.src = '/logo.png';
+
+    logoImg.onload = () => {
+      // Draw top emblem logo (110x110)
+      const logoCenter = 400;
+      const logoTop = 135;
+      const radius = 55;
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(logoCenter, logoTop, radius, 0, Math.PI * 2);
+      ctx.clip();
+      ctx.drawImage(logoImg, logoCenter - radius, logoTop - radius, radius * 2, radius * 2);
+      ctx.restore();
+
+      ctx.beginPath();
+      ctx.arc(logoCenter, logoTop, radius + 3, 0, Math.PI * 2);
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = '#C85A32';
+      ctx.stroke();
+
+      // Heading: The Prime Cafe
+      ctx.fillStyle = '#2C1810';
+      ctx.font = 'bold 36px "Segoe UI", Roboto, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('The Prime Cafe', 400, 235);
+
+      // Subtitle
+      ctx.fillStyle = '#C85A32';
+      ctx.font = '600 20px "Segoe UI", Roboto, sans-serif';
+      ctx.fillText('Pani Tanki Chowk, Muzaffarpur', 400, 270);
+
+      // QR Code with embedded logo in center
+      const qrImg = new Image();
+      qrImg.crossOrigin = 'anonymous';
+      qrImg.src = universalQrUrl;
+      qrImg.onload = () => {
+        // Draw 480x480 QR in center
+        ctx.drawImage(qrImg, 160, 310, 480, 480);
+
+        // Instruction
+        ctx.fillStyle = '#2C1810';
+        ctx.font = 'bold 26px "Segoe UI", Roboto, sans-serif';
+        ctx.fillText('📷 Scan with Phone Camera to Order', 400, 840);
+
+        ctx.fillStyle = '#7A685D';
+        ctx.font = '18px "Segoe UI", Roboto, sans-serif';
+        ctx.fillText('Browse full digital menu & place orders instantly', 400, 880);
+
+        const a = document.createElement('a');
+        a.href = canvas.toDataURL('image/png');
+        a.download = 'The-Prime-Cafe-Official-QR-Standee.png';
+        a.click();
+      };
+    };
   };
 
   const handlePrintSingleStandee = () => {
@@ -543,9 +690,14 @@ const AdminProfileTab = () => {
                   <span className="text-[10px] font-bold text-[#7A685D] uppercase tracking-wider block">
                     Stand Card #{index}
                   </span>
-                  <h5 className="font-extrabold text-xs text-[#2C1810] truncate mt-0.5">
-                    The Prime Cafe
-                  </h5>
+                  <div className="flex items-center justify-center gap-1.5 mt-1">
+                    <div className="w-5 h-5 rounded-full overflow-hidden ring-1 ring-[#C85A32]/30 bg-black flex items-center justify-center shrink-0">
+                      <img src="/logo.png" alt="The Prime Cafe" className="w-full h-full object-cover" />
+                    </div>
+                    <h5 className="font-extrabold text-xs text-[#2C1810] truncate">
+                      The Prime Cafe
+                    </h5>
+                  </div>
                 </div>
 
                 {universalQrUrl && (

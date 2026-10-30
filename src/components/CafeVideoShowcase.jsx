@@ -137,10 +137,10 @@ const ReelCard = ({ reel, isActive }) => {
       onClick={togglePlay}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
-      className={`group relative aspect-[9/13] max-h-[60vh] w-full rounded-2xl sm:rounded-3xl overflow-hidden bg-black border border-[#E6DCD3] shadow-md transition-all duration-300 cursor-pointer flex flex-col justify-end select-none ${
+      className={`group relative aspect-[9/16] w-full rounded-[26px] sm:rounded-[30px] overflow-hidden bg-black border border-white/10 shadow-md transition-all duration-300 cursor-pointer flex flex-col justify-end select-none ${
         isActive
           ? 'scale-100 opacity-100 ring-2 ring-[#C85A32]/40 shadow-xl'
-          : 'scale-[0.95] opacity-75 md:scale-100 md:opacity-100'
+          : 'scale-[0.96] opacity-80 md:scale-100 md:opacity-100'
       }`}
     >
       {/* Background Video */}
@@ -246,7 +246,7 @@ const CafeVideoShowcase = () => {
         {REELS_DATA.map((reel, index) => (
           <div
             key={reel.id}
-            className="w-[76vw] max-w-[270px] sm:max-w-[290px] shrink-0 snap-center md:w-[270px] md:max-w-none lg:w-[295px] xl:w-[320px] md:snap-start flex justify-center"
+            className="w-[74vw] max-w-[265px] shrink-0 snap-center md:w-[265px] lg:w-[270px] md:snap-start flex justify-center"
           >
             <ReelCard reel={reel} isActive={currentIndex === index} />
           </div>

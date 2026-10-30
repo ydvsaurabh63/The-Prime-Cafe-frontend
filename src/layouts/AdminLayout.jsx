@@ -130,9 +130,14 @@ const AdminLayout = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-[#FAF7F2] space-y-3">
-        <div className="w-8 h-8 border-3 border-[#4A2C18] border-t-transparent rounded-full animate-spin"></div>
-        <p className="text-xs font-bold text-[#7A685D]">Connecting to The Prime Cafe Dashboard...</p>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#FAF7F2] space-y-4 p-4">
+        <div className="w-20 h-20 rounded-full overflow-hidden shadow-lg ring-2 ring-[#C85A32]/35 bg-black flex items-center justify-center animate-pulse">
+          <img src="/logo.png" alt="The Prime Cafe" className="w-full h-full object-cover" />
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-5 h-5 border-2 border-[#E6DCD3] border-t-[#C85A32] rounded-full animate-spin"></div>
+          <p className="text-xs font-bold text-[#7A685D]">Connecting to The Prime Cafe Dashboard...</p>
+        </div>
       </div>
     );
   }

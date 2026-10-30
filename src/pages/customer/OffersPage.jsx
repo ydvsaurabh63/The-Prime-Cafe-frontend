@@ -265,6 +265,9 @@ const OffersPage = () => {
 
         {loading ? (
           <div className="py-16 flex flex-col items-center justify-center text-center">
+            <div className="w-16 h-16 rounded-full overflow-hidden shadow-md ring-2 ring-[#C85A32]/30 bg-black flex items-center justify-center animate-pulse mb-3">
+              <img src="/logo.png" alt="The Prime Cafe" className="w-full h-full object-cover" />
+            </div>
             <div className="w-9 h-9 border-3 border-[#C85A32] border-t-transparent rounded-full animate-spin"></div>
             <p className="mt-3 text-xs text-[#7A685D]">Loading special cafe treats...</p>
           </div>

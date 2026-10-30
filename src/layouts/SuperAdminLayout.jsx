@@ -35,6 +35,20 @@ const SuperAdminLayout = () => {
     navigate('/superadmin/login');
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#FAF7F2] space-y-4 p-4">
+        <div className="w-20 h-20 rounded-full overflow-hidden shadow-lg ring-2 ring-[#C85A32]/35 bg-black flex items-center justify-center animate-pulse">
+          <img src="/logo.png" alt="The Prime Cafe" className="w-full h-full object-cover" />
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-5 h-5 border-2 border-[#E6DCD3] border-t-[#C85A32] rounded-full animate-spin"></div>
+          <p className="text-xs font-bold text-[#7A685D]">Connecting to Superadmin HQ...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#FAF7F2] text-[#2C1810] flex flex-col antialiased">
       <div className="flex-1 flex flex-col md:flex-row">

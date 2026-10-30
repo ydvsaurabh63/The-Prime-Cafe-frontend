@@ -345,6 +345,9 @@ const AdminOrdersTab = () => {
       {/* Orders List / Cards */}
       {loading ? (
         <div className="py-16 text-center">
+          <div className="w-14 h-14 rounded-full overflow-hidden shadow-md ring-2 ring-[#C85A32]/30 bg-black flex items-center justify-center animate-pulse mx-auto mb-3">
+            <img src="/logo.png" alt="The Prime Cafe" className="w-full h-full object-cover" />
+          </div>
           <div className="w-8 h-8 border-3 border-[#4A2C18] border-t-transparent rounded-full animate-spin mx-auto"></div>
           <p className="mt-3 text-xs text-[#7A685D]">Loading live orders...</p>
         </div>

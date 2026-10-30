@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
+import SplashScreen from './components/SplashScreen';
 
 import { useSearchParams } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
@@ -48,11 +49,15 @@ const CafeQREntry = () => {
 };
 
 function App() {
+  const [showSplash, setShowSplash] = useState(true);
+
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <CartProvider>
-          <Routes>
+    <>
+      {showSplash && <SplashScreen onFinish={() => setShowSplash(false)} />}
+      <BrowserRouter>
+        <AuthProvider>
+          <CartProvider>
+            <Routes>
             {/* Customer QR Entry point */}
             <Route path="/cafe" element={<CafeQREntry />} />
 
@@ -117,6 +122,7 @@ function App() {
         </CartProvider>
       </AuthProvider>
     </BrowserRouter>
+    </>
   );
 }
 

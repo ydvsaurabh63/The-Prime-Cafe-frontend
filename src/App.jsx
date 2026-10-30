@@ -41,11 +41,11 @@ import SuperAdminClientsTab from './pages/superadmin/SuperAdminClientsTab';
 import AdminPortalOverviewTab from './pages/admin-portal/AdminPortalOverviewTab';
 import AdminPortalClientsTab from './pages/admin-portal/AdminPortalClientsTab';
 
-// Handles QR scans from tables: seamlessly opens cafe home with table parameter
+// Handles QR scans from tables: directs customer to Google Login & Registration Form first
 const CafeQREntry = () => {
   const [searchParams] = useSearchParams();
   const table = searchParams.get('table') || '';
-  return <Navigate to={`/home${table ? `?table=${encodeURIComponent(table)}` : ''}`} replace />;
+  return <Navigate to={`/login?table=${encodeURIComponent(table)}&redirect=/home`} replace />;
 };
 
 function App() {

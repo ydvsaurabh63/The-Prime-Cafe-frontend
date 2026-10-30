@@ -41,7 +41,7 @@ const CustomerLoginPage = () => {
   const redirect = searchParams.get('redirect') || '/home';
   const tableParam = searchParams.get('table');
 
-  const { register, googleLogin, logout, updateCurrentUser } = useAuth();
+  const { user, register, googleLogin, logout, updateCurrentUser } = useAuth();
   const { setTable } = useCart();
   const navigate = useNavigate();
 
@@ -352,6 +352,30 @@ const CustomerLoginPage = () => {
                   <GoogleIcon />
                   <span>{googleLoading ? 'Signing in with Google...' : 'Continue with Google'}</span>
                 </button>
+              )}
+
+              {user && (user.email || user.name) && (
+                <div className="pt-3 border-t border-[#E6DCD3]/70">
+                  <p className="text-[11px] text-[#7A685D] mb-1">
+                    Logged in as <strong className="text-[#2C1810]">{user.email || user.name}</strong>
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setGoogleAccount(user);
+                      if (user.name) setName(user.name);
+                      if (user.phone) setPhone(user.phone);
+                      if (user.area) setArea(user.area);
+                      if (user.city) setCity(user.city);
+                      if (user.pincode) setPincode(user.pincode);
+                      if (user.foodPreference) setFoodPreference(user.foodPreference);
+                      setStep('details');
+                    }}
+                    className="text-xs font-bold text-[#C85A32] hover:text-[#B24E2A] underline cursor-pointer"
+                  >
+                    Proceed to Registration Form →
+                  </button>
+                </div>
               )}
             </div>
           </div>

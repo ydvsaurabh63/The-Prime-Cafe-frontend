@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Bell, Sparkles, X, Download } from 'lucide-react';
+import { Bell, Sparkles, X } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
@@ -78,27 +78,12 @@ const CustomerHeader = () => {
           </div>
 
           {/* Header Right Actions */}
-          <div className="flex items-center gap-1.5 sm:gap-2">
-            {/* Download / Install App Button (Visible on mobile & desktop) */}
-            <button
-              type="button"
-              onClick={() => {
-                window.dispatchEvent(new CustomEvent('open-pwa-install'));
-              }}
-              className="flex items-center gap-1.5 text-xs font-bold bg-white hover:bg-[#FAF0E6] text-[#4A2C18] border border-[#E6DCD3] px-2.5 sm:px-3 py-1.5 rounded-full shadow-2xs transition active:scale-95 cursor-pointer"
-              title="Download & Install The Prime Cafe Mobile App"
-            >
-              <Download size={13} className="text-[#C85A32]" />
-              <span className="text-[11px] sm:text-xs">
-                <span className="hidden min-[380px]:inline">Download </span>App
-              </span>
-            </button>
-
+          <div className="flex items-center gap-2">
             {/* Dynamic Cafe Owner to Customer Notice Bell */}
             <button
               type="button"
               onClick={() => setIsNoticeModalOpen(true)}
-              className={`flex items-center gap-1.5 text-xs font-black px-2.5 sm:px-4 py-1.5 rounded-full shadow-xs transition active:scale-95 cursor-pointer relative ${
+              className={`flex items-center gap-1.5 text-xs font-black px-3 sm:px-4 py-1.5 rounded-full shadow-xs transition active:scale-95 cursor-pointer relative ${
                 unreadCount > 0
                   ? 'bg-gradient-to-r from-[#C85A32] to-[#E06638] text-white ring-2 ring-[#C85A32]/40 shadow-md animate-pulse'
                   : 'bg-[#C85A32] hover:bg-[#B24E2A] text-white'

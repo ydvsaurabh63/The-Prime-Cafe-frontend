@@ -30,7 +30,8 @@ import {
   X,
   ShoppingBag,
   Phone,
-  Compass
+  Compass,
+  Download
 } from 'lucide-react';
 import api from '../../services/api';
 import { useCart } from '../../context/CartContext';
@@ -500,6 +501,37 @@ const HomePage = () => {
 
       {/* 2.5 CUSTOMER VISIT CHECK-IN / LOYALTY REWARDS */}
       <LoyaltyRewardHero />
+
+      {/* 2.6 PROMINENT MOBILE APP DOWNLOAD CARD */}
+      <section className="bg-gradient-to-r from-[#3B2215] via-[#4A2C18] to-[#2C1810] text-[#FAF7F2] p-4 sm:p-5 rounded-3xl border border-[#C85A32]/35 shadow-md flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="flex items-center gap-3.5 w-full sm:w-auto">
+          <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl overflow-hidden ring-2 ring-[#C85A32]/50 bg-black flex items-center justify-center shrink-0 shadow-md">
+            <img src="/logo.png" alt="The Prime Cafe App" className="w-full h-full object-cover" />
+          </div>
+          <div className="min-w-0">
+            <div className="flex items-center gap-2">
+              <h3 className="text-xs sm:text-sm font-extrabold text-[#FAF7F2] tracking-tight">
+                Download The Prime Cafe Mobile App
+              </h3>
+              <span className="bg-[#C85A32] text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+                App
+              </span>
+            </div>
+            <p className="text-[11px] sm:text-xs text-[#FAF7F2]/80 leading-snug mt-0.5">
+              1-Tap table ordering, instant bill notifications & home screen access
+            </p>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => window.dispatchEvent(new CustomEvent('open-pwa-install'))}
+          className="w-full sm:w-auto bg-[#C85A32] hover:bg-[#B24E2A] text-white font-extrabold text-xs sm:text-sm px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl shadow-xs transition active:scale-95 flex items-center justify-center gap-2 shrink-0 cursor-pointer"
+        >
+          <Download size={15} />
+          <span>Download / Install App</span>
+        </button>
+      </section>
 
       {/* 2.5 VIDEO SHOWCASE SECTION */}
       <CafeVideoShowcase />

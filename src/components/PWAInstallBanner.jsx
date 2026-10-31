@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Download, X, Sparkles, Smartphone, CheckCircle2, Loader2 } from 'lucide-react';
 
 const PWAInstallBanner = () => {
@@ -9,6 +9,37 @@ const PWAInstallBanner = () => {
   const [isInstalling, setIsInstalling] = useState(false);
   const [showSuccessToast, setShowSuccessToast] = useState(false);
 
+  const handleInstallClick = useCallback(async () => {
+    const promptEvent = deferredPrompt || window.pwaDeferredPrompt;
+
+    if (promptEvent && typeof promptEvent.prompt === 'function') {
+      try {
+        setIsInstalling(true);
+        await promptEvent.prompt();
+        const choice = await promptEvent.userChoice;
+        console.log('[PWA] User choice:', choice);
+
+        if (choice && choice.outcome === 'accepted') {
+          setTimeout(() => {
+            setIsInstalling(false);
+            setShowBanner(false);
+            setShowSuccessToast(true);
+            setTimeout(() => setShowSuccessToast(false), 5000);
+          }, 2500);
+        } else {
+          setIsInstalling(false);
+        }
+        return;
+      } catch (err) {
+        console.warn('[PWA] Prompt error:', err);
+        setIsInstalling(false);
+      }
+    }
+
+    // If browser prompt is not ready or unsupported (e.g. iOS Safari), show manual guide
+    setShowHelpModal(true);
+  }, [deferredPrompt]);
+
   useEffect(() => {
     // Check if already running in standalone (installed) mode
     const isStandaloneMode =
@@ -17,16 +48,11 @@ const PWAInstallBanner = () => {
 
     if (isStandaloneMode) {
       setIsStandalone(true);
-      return;
     }
 
-    // Check if user dismissed it in this session
     const isDismissed = sessionStorage.getItem('pwa_banner_dismissed');
-    if (isDismissed) {
-      return;
-    }
 
-    if (window.pwaDeferredPrompt) {
+    if (!isStandaloneMode && !isDismissed && window.pwaDeferredPrompt) {
       setDeferredPrompt(window.pwaDeferredPrompt);
       setShowBanner(true);
     }
@@ -35,23 +61,42 @@ const PWAInstallBanner = () => {
       e.preventDefault();
       setDeferredPrompt(e);
       window.pwaDeferredPrompt = e;
-      setShowBanner(true);
+      if (!isStandaloneMode && !sessionStorage.getItem('pwa_banner_dismissed')) {
+        setShowBanner(true);
+      }
     };
 
     const handlePwaReady = () => {
       if (window.pwaDeferredPrompt) {
         setDeferredPrompt(window.pwaDeferredPrompt);
-        setShowBanner(true);
+        if (!isStandaloneMode && !sessionStorage.getItem('pwa_banner_dismissed')) {
+          setShowBanner(true);
+        }
       }
+    };
+
+    // Listen for manual trigger from Header, HomePage, ProfilePage etc.
+    const handleOpenPwaInstall = () => {
+      const isStandaloneNow =
+        window.matchMedia('(display-mode: standalone)').matches ||
+        window.navigator.standalone === true;
+
+      if (isStandaloneNow) {
+        setShowSuccessToast(true);
+        return;
+      }
+
+      handleInstallClick();
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     window.addEventListener('pwa-ready', handlePwaReady);
+    window.addEventListener('open-pwa-install', handleOpenPwaInstall);
 
     // On mobile devices, show banner after brief delay
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || window.innerWidth < 768;
     let timer = null;
-    if (isMobile) {
+    if (isMobile && !isStandaloneMode && !isDismissed) {
       timer = setTimeout(() => {
         if (!sessionStorage.getItem('pwa_banner_dismissed')) {
           setShowBanner(true);
@@ -76,50 +121,15 @@ const PWAInstallBanner = () => {
       if (timer) clearTimeout(timer);
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
       window.removeEventListener('pwa-ready', handlePwaReady);
+      window.removeEventListener('open-pwa-install', handleOpenPwaInstall);
       window.removeEventListener('appinstalled', handleAppInstalled);
     };
-  }, []);
-
-  const handleInstallClick = async () => {
-    const promptEvent = deferredPrompt || window.pwaDeferredPrompt;
-
-    if (promptEvent && typeof promptEvent.prompt === 'function') {
-      try {
-        setIsInstalling(true);
-        await promptEvent.prompt();
-        const choice = await promptEvent.userChoice;
-        console.log('[PWA] User choice:', choice);
-
-        if (choice.outcome === 'accepted') {
-          // Keep showing installing state until OS finishes or timeout
-          setTimeout(() => {
-            setIsInstalling(false);
-            setShowBanner(false);
-            setShowSuccessToast(true);
-            setTimeout(() => setShowSuccessToast(false), 5000);
-          }, 3000);
-        } else {
-          setIsInstalling(false);
-        }
-        return;
-      } catch (err) {
-        console.warn('[PWA] Prompt error:', err);
-        setIsInstalling(false);
-      }
-    }
-
-    // If browser prompt is not ready, show manual guide
-    setShowHelpModal(true);
-  };
+  }, [handleInstallClick]);
 
   const handleDismiss = () => {
     setShowBanner(false);
     sessionStorage.setItem('pwa_banner_dismissed', 'true');
   };
-
-  if (isStandalone) {
-    return null;
-  }
 
   return (
     <>
@@ -131,9 +141,13 @@ const PWAInstallBanner = () => {
               <CheckCircle2 size={20} className="text-emerald-200" />
             </div>
             <div className="min-w-0 flex-1">
-              <h4 className="text-xs font-bold leading-tight">App Installed Successfully!</h4>
+              <h4 className="text-xs font-bold leading-tight">
+                {isStandalone ? 'App is Already Active!' : 'App Installed Successfully!'}
+              </h4>
               <p className="text-[11px] text-emerald-100 mt-0.5">
-                The Prime Cafe is now on your home screen.
+                {isStandalone
+                  ? 'You are currently using The Prime Cafe mobile app.'
+                  : 'The Prime Cafe is now added to your home screen.'}
               </p>
             </div>
             <button
@@ -146,8 +160,8 @@ const PWAInstallBanner = () => {
         </div>
       )}
 
-      {/* Install Bottom Banner */}
-      {showBanner && (
+      {/* Install Bottom Banner (only if not standalone and not dismissed) */}
+      {!isStandalone && showBanner && (
         <div className="fixed bottom-20 left-3 right-3 sm:left-auto sm:right-6 sm:bottom-6 sm:max-w-sm z-50 animate-in fade-in slide-in-from-bottom duration-300">
           <div className="bg-[#4A2C18] text-[#FAF7F2] rounded-2xl p-3 shadow-2xl border border-[#FAF7F2]/15 flex items-center justify-between gap-3">
             {/* App Icon */}
@@ -178,7 +192,7 @@ const PWAInstallBanner = () => {
                 type="button"
                 disabled={isInstalling}
                 onClick={handleInstallClick}
-                className="bg-[#C85A32] hover:bg-[#B24E2A] active:scale-95 disabled:opacity-80 text-white font-bold text-xs px-3.5 py-1.5 rounded-xl shadow-sm transition flex items-center gap-1.5"
+                className="bg-[#C85A32] hover:bg-[#B24E2A] active:scale-95 disabled:opacity-80 text-white font-bold text-xs px-3.5 py-1.5 rounded-xl shadow-xs transition flex items-center gap-1.5 cursor-pointer"
               >
                 {isInstalling ? (
                   <>
@@ -195,7 +209,7 @@ const PWAInstallBanner = () => {
               <button
                 type="button"
                 onClick={handleDismiss}
-                className="text-[#FAF7F2]/60 hover:text-white p-1 rounded-lg transition"
+                className="text-[#FAF7F2]/60 hover:text-white p-1 rounded-lg transition cursor-pointer"
                 aria-label="Dismiss banner"
               >
                 <X size={16} />
@@ -207,11 +221,11 @@ const PWAInstallBanner = () => {
 
       {/* Manual Installation Guide Modal */}
       {showHelpModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-200">
           <div className="bg-[#FAF7F2] text-[#2C1810] rounded-3xl p-6 max-w-sm w-full shadow-2xl border border-[#E6DCD3] relative">
             <button
               onClick={() => setShowHelpModal(false)}
-              className="absolute top-4 right-4 p-1.5 rounded-full bg-[#F5EFEB] text-[#7A685D] hover:text-[#2C1810]"
+              className="absolute top-4 right-4 p-1.5 rounded-full bg-[#F5EFEB] text-[#7A685D] hover:text-[#2C1810] cursor-pointer"
             >
               <X size={18} />
             </button>
@@ -221,7 +235,7 @@ const PWAInstallBanner = () => {
                 <Smartphone size={22} />
               </div>
               <div>
-                <h3 className="font-extrabold text-sm text-[#2C1810]">Install on Phone</h3>
+                <h3 className="font-extrabold text-sm text-[#2C1810]">Install Mobile App</h3>
                 <p className="text-xs text-[#7A685D]">Follow these 2 quick steps:</p>
               </div>
             </div>
@@ -232,7 +246,7 @@ const PWAInstallBanner = () => {
                   1
                 </span>
                 <p className="text-[#4A2C18]">
-                  Open your browser menu (tap the <strong>3 dots ⋮</strong> in the top right corner).
+                  Open your browser menu (tap the <strong>3 dots ⋮</strong> in Chrome / Brave).
                 </p>
               </div>
               <div className="flex items-start gap-2.5">
@@ -240,7 +254,7 @@ const PWAInstallBanner = () => {
                   2
                 </span>
                 <p className="text-[#4A2C18]">
-                  Tap <strong>"Install and create shortcut"</strong> or <strong>"Install app"</strong>.
+                  Tap <strong>"Install app"</strong> or <strong>"Add to Home Screen"</strong>.
                 </p>
               </div>
             </div>
@@ -251,7 +265,7 @@ const PWAInstallBanner = () => {
 
             <button
               onClick={() => setShowHelpModal(false)}
-              className="mt-5 w-full bg-[#4A2C18] hover:bg-[#382012] text-white font-bold py-2.5 rounded-xl text-xs transition"
+              className="mt-5 w-full bg-[#4A2C18] hover:bg-[#382012] text-white font-bold py-2.5 rounded-xl text-xs transition cursor-pointer"
             >
               Got it
             </button>

@@ -233,13 +233,9 @@ const ProfilePage = () => {
         <button
           type="button"
           onClick={() => {
-            if (window.pwaDeferredPrompt) {
-              window.pwaDeferredPrompt.prompt();
-            } else {
-              alert('To install on your phone, open the 3 dots (⋮) in your Chrome browser menu and tap "Install app".');
-            }
+            window.dispatchEvent(new CustomEvent('open-pwa-install'));
           }}
-          className="bg-[#C85A32] hover:bg-[#B24E2A] text-white text-xs font-bold px-3.5 py-2 rounded-xl shrink-0 transition shadow-xs"
+          className="bg-[#C85A32] hover:bg-[#B24E2A] active:scale-95 text-white text-xs font-bold px-3.5 py-2 rounded-xl shrink-0 transition shadow-xs cursor-pointer"
         >
           Install App
         </button>
